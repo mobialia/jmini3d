@@ -6,7 +6,7 @@
   <inherits name="mini3d"/>
 
   <entry-point class="mini3d.gwt.demo.Demo"/>
-  <source path="slot"/>
+  <source path="demo"/>
   
   <!-- set-property name="user.agent" value="safari"/-->
   <set-property name="user.agent" value="safari,gecko1_8,ie8,ie9"/> 
