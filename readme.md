@@ -10,6 +10,7 @@ Subprojects:
 * *android:* the android renderer (OpenGL ES 1.1 Renderer)
 * *gwt:* the GWT library project implementing a WebGL Renderer (based on OpenGL ES 2)
 * *gwt_demo:* a small demo project in GWT (we need more demos, sorry...)
+* *utils:* includes an utility to generate Geometry files from OBJ models
 
 Also includes a touch abstraction library (Mini3d Input) for Android and GWT.
 
