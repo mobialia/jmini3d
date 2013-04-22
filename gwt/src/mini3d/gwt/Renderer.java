@@ -67,6 +67,7 @@ public class Renderer implements AnimationCallback {
 	}
 
 	public void onResume() {
+		stop = false;
 		AnimationScheduler.get().requestAnimationFrame(this);
 	}
 
