@@ -7,11 +7,10 @@ import mini3d.Geometry3d;
 import mini3d.GpuObjectStatus;
 import mini3d.Texture;
 
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.googlecode.gwtgl.array.Float32Array;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLTexture;
@@ -26,9 +25,9 @@ public class GpuUploader {
 
 	HashMap<Geometry3d, GeometryBuffers> geometryBuffers = new HashMap<Geometry3d, GeometryBuffers>();
 	HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
-	HashMap<Texture, Image> textureImages = new HashMap<Texture, Image>();
+	HashMap<Texture, ImageElement> textureImages = new HashMap<Texture, ImageElement>();
 	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<CubeMapTexture, WebGLTexture>();
-	HashMap<CubeMapTexture, Image[]> cubeMapImages = new HashMap<CubeMapTexture, Image[]>();
+	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
 
 	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader) {
 		this.gl = gl;
@@ -100,19 +99,19 @@ public class GpuUploader {
 			WebGLTexture webGlTexture = gl.createTexture();
 			textures.put(texture, webGlTexture);
 
-			Image textureImage = resourceLoader.getImage(texture.image);
+			ImageElement textureImage = resourceLoader.getImage(texture.image);
 			if (textureImage == null) {
 				Window.alert("Texture image not found in resources: " + texture.image);
 			} else {
 				textureImages.put(texture, textureImage);
 
-				textureImage.addLoadHandler(new LoadHandler() {
+				Event.setEventListener(textureImage, new EventListener() {
 					@Override
-					public void onLoad(LoadEvent event) {
+					public void onBrowserEvent(Event event) {
 						textureLoaded(texture);
 					}
 				});
-				RootPanel.get("preload").add(textureImage);
+				Event.sinkEvents(textureImage, Event.ONLOAD);
 			}
 		}
 	}
@@ -124,18 +123,19 @@ public class GpuUploader {
 			WebGLTexture texture = gl.createTexture();
 			cubeMapTextures.put(cubeMapTexture, texture);
 
-			Image[] textureImages = new Image[6];
+			ImageElement[] textureImages = new ImageElement[6];
 			cubeMapImages.put(cubeMapTexture, textureImages);
 
 			for (int i = 0; i < 6; i++) {
 				textureImages[i] = resourceLoader.getImage(cubeMapTexture.images[i]);
-				textureImages[i].addLoadHandler(new LoadHandler() {
+
+				Event.setEventListener(textureImages[i], new EventListener() {
 					@Override
-					public void onLoad(LoadEvent event) {
+					public void onBrowserEvent(Event event) {
 						cubeTextureLoaded(cubeMapTexture);
 					}
 				});
-				RootPanel.get("preload").add(textureImages[i]);
+				Event.sinkEvents(textureImages[i], Event.ONLOAD);
 			}
 		}
 	}
@@ -144,7 +144,7 @@ public class GpuUploader {
 		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, textures.get(texture));
 		// gl.pixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, 1);
 		gl.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
-				textureImages.get(texture).getElement());
+				textureImages.get(texture));
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR_MIPMAP_LINEAR);
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_S, WebGLRenderingContext.CLAMP_TO_EDGE);
@@ -164,7 +164,7 @@ public class GpuUploader {
 
 			for (int i = 0; i < 6; i++) {
 				gl.texImage2D(CUBE_MAP_SIDES[i], 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
-						cubeMapImages.get(cubeMapTexture)[i].getElement());
+						cubeMapImages.get(cubeMapTexture)[i]);
 			}
 
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
