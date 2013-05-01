@@ -47,7 +47,7 @@ public class Renderer implements AnimationCallback {
 		webGLCanvas = Canvas.createIfSupported();
 		gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("webgl");
 		if (gl == null) {
-			gl = (WebGLRenderingContext)  ((Canvas) webGLCanvas).getContext("experimental-webgl");
+			gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("experimental-webgl");
 		}
 //		if (gl == null && getUserAgent().contains("msie")) {
 //			webGLCanvas = new IeWebGLWidget();
