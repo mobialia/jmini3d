@@ -18,3 +18,5 @@ This library is used in games from Mobialia (http://www.mobialia.com) with Andro
 * Mobialia Chess: http://chess.mobialia.com http://www.mobialia.com/apps/chess
 * Mobialia Four in a Row: http://fourinarow.mobialia.com http://www.mobialia.com/apps/fourinarow
 * Slot Racing: http://slot.mobialia.com http://www.mobialia.com/apps/slot
+
+It's released under the MIT License, so feel free to use it anywhere. 
