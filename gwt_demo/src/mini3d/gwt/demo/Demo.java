@@ -25,7 +25,9 @@ public class Demo implements EntryPoint, SceneController {
 	float cameraAngle;
 	
 	CubeMapTexture envMapTexture = new CubeMapTexture(new String[] { "posx", "negx", "posy", "negy", "posz", "negz" });
-	//Material material = new Material(new Texture("texture"), envMapTexture, 0.2f);
+	// Material material = new Material(new Texture("texture"), envMapTexture,
+	// 0.2f);
+
 	Material material = new Material(new Texture("texture"));
 
 	@Override
@@ -59,7 +61,7 @@ public class Demo implements EntryPoint, SceneController {
 
 	@Override
 	public boolean updateScene() {
-		// Camera...
+		// Rotate camera...
 		cameraAngle += 0.01;
 
 		float d = 10;
