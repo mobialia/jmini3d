@@ -34,7 +34,7 @@ public class Demo implements EntryPoint, SceneController {
 	public void onModuleLoad() {
 
 		scene = new Scene(this);
-		renderer = new Renderer(new ResourceLoader(), scene, Window.getClientWidth(), Window.getClientHeight());
+		renderer = new Renderer(new ResourceLoader("./"), scene, Window.getClientWidth(), Window.getClientHeight());
 		renderer.onResume();
 		
 		Window.addResizeHandler(new ResizeHandler() {
