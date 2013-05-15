@@ -1,5 +1,3 @@
-precision highp float;
-
 attribute vec3 cameraPosition;
 
 attribute vec3 vertexPosition;
