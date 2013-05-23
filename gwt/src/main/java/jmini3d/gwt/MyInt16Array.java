@@ -73,9 +73,9 @@ public class MyInt16Array extends IntBasedTypedArray<MyInt16Array> {
    */
   public static native MyInt16Array create(int length) /*-{
                 return new Int16Array(length);
-  }-*/;;
+  }-*/;
 
-  /**
+    /**
    * Creates a new instance of the {@link TypedArray} of the length of the given array in values.
    * The values are set to the values of the given array.
    * 
