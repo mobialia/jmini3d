@@ -22,8 +22,7 @@ public class Renderer implements AnimationCallback {
 
 	private FocusWidget webGLCanvas;
 	private WebGLRenderingContext gl;
-	private WebGLProgram shaderProgram;
-	private GpuUploader gpuUploader;
+    private GpuUploader gpuUploader;
 	
 	private TouchController touchController; 
 
@@ -220,7 +219,7 @@ public class Renderer implements AnimationCallback {
 		WebGLShader fragmentShader = getShader(WebGLRenderingContext.FRAGMENT_SHADER, EngineResources.INSTANCE.fragmentShader().getText());
 		WebGLShader vertexShader = getShader(WebGLRenderingContext.VERTEX_SHADER, EngineResources.INSTANCE.vertexShader().getText());
 
-		shaderProgram = gl.createProgram();
+        WebGLProgram shaderProgram = gl.createProgram();
 		gl.attachShader(shaderProgram, vertexShader);
 		gl.attachShader(shaderProgram, fragmentShader);
 		gl.linkProgram(shaderProgram);
