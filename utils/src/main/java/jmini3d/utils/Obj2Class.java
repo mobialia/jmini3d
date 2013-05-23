@@ -107,11 +107,11 @@ public class Obj2Class {
 		
 		System.out.println(className);
 		
-		sb.append("package " + packageName + ";\n");
+		sb.append("package ").append(packageName).append(";\n");
 		sb.append("import com.mobialia.jmini3d.Geometry3d;");
 
 		sb.append("\n");
-		sb.append("public class " + className + " extends Geometry3d {\n");
+		sb.append("public class ").append(className).append(" extends Geometry3d {\n");
 		sb.append("\n");
 
 		sb.append("public float[] vertex() {\n");
