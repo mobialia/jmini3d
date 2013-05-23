@@ -146,7 +146,7 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 	@Override
 	public void onTouchEnd(TouchEndEvent event) {		
 		for (Integer key: pointers.keySet()) {
-			if (key != MOUSE_POINTER_ID) {
+			if (!MOUSE_POINTER_ID.equals(key)) {
 				TouchPointer pointer = pointers.get(key);
 				pointer.status = TouchPointer.TOUCH_UP;
 			}
@@ -160,7 +160,7 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 		listener.onTouch(pointers);
 		
 		for (Integer key : pointers.keySet()) {
-			if (key != MOUSE_POINTER_ID) {
+			if (!MOUSE_POINTER_ID.equals(key)) {
 				TouchPointer pointer = pointers.get(key);
 				if (pointer.status == TouchPointer.TOUCH_UP) {
 					pointers.remove(key);
