@@ -68,7 +68,7 @@ public class Demo implements EntryPoint, SceneController {
 		Vector3 target = scene.getCamera().getTarget();
 		scene.getCamera().setPosition((float) (target.x - d * Math.cos(cameraAngle)), //
 				(float) (target.y - d * Math.sin(cameraAngle)), //
-				(float) (target.z + d));
+                target.z + d);
 
 		return true;
 	}
