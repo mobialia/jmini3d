@@ -9,7 +9,6 @@ buildscript {
 }
 
 apply plugin: 'android-library'
-apply plugin: 'maven'
 
 archivesBaseName = 'jmini3d-android'
 
@@ -25,4 +24,16 @@ android {
         minSdkVersion 7
         targetSdkVersion 16
     }
+}
+
+apply plugin: 'maven'
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+      pom.version = '0.1'
+      pom.groupId = 'com.mobialia'
+      pom.artifactId = 'jmini3d-android'
+    }
+  }
 }
