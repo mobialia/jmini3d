@@ -9,6 +9,7 @@ buildscript {
 }
 
 apply plugin: 'android-library'
+apply plugin: 'maven'
 
 archivesBaseName = 'jmini3d-android'
 
