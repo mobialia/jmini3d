@@ -267,9 +267,9 @@ public class MatrixUtils {
 		dest[7] = mat[5];
 		dest[8] = mat[8];
 		return dest;
-	};
+	}
 
-	public static float[] multiply(float[] mat, float[] mat2, float[] dest) {
+    public static float[] multiply(float[] mat, float[] mat2, float[] dest) {
 		if (dest == null) {
 			dest = mat;
 		}
@@ -315,9 +315,9 @@ public class MatrixUtils {
 		dest[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
 		return dest;
-	};
+	}
 
-	public static float[] multiplyVectorPost(float[] mat, float[] vec, float[] dest) {
+    public static float[] multiplyVectorPost(float[] mat, float[] vec, float[] dest) {
 		if (dest == null) {
 			dest = vec;
 		}
