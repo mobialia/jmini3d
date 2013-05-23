@@ -1,5 +1,5 @@
-Mini3D
-======
+JMini3D
+=======
 
 Minimalistic 3D library with support for Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
 

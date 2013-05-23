@@ -1,0 +1,13 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+archivesBaseName = 'jmini3d-core'
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}

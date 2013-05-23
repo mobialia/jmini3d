@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.4'
+    }
+}
+
+apply plugin: 'android-library'
+
+archivesBaseName = 'jmini3d-android'
+
+dependencies {
+    compile project(':core')
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 16
+    }
+}
