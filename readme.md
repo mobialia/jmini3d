@@ -7,7 +7,7 @@ This library helps you to develop 3D apps compatible with Android and GWT projec
 
 Subprojects:
 * *core:*" includes the common classes between Android and GWT projects 
-* *android:* the android renderer (OpenGL ES 1.1 Renderer)
+* *android:* the android renderer (OpenGL ES 1.1 Renderer). Use "gradle uploadArchives" to upload this library's AAR to your local maven repo.
 * *gwt:* the GWT library project implementing a WebGL Renderer (based on OpenGL ES 2)
 * *gwt_demo:* a small demo project in GWT (we need more demos, sorry...)
 * *utils:* includes an utility to generate Geometry files from OBJ models
