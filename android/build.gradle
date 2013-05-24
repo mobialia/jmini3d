@@ -19,11 +19,6 @@ dependencies {
 android {
     compileSdkVersion 17
     buildToolsVersion "17.0.0"
-
-    defaultConfig {
-        minSdkVersion 5
-        targetSdkVersion 17
-    }
 }
 
 apply plugin: 'maven'
