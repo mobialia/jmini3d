@@ -3,6 +3,9 @@ apply plugin: 'maven'
 
 archivesBaseName = 'jmini3d-core'
 
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
