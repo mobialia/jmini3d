@@ -31,11 +31,7 @@ uploadArchives {
   repositories {
     mavenDeployer {
       repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-      pom.version = '0.1'
-      pom.groupId = 'com.mobialia'
-      pom.artifactId = 'jmini3d-android'
     }
   }
 }
-
 task install(dependsOn: uploadArchives)
