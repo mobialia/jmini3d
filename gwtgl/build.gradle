@@ -1,0 +1,25 @@
+apply plugin: 'maven'
+
+group = 'com.googlecode.gwtgl'
+version = '0.9.1'
+archivesBaseName = 'gwtgl'
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from zipTree(file('gwtgl-0.9.1-sources.jar'))
+}
+
+artifacts {
+    archives file: file('gwtgl-0.9.1.jar')
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+        }
+    }
+}
+
+task install(dependsOn: uploadArchives)

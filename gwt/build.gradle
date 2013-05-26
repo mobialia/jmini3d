@@ -6,15 +6,14 @@ archivesBaseName = 'jmini3d-gwt'
 dependencies {
     compile 'com.google.gwt:gwt-user:2.5.1'
     compile 'com.google.gwt:gwt-dev:2.5.1'
+    compile 'com.googlecode.gwtgl:gwtgl:0.9.1'
+    compile 'com.googlecode.gwtgl:gwtgl:0.9.1:sources'
     compile project(':core')
-    compile files('./libs/gwtgl-0.9.1.jar')
-    compile files('./libs/gwtgl-0.9.1-sources.jar')
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    from zipTree('./libs/gwtgl-0.9.1-sources.jar')
 }
 
 artifacts {

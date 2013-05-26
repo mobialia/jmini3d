@@ -11,6 +11,7 @@ Subprojects:
 * *gwt:* the GWT library project implementing a WebGL Renderer (based on OpenGL ES 2)
 * *gwt_demo:* a small demo project in GWT (we need more demos, sorry...)
 * *utils:* includes an utility to generate Geometry files from OBJ models
+* *gwtgl:* a dependency for the gwt project, do a 'gradle install' in this folder to copy the gwtgl artifact to your maven local repo
 
 Also includes a touch abstraction library (Mini3d Input) for Android and GWT.
 
