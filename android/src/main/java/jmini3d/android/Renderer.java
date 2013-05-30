@@ -52,6 +52,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	TouchController touchController;
 
+    int width;
+    int height;
+
 	public Renderer(Context context, Scene scene, ResourceLoader resourceLoader, boolean traslucent) {
 		this.scene = scene;
 		this.resourceLoader = resourceLoader;
@@ -95,11 +98,18 @@ public class Renderer implements GLSurfaceView.Renderer {
 		Log.i(TAG, "onSurfaceCreated()");
 		gpuUploader.setGl(gl);
 		setGl(gl);
+
+        width = -1;
+        height= -1;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int w, int h) {
-		Log.i(TAG, "onSurfaceChanged()");
-		setSize(w, h);
+		Log.i(TAG, "onSurfaceChanged() w=" + w + " h= " + h);
+        if (w != width || h != height) {
+		    setSize(w, h);
+            width = w;
+            height = h;
+        }
 	}
 	
 	public void setSize(int width, int height) {
