@@ -1,22 +1,18 @@
 package jmini3d.android.demo;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
-import jmini3d.CubeMapTexture;
 import jmini3d.Material;
 import jmini3d.Object3d;
-import jmini3d.Scene;
 import jmini3d.Texture;
 import jmini3d.VariableGeometry3d;
 import jmini3d.Vector3;
-import jmini3d.android.Renderer;
 import jmini3d.android.RendererActivity;
 
 public class DemoActivity extends RendererActivity {
 
-    public static final String TAG = "Demo";
+    public static final String TAG = "DemoActivity";
     float cameraAngle;
 
     //CubeMapTexture envMapTexture = new CubeMapTexture(new String[] { "posx", "negx", "posy", "negy", "posz", "negz" });
