@@ -88,6 +88,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 	public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig) {
 		Log.i(TAG, "onSurfaceCreated()");
         initShaders();
+
+        width = -1;
+        height = -1;
 	}
 
 	public void onSurfaceChanged(GL10 unused, int w, int h) {
