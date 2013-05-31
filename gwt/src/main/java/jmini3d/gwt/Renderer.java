@@ -22,18 +22,19 @@ public class Renderer implements AnimationCallback {
 
 	private FocusWidget webGLCanvas;
 	private WebGLRenderingContext gl;
+
+    Scene scene;
+    private ResourceLoader resourceLoader;
     private GpuUploader gpuUploader;
-	
-	private TouchController touchController; 
+	private TouchController touchController;
+
+    public float[] ortho = new float[16];
 
 	private int vertexPositionAttribute, vertexNormalAttribute, textureCoordAttribute;
-	WebGLUniformLocation uPerspectiveMatrix, uModelViewMatrix, //
+	private WebGLUniformLocation uPerspectiveMatrix, uModelViewMatrix, //
 			uNormalMatrix, uUseLighting, uAmbientColor, uPointLightingLocation, //
 			uPointLightingColor, uSampler, uEnvMap, uReflectivity, uObjectColor, uObjectColorTrans;
 
-	Scene scene;
-	public float[] ortho = new float[16];
-	
 	boolean stop = false;
 
 //	public static native String getUserAgent() /*-{
@@ -42,8 +43,11 @@ public class Renderer implements AnimationCallback {
 
 	public Renderer(ResourceLoader resourceLoader, Scene scene, int width, int height) {
 		this.scene = scene;
+        this.resourceLoader = resourceLoader;
 
-		webGLCanvas = Canvas.createIfSupported();
+        MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
+
+        webGLCanvas = Canvas.createIfSupported();
 		gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("webgl");
 		if (gl == null) {
 			gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("experimental-webgl");
@@ -56,8 +60,6 @@ public class Renderer implements AnimationCallback {
 			Window.alert("Sorry, Your browser doesn't support WebGL. Please Install Chrome or Firefox.");
 			return;
 		}
-		
-		MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
 
 		gpuUploader = new GpuUploader(gl, resourceLoader);
 		initShaders();
@@ -110,10 +112,6 @@ public class Renderer implements AnimationCallback {
 		// For transparency
 		gl.enable(WebGLRenderingContext.BLEND);
 		gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
-	}
-
-	public FocusWidget getCanvas() {
-		return webGLCanvas;
 	}
 
 	public void onDrawFrame() {
@@ -263,11 +261,19 @@ public class Renderer implements AnimationCallback {
 			throw new RuntimeException(gl.getShaderInfoLog(shader));
 		}
 		return shader;
-	}
+    }
+
+    public GpuUploader getGpuUploader() {
+        return gpuUploader;
+    }
 
 	public void requestRender() {
 		needsRedraw = true;
 	}
+
+    public ResourceLoader getResourceLoader() {
+        return resourceLoader;
+    }
 
 	public void setTouchListener(TouchListener listener) {
 		if (touchController == null)  {
@@ -279,4 +285,8 @@ public class Renderer implements AnimationCallback {
 	public void stop() {
 		stop = true;
 	}
+
+    public FocusWidget getCanvas() {
+        return webGLCanvas;
+    }
 }
