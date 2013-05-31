@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mobialia.min3d"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <!-- Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
+    <uses-sdk android:minSdkVersion="9" />
+</manifest>

@@ -1,0 +1,32 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.4.2'
+    }
+}
+
+apply plugin: 'android-library'
+
+archivesBaseName = 'jmini3d-android2'
+
+dependencies {
+    compile project(':core')
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+}
+
+apply plugin: 'maven'
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+    }
+  }
+}
+task install(dependsOn: uploadArchives)
