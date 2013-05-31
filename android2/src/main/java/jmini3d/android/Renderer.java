@@ -24,6 +24,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 	public static final String TAG = "Renderer";
     public static boolean needsRedraw = true;
 
+    private GL10 gl;
+
     // stats-related
 	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 1000;
 	private boolean logFps = false;
@@ -85,8 +87,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 		gpuUploader = new GpuUploader(resourceLoader);
 	}
 
-	public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig) {
+	public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig) {
 		Log.i(TAG, "onSurfaceCreated()");
+        this.gl = gl;
         initShaders();
 
         width = -1;
@@ -313,6 +316,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     public GLSurfaceView getView() {
         return glSurfaceView;
+    }
+
+    public GL10 getGl() {
+        return gl;
     }
 
     /**
