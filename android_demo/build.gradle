@@ -12,7 +12,7 @@ apply plugin: 'android'
 
 dependencies {
     compile project(':core')
-    compile project(':android')
+    compile project(':android2')
 }
 
 android {
