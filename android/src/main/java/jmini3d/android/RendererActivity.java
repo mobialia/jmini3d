@@ -1,13 +1,14 @@
 package jmini3d.android;
 
+import android.app.Activity;
+import android.os.Bundle;
+
 import java.util.HashMap;
 
 import jmini3d.Scene;
 import jmini3d.SceneController;
 import jmini3d.input.TouchListener;
 import jmini3d.input.TouchPointer;
-import android.app.Activity;
-import android.os.Bundle;
 
 public class RendererActivity extends Activity implements SceneController, TouchListener {
 	public static final String TAG = "RendererActivity";

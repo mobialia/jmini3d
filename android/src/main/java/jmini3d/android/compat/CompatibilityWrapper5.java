@@ -5,7 +5,7 @@ import android.view.MotionEvent;
 
 /**
  * Functions since API level 5
- * 
+ *
  * @author rui
  */
 public class CompatibilityWrapper5 {

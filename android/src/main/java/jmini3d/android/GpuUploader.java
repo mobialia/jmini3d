@@ -1,5 +1,11 @@
 package jmini3d.android;
 
+import android.graphics.Bitmap;
+import android.opengl.GLES10;
+import android.opengl.GLES11;
+import android.opengl.GLUtils;
+import android.util.Log;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -11,20 +17,16 @@ import javax.microedition.khronos.opengles.GL11;
 import jmini3d.Geometry3d;
 import jmini3d.GpuObjectStatus;
 import jmini3d.Texture;
-import android.graphics.Bitmap;
-import android.opengl.GLUtils;
-import android.util.Log;
 
 public class GpuUploader {
 	static final String TAG = "GpuUploader";
 
 	// static final int[] CUBE_MAP_SIDES = {
-	// GL10.GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL10.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-	// GL10.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL10.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-	// GL10.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL10.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+	// GLES10.GL_TEXTURE_CUBE_MAP_POSITIVE_X, GLES10.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	// GLES10.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GLES10.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	// GLES10.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GLES10.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 	// };
 
-	GL10 gl;
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry3d, GeometryBuffers> geometryBuffers = new HashMap<Geometry3d, GeometryBuffers>();
@@ -104,19 +106,17 @@ public class GpuUploader {
 			}
 
 		} else {
-			GL11 gl11 = (GL11) gl;
-
 			if ((geometry3d.status & GpuObjectStatus.VERTICES_UPLOADED) == 0) {
 				geometry3d.status |= GpuObjectStatus.VERTICES_UPLOADED;
 				float[] vertex = geometry3d.vertex();
 				if (vertex != null) {
 					if (buffers.vertexBufferId == null) {
 						int[] vboId = new int[1];
-						((GL11) gl).glGenBuffers(1, vboId, 0);
+						GLES11.glGenBuffers(1, vboId, 0);
 						buffers.vertexBufferId = vboId[0];
 					}
-					gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, buffers.vertexBufferId);
-					gl11.glBufferData(GL11.GL_ARRAY_BUFFER, vertex.length * 4, FloatBuffer.wrap(vertex), GL11.GL_STATIC_DRAW);
+					GLES11.glBindBuffer(GLES11.GL_ARRAY_BUFFER, buffers.vertexBufferId);
+					GLES11.glBufferData(GLES11.GL_ARRAY_BUFFER, vertex.length * 4, FloatBuffer.wrap(vertex), GLES11.GL_STATIC_DRAW);
 				}
 			}
 
@@ -126,11 +126,11 @@ public class GpuUploader {
 				if (normals != null) {
 					if (buffers.normalsBufferId == null) {
 						int[] vboId = new int[1];
-						((GL11) gl).glGenBuffers(1, vboId, 0);
+						GLES11.glGenBuffers(1, vboId, 0);
 						buffers.normalsBufferId = vboId[0];
 					}
-					gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, buffers.normalsBufferId);
-					gl11.glBufferData(GL11.GL_ARRAY_BUFFER, normals.length * 4, FloatBuffer.wrap(normals), GL11.GL_STATIC_DRAW);
+					GLES11.glBindBuffer(GLES11.GL_ARRAY_BUFFER, buffers.normalsBufferId);
+					GLES11.glBufferData(GLES11.GL_ARRAY_BUFFER, normals.length * 4, FloatBuffer.wrap(normals), GLES11.GL_STATIC_DRAW);
 				}
 			}
 
@@ -140,11 +140,11 @@ public class GpuUploader {
 				if (uvs != null) {
 					if (buffers.uvsBufferId == null) {
 						int[] vboId = new int[1];
-						((GL11) gl).glGenBuffers(1, vboId, 0);
+						GLES11.glGenBuffers(1, vboId, 0);
 						buffers.uvsBufferId = vboId[0];
 					}
-					gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, buffers.uvsBufferId);
-					gl11.glBufferData(GL11.GL_ARRAY_BUFFER, uvs.length * 4, FloatBuffer.wrap(uvs), GL11.GL_STATIC_DRAW);
+					GLES11.glBindBuffer(GLES11.GL_ARRAY_BUFFER, buffers.uvsBufferId);
+					GLES11.glBufferData(GLES11.GL_ARRAY_BUFFER, uvs.length * 4, FloatBuffer.wrap(uvs), GLES11.GL_STATIC_DRAW);
 				}
 			}
 
@@ -155,12 +155,12 @@ public class GpuUploader {
 					geometry3d.facesLength = faces.length;
 					if (buffers.facesBufferId == null) {
 						int[] vboId = new int[1];
-						((GL11) gl).glGenBuffers(1, vboId, 0);
+						GLES11.glGenBuffers(1, vboId, 0);
 						buffers.facesBufferId = vboId[0];
 					}
 
-					gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
-					gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, faces.length * 2, ShortBuffer.wrap(faces), GL11.GL_STATIC_DRAW);
+					GLES11.glBindBuffer(GLES11.GL_ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
+					GLES11.glBufferData(GLES11.GL_ELEMENT_ARRAY_BUFFER, faces.length * 2, ShortBuffer.wrap(faces), GLES11.GL_STATIC_DRAW);
 				}
 			}
 		}
@@ -180,23 +180,23 @@ public class GpuUploader {
 			Integer textureId = textures.get(texture);
 			if (textureId == null) {
 				int[] texturesIds = new int[1];
-				gl.glGenTextures(1, texturesIds, 0);
+				GLES10.glGenTextures(1, texturesIds, 0);
 				textureId = texturesIds[0];
 				textures.put(texture, textureId);
 			}
 
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-			// gl.pixelStorei(GL10.UNPACK_FLIP_Y_WEBGL, 1);
-			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-			// gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,
-			// GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
+			GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textureId);
+			// GLES10.pixelStorei(GLES10.UNPACK_FLIP_Y_WEBGL, 1);
+			GLUtils.texImage2D(GLES10.GL_TEXTURE_2D, 0, bitmap, 0);
+			// GLES10.glTexImage2D(GLES10.GL_TEXTURE_2D, 0, GLES10.GL_RGBA,
+			// GLES10.GL_RGBA, GLES10.GL_UNSIGNED_BYTE,
 			// imageResource);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-			// gl.generateMipmap(GL10.TEXTURE_2D);
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+			GLES10.glTexParameterx(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
+			GLES10.glTexParameterx(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
+			GLES10.glTexParameterx(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_CLAMP_TO_EDGE);
+			GLES10.glTexParameterx(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_CLAMP_TO_EDGE);
+			// GLES10.generateMipmap(GLES10.TEXTURE_2D);
+			GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, 0);
 
 			Renderer.needsRedraw = true;
 
@@ -210,7 +210,7 @@ public class GpuUploader {
 	// }
 	// cubeMapTexture.status = GpuObjectStatus.UPLOADING;
 	//
-	// WebGLTexture texture = gl.createTexture();
+	// WebGLTexture texture = GLES10.createTexture();
 	// cubeMapTextures.put(cubeMapTexture, texture);
 	//
 	// Image[] textureImages = new Image[6];
@@ -236,26 +236,26 @@ public class GpuUploader {
 	// public void cubeTextureLoaded(CubeMapTexture cubeMapTexture) {
 	// cubeMapTexture.loadCount++;
 	// if (cubeMapTexture.loadCount == 6) {
-	// gl.bindTexture(GL10.TEXTURE_CUBE_MAP,
+	// GLES10.bindTexture(GLES10.TEXTURE_CUBE_MAP,
 	// cubeMapTextures.get(cubeMapTexture));
-	// // gl.pixelStorei(GL10.UNPACK_FLIP_Y_WEBGL, 1);
+	// // GLES10.pixelStorei(GLES10.UNPACK_FLIP_Y_WEBGL, 1);
 	//
 	// for (int i = 0; i < 6; i++) {
-	// gl.texImage2D(CUBE_MAP_SIDES[i], 0, GL10.RGBA, GL10.RGBA,
-	// GL10.UNSIGNED_BYTE,
+	// GLES10.texImage2D(CUBE_MAP_SIDES[i], 0, GLES10.RGBA, GLES10.RGBA,
+	// GLES10.UNSIGNED_BYTE,
 	// cubeMapImages.get(cubeMapTexture)[i].getElement());
 	// }
 	//
-	// gl.texParameteri(GL11.GL_TEXTURE_CUBE_MAP, GL10.TEXTURE_MAG_FILTER,
-	// GL10.LINEAR);
-	// gl.texParameteri(GL11.GL_TEXTURE_CUBE_MAP, GL10.TEXTURE_MIN_FILTER,
-	// GL10.LINEAR);
-	// gl.texParameteri(GL11.GL_TEXTURE_CUBE_MAP, GL10.TEXTURE_WRAP_S,
-	// GL10.CLAMP_TO_EDGE);
-	// gl.texParameteri(GL11.GL_TEXTURE_CUBE_MAP, GL10.TEXTURE_WRAP_T,
-	// GL10.CLAMP_TO_EDGE);
-	// // gl.generateMipmap(GL10.TEXTURE_CUBE_MAP);
-	// gl.bindTexture(GL10.TEXTURE_CUBE_MAP, null);
+	// GLES10.texParameteri(GLES11.GL_TEXTURE_CUBE_MAP, GLES10.TEXTURE_MAG_FILTER,
+	// GLES10.LINEAR);
+	// GLES10.texParameteri(GLES11.GL_TEXTURE_CUBE_MAP, GLES10.TEXTURE_MIN_FILTER,
+	// GLES10.LINEAR);
+	// GLES10.texParameteri(GLES11.GL_TEXTURE_CUBE_MAP, GLES10.TEXTURE_WRAP_S,
+	// GLES10.CLAMP_TO_EDGE);
+	// GLES10.texParameteri(GLES11.GL_TEXTURE_CUBE_MAP, GLES10.TEXTURE_WRAP_T,
+	// GLES10.CLAMP_TO_EDGE);
+	// // GLES10.generateMipmap(GLES10.TEXTURE_CUBE_MAP);
+	// GLES10.bindTexture(GLES10.TEXTURE_CUBE_MAP, null);
 	//
 	// cubeMapTexture.status = GpuObjectStatus.UPLOADED;
 	// Renderer.needsRedraw = true;
@@ -282,19 +282,17 @@ public class GpuUploader {
 						buffers.facesBuffer.clear();
 					}
 				} else {
-					GL11 gl11 = (GL11) gl;
-
 					if (buffers.vertexBufferId != null) {
-						gl11.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.vertexBufferId }));
+						GLES11.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
 					}
 					if (buffers.normalsBufferId != null) {
-						gl11.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.normalsBufferId }));
+						GLES11.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
 					}
 					if (buffers.uvsBufferId != null) {
-						gl11.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.uvsBufferId }));
+						GLES11.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
 					}
 					if (buffers.facesBufferId != null) {
-						gl11.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.facesBufferId }));
+						GLES11.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
 					}
 				}
 
@@ -303,7 +301,7 @@ public class GpuUploader {
 		} else if (o instanceof Texture) {
 			if (textures.containsKey(o)) {
 				((Texture) o).status = 0;
-				gl.glDeleteTextures(1, IntBuffer.wrap(new int[] { textures.get(o) }));
+				GLES10.glDeleteTextures(1, IntBuffer.wrap(new int[]{textures.get(o)}));
 				textures.remove(o);
 			}
 		}
@@ -322,9 +320,7 @@ public class GpuUploader {
 	}
 
 	public void setGl(GL10 gl) {
-		this.gl = gl;
-
-		// OpenGL ES version
+		// Detect OpenGL ES version
 		if (gl instanceof GL11) {
 			openGlVersion = 1.1f;
 		} else {
