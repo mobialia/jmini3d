@@ -1,12 +1,5 @@
 package jmini3d.gwt;
 
-import jmini3d.GpuObjectStatus;
-import jmini3d.MatrixUtils;
-import jmini3d.Object3d;
-import jmini3d.Scene;
-import jmini3d.gwt.input.TouchController;
-import jmini3d.input.TouchListener;
-
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.canvas.client.Canvas;
@@ -17,25 +10,33 @@ import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
 import com.googlecode.gwtgl.binding.WebGLUniformLocation;
 
+import jmini3d.GpuObjectStatus;
+import jmini3d.MatrixUtils;
+import jmini3d.Object3d;
+import jmini3d.Scene;
+import jmini3d.gwt.input.TouchController;
+import jmini3d.input.TouchListener;
+
 public class Renderer implements AnimationCallback {
+	public static final String TAG = "Renderer";
 	public static boolean needsRedraw = true;
 
-	private FocusWidget webGLCanvas;
-	private WebGLRenderingContext gl;
-
-    Scene scene;
-    private ResourceLoader resourceLoader;
-    private GpuUploader gpuUploader;
+	Scene scene;
+	private ResourceLoader resourceLoader;
+	private GpuUploader gpuUploader;
 	private TouchController touchController;
 
-    public float[] ortho = new float[16];
+	public float[] ortho = new float[16];
+
+	boolean stop = false;
 
 	private int vertexPositionAttribute, vertexNormalAttribute, textureCoordAttribute;
 	private WebGLUniformLocation uPerspectiveMatrix, uModelViewMatrix, //
 			uNormalMatrix, uUseLighting, uAmbientColor, uPointLightingLocation, //
 			uPointLightingColor, uSampler, uEnvMap, uReflectivity, uObjectColor, uObjectColorTrans;
 
-	boolean stop = false;
+	private FocusWidget webGLCanvas;
+	private WebGLRenderingContext gl;
 
 //	public static native String getUserAgent() /*-{
 //		return navigator.userAgent.toLowerCase();
@@ -43,11 +44,12 @@ public class Renderer implements AnimationCallback {
 
 	public Renderer(ResourceLoader resourceLoader, Scene scene, int width, int height) {
 		this.scene = scene;
-        this.resourceLoader = resourceLoader;
+		this.resourceLoader = resourceLoader;
 
-        MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
+		MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
 
-        webGLCanvas = Canvas.createIfSupported();
+
+		webGLCanvas = Canvas.createIfSupported();
 		gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("webgl");
 		if (gl == null) {
 			gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("experimental-webgl");
@@ -62,6 +64,7 @@ public class Renderer implements AnimationCallback {
 		}
 
 		gpuUploader = new GpuUploader(gl, resourceLoader);
+
 		initShaders();
 
 		setSize(width, height);
@@ -95,6 +98,8 @@ public class Renderer implements AnimationCallback {
 		webGLCanvas.setWidth(width + "px");
 		webGLCanvas.setHeight(height + "px");
 
+		gl.viewport(0, 0, scene.camera.getWidth(), scene.camera.getHeight());
+
 		// Scene reload on size changed, needed to keep aspect ratios
 		reset();
 		gpuUploader.reset();
@@ -122,21 +127,20 @@ public class Renderer implements AnimationCallback {
 			return;
 		}
 
-		for (Object o : scene.unload) {
-			gpuUploader.unload(o);
+		for (int i = 0; i < scene.unload.size(); i++) {
+			gpuUploader.unload(scene.unload.get(i));
 		}
 		scene.unload.clear();
 
 		needsRedraw = false;
-
-		gl.viewport(0, 0, scene.camera.getWidth(), scene.camera.getHeight());
 
 		gl.clearColor(scene.getBackgroundColor().r, scene.getBackgroundColor().g, scene.getBackgroundColor().b, scene.getBackgroundColor().a);
 		gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT);
 
 		setSceneUniforms();
 
-		for (Object3d o3d : scene.children) {
+		for (int i = 0; i < scene.children.size(); i++) {
+			Object3d o3d = scene.children.get(i);
 			if (o3d.visible) {
 				o3d.updateMatrices(scene.camera.modelViewMatrix, cameraChanged);
 				drawObject(o3d);
@@ -145,7 +149,8 @@ public class Renderer implements AnimationCallback {
 
 		gl.uniformMatrix4fv(uPerspectiveMatrix, false, ortho);
 
-		for (Object3d o3d : scene.hud) {
+		for (int i = 0; i < scene.hud.size(); i++) {
+			Object3d o3d = scene.hud.get(i);
 			if (o3d.visible) {
 				o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
 				drawObject(o3d);
@@ -217,7 +222,7 @@ public class Renderer implements AnimationCallback {
 		WebGLShader fragmentShader = getShader(WebGLRenderingContext.FRAGMENT_SHADER, EngineResources.INSTANCE.fragmentShader().getText());
 		WebGLShader vertexShader = getShader(WebGLRenderingContext.VERTEX_SHADER, EngineResources.INSTANCE.vertexShader().getText());
 
-        WebGLProgram shaderProgram = gl.createProgram();
+		WebGLProgram shaderProgram = gl.createProgram();
 		gl.attachShader(shaderProgram, vertexShader);
 		gl.attachShader(shaderProgram, fragmentShader);
 		gl.linkProgram(shaderProgram);
@@ -261,22 +266,22 @@ public class Renderer implements AnimationCallback {
 			throw new RuntimeException(gl.getShaderInfoLog(shader));
 		}
 		return shader;
-    }
+	}
 
-    public GpuUploader getGpuUploader() {
-        return gpuUploader;
-    }
+	public GpuUploader getGpuUploader() {
+		return gpuUploader;
+	}
 
 	public void requestRender() {
 		needsRedraw = true;
 	}
 
-    public ResourceLoader getResourceLoader() {
-        return resourceLoader;
-    }
+	public ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
 
 	public void setTouchListener(TouchListener listener) {
-		if (touchController == null)  {
+		if (touchController == null) {
 			touchController = new TouchController(webGLCanvas);
 		}
 		touchController.setListener(listener);
@@ -286,7 +291,7 @@ public class Renderer implements AnimationCallback {
 		stop = true;
 	}
 
-    public FocusWidget getCanvas() {
-        return webGLCanvas;
-    }
+	public FocusWidget getCanvas() {
+		return webGLCanvas;
+	}
 }
