@@ -57,7 +57,7 @@ public class TouchController implements OnTouchListener {
 				touchPointer.y = (int) event.getY();
 			}
 			touchPointer.status = TouchPointer.TOUCH_DOWN;
-			pointers.put(Integer.valueOf(pointerId), touchPointer);
+			pointers.put(pointerId, touchPointer);
 			if (listener != null) {
 				listener.onTouch(pointers);
 			}
@@ -92,7 +92,7 @@ public class TouchController implements OnTouchListener {
 				listener.onTouch(pointers);
 			}
 			pointers.remove(Integer.valueOf(pointerId));
-			pointersAux.put(Integer.valueOf(pointerId), upPointer);
+			pointersAux.put(pointerId, upPointer);
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
 			break;
