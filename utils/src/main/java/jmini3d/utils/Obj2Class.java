@@ -101,7 +101,7 @@ public class Obj2Class {
 	
 	
 	public void writeFile(String packageName, String fileName) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		String className = fileName.substring(fileName.lastIndexOf("/") + 1).replace(".java", "");
 		
