@@ -7,9 +7,9 @@ import com.google.gwt.resources.client.TextResource;
 public interface EngineResources extends ClientBundle {
 	public static EngineResources INSTANCE = GWT.create(EngineResources.class);
 
-	@Source(value = { "fragment-shader.txt" })
+	@Source(value = {"fragment-shader.txt"})
 	TextResource fragmentShader();
 
-	@Source(value = { "vertex-shader.txt" })
+	@Source(value = {"vertex-shader.txt"})
 	TextResource vertexShader();
 }

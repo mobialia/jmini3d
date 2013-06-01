@@ -1,10 +1,5 @@
 package jmini3d.gwt.input;
 
-import java.util.HashMap;
-
-import jmini3d.input.TouchListener;
-import jmini3d.input.TouchPointer;
-
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -24,24 +19,29 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.FocusWidget;
 
+import java.util.HashMap;
+
+import jmini3d.input.TouchListener;
+import jmini3d.input.TouchPointer;
+
 public class TouchController implements MouseDownHandler, MouseUpHandler, MouseMoveHandler, MouseOutHandler, TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler {
-	
+
 	static final Integer MOUSE_POINTER_ID = 666;
-	
+
 	TouchListener listener;
 	TouchPointer mousePointer;
 
 	int eventX;
 	int eventY;
-	
+
 	HashMap<Integer, TouchPointer> pointers = new HashMap<Integer, TouchPointer>();
 	HashMap<Integer, TouchPointer> pointersAux = new HashMap<Integer, TouchPointer>();
-	
+
 	FocusWidget widget;
-	
+
 	public TouchController(FocusWidget widget) {
 		this.widget = widget;
-		
+
 		widget.addMouseDownHandler(this);
 		widget.addMouseUpHandler(this);
 		widget.addMouseMoveHandler(this);
@@ -51,10 +51,10 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 		widget.addTouchMoveHandler(this);
 		widget.addTouchEndHandler(this);
 		widget.addTouchCancelHandler(this);
-		
+
 		mousePointer = new TouchPointer();
 	}
-	
+
 	public void setListener(TouchListener listener) {
 		this.listener = listener;
 	}
@@ -64,7 +64,7 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 		mousePointer.x = event.getX();
 		mousePointer.y = event.getY();
 		mousePointer.status = TouchPointer.TOUCH_DOWN;
-		
+
 		pointers.put(MOUSE_POINTER_ID, mousePointer);
 		listener.onTouch(pointers);
 		event.preventDefault();
@@ -75,7 +75,7 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 		mousePointer.x = event.getX();
 		mousePointer.y = event.getY();
 		mousePointer.status = TouchPointer.TOUCH_MOVE;
-		
+
 		if (pointers.containsKey(MOUSE_POINTER_ID)) {
 			listener.onTouch(pointers);
 		}
@@ -122,8 +122,8 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 			pointers.put(touch.getIdentifier(), pointer);
 		}
 		listener.onTouch(pointers);
-		
-		for (TouchPointer pointer: pointers.values()) {
+
+		for (TouchPointer pointer : pointers.values()) {
 			pointer.status = TouchPointer.TOUCH_MOVE;
 		}
 
@@ -144,8 +144,8 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 	}
 
 	@Override
-	public void onTouchEnd(TouchEndEvent event) {		
-		for (Integer key: pointers.keySet()) {
+	public void onTouchEnd(TouchEndEvent event) {
+		for (Integer key : pointers.keySet()) {
 			if (!MOUSE_POINTER_ID.equals(key)) {
 				TouchPointer pointer = pointers.get(key);
 				pointer.status = TouchPointer.TOUCH_UP;
@@ -158,7 +158,7 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 			pointer.status = TouchPointer.TOUCH_MOVE;
 		}
 		listener.onTouch(pointers);
-		
+
 		for (Integer key : pointers.keySet()) {
 			if (!MOUSE_POINTER_ID.equals(key)) {
 				TouchPointer pointer = pointers.get(key);
@@ -167,7 +167,7 @@ public class TouchController implements MouseDownHandler, MouseUpHandler, MouseM
 				}
 			}
 		}
-		
+
 		event.preventDefault();
 	}
 

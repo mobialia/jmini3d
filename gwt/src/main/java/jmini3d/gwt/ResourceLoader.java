@@ -8,10 +8,8 @@ public class ResourceLoader {
 	String imagePath;
 
 	/**
-	 * 
-	 * @param imagePath
-	 *            Path where images are located, with the trailing slash i.e.
-	 *            "img/"
+	 * @param imagePath Path where images are located, with the trailing slash i.e.
+	 *                  "img/"
 	 */
 	public ResourceLoader(String imagePath) {
 		this.imagePath = imagePath;

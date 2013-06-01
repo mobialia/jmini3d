@@ -1,12 +1,5 @@
 package jmini3d.gwt;
 
-import java.util.HashMap;
-
-import jmini3d.CubeMapTexture;
-import jmini3d.Geometry3d;
-import jmini3d.GpuObjectStatus;
-import jmini3d.Texture;
-
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
@@ -15,10 +8,17 @@ import com.googlecode.gwtgl.array.Float32Array;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLTexture;
 
+import java.util.HashMap;
+
+import jmini3d.CubeMapTexture;
+import jmini3d.Geometry3d;
+import jmini3d.GpuObjectStatus;
+import jmini3d.Texture;
+
 public class GpuUploader {
-	static final int[] CUBE_MAP_SIDES = { WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
+	static final int[] CUBE_MAP_SIDES = {WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
 			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z };
+			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z};
 
 	WebGLRenderingContext gl;
 	ResourceLoader resourceLoader;
@@ -213,7 +213,7 @@ public class GpuUploader {
 			}
 		}
 	}
-	
+
 	public void reset() {
 		// Now force re-upload of all objects
 		for (Geometry3d geometry : geometryBuffers.keySet()) {

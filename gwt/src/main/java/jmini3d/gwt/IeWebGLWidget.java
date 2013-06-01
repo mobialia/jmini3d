@@ -7,7 +7,7 @@ import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 
 public class IeWebGLWidget extends FocusWidget {
 	Element element;
-	
+
 	public IeWebGLWidget() {
 		element = DOM.createElement("object");
 		DOM.setElementProperty(element, "type", "application/x-webgl");
@@ -17,13 +17,13 @@ public class IeWebGLWidget extends FocusWidget {
 	}
 
 	public void setWidh(String width) {
-        DOM.setElementProperty(element, "width", width);
+		DOM.setElementProperty(element, "width", width);
 	}
 
 	public void setHeight(String height) {
-        DOM.setElementProperty(element, "height", height);
+		DOM.setElementProperty(element, "height", height);
 	}
-	
+
 	public native WebGLRenderingContext getContext(String context) /*-{
 		var element = this.@jmini3d.gwt.IeWebGLWidget::element;
 		return element.getContext(context);
