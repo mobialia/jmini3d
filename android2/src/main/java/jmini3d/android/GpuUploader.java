@@ -1,5 +1,10 @@
 package jmini3d.android;
 
+import android.graphics.Bitmap;
+import android.opengl.GLES20;
+import android.opengl.GLUtils;
+import android.util.Log;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -9,17 +14,13 @@ import jmini3d.CubeMapTexture;
 import jmini3d.Geometry3d;
 import jmini3d.GpuObjectStatus;
 import jmini3d.Texture;
-import android.graphics.Bitmap;
-import android.opengl.GLES20;
-import android.opengl.GLUtils;
-import android.util.Log;
 
 public class GpuUploader {
 	static final String TAG = "GpuUploader";
 
-	static final int[] CUBE_MAP_SIDES = { GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, //
+	static final int[] CUBE_MAP_SIDES = {GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, //
 			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, //
-			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
+			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
 
 	ResourceLoader resourceLoader;
 
@@ -105,8 +106,6 @@ public class GpuUploader {
 
 	public void upload(Texture texture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
-            Log.d(TAG, "Uploading texture " + texture.image);
-
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 			Bitmap bitmap;
 			try {
@@ -133,8 +132,6 @@ public class GpuUploader {
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 			// GLES20.generateMipmap(GLES20.TEXTURE_2D);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-
-            Log.d(TAG, "Uploaded " + texture.image + " to id " + textureId);
 
 			Renderer.needsRedraw = true;
 
@@ -190,16 +187,16 @@ public class GpuUploader {
 				GeometryBuffers buffers = geometryBuffers.get(o);
 
 				if (buffers.vertexBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.vertexBufferId }));
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
 				}
 				if (buffers.normalsBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.normalsBufferId }));
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
 				}
 				if (buffers.uvsBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.uvsBufferId }));
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
 				}
 				if (buffers.facesBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[] { buffers.facesBufferId }));
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
 				}
 
 				geometryBuffers.remove(o);
@@ -207,7 +204,7 @@ public class GpuUploader {
 		} else if (o instanceof Texture) {
 			if (textures.containsKey(o)) {
 				((Texture) o).status = 0;
-				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[] { textures.get(o) }));
+				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{textures.get(o)}));
 				textures.remove(o);
 			}
 		}
