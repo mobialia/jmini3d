@@ -10,6 +10,7 @@ import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
 import com.googlecode.gwtgl.binding.WebGLUniformLocation;
 
+import jmini3d.Blending;
 import jmini3d.GpuObjectStatus;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
@@ -21,6 +22,13 @@ public class Renderer implements AnimationCallback {
 	public static final String TAG = "Renderer";
 	public static boolean needsRedraw = true;
 
+	// stats-related
+	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 1000;
+	private boolean logFps = false;
+	private long frameCount = 0;
+	private float fps = 0;
+	private long timeLastSample;
+
 	Scene scene;
 	private ResourceLoader resourceLoader;
 	private GpuUploader gpuUploader;
@@ -29,6 +37,8 @@ public class Renderer implements AnimationCallback {
 	public float[] ortho = new float[16];
 
 	boolean stop = false;
+
+	Blending blending;
 
 	private int vertexPositionAttribute, vertexNormalAttribute, textureCoordAttribute;
 	private WebGLUniformLocation uPerspectiveMatrix, uModelViewMatrix, //
@@ -110,13 +120,20 @@ public class Renderer implements AnimationCallback {
 	}
 
 	public void reset() {
-		gl.clearDepth(1.0f);
 		gl.enable(WebGLRenderingContext.DEPTH_TEST);
+		gl.clearDepth(1f);
 		gl.depthFunc(WebGLRenderingContext.LEQUAL);
+		gl.depthRange(0, 1f);
+		gl.depthMask(true);
 
 		// For transparency
-		gl.enable(WebGLRenderingContext.BLEND);
-		gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+		gl.disable(WebGLRenderingContext.BLEND);
+		blending = Blending.NoBlending;
+
+		// CCW frontfaces only, by default
+		gl.frontFace(WebGLRenderingContext.CCW);
+		gl.cullFace(WebGLRenderingContext.BACK);
+		gl.enable(WebGLRenderingContext.CULL_FACE);
 	}
 
 	public void onDrawFrame() {
@@ -144,6 +161,10 @@ public class Renderer implements AnimationCallback {
 			if (o3d.visible) {
 				o3d.updateMatrices(scene.camera.modelViewMatrix, cameraChanged);
 				drawObject(o3d);
+
+				if (o3d.clearDepthAfterDraw) {
+					gl.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
+				}
 			}
 		}
 
@@ -156,20 +177,33 @@ public class Renderer implements AnimationCallback {
 				drawObject(o3d);
 			}
 		}
+		if (logFps) {
+			doFps();
+		}
 	}
 
 	private void drawObject(Object3d o3d) {
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
+
+		if (blending != o3d.material.blending) {
+            setBlending(o3d.material.blending);
+		}
+
 		if (o3d.material.texture != null) {
 			gpuUploader.upload(o3d.material.texture);
-			if ((o3d.material.texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0)
+			if ((o3d.material.texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
+			}
 		}
 		if (o3d.material.envMapTexture != null) {
 			gpuUploader.upload(o3d.material.envMapTexture);
-			if ((o3d.material.envMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0)
+			if ((o3d.material.envMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
+			}
 		}
+
+		setMaterialUniforms(o3d);
+		setObjectUniforms(o3d);
 
 		gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
 		gl.vertexAttribPointer(vertexPositionAttribute, 3, WebGLRenderingContext.FLOAT, false, 0, 0);
@@ -185,7 +219,6 @@ public class Renderer implements AnimationCallback {
 		gl.activeTexture(WebGLRenderingContext.TEXTURE0);
 		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, gpuUploader.textures.get(o3d.material.texture));
 
-		setMaterialUniforms(o3d);
 		gl.drawElements(WebGLRenderingContext.TRIANGLES, o3d.geometry3d.facesLength, WebGLRenderingContext.UNSIGNED_SHORT, 0);
 	}
 
@@ -201,11 +234,6 @@ public class Renderer implements AnimationCallback {
 	}
 
 	private void setMaterialUniforms(Object3d o3d) {
-		gl.uniformMatrix4fv(uModelViewMatrix, false, o3d.modelViewMatrix);
-		if (o3d.normalMatrix != null) { // BUG
-			gl.uniformMatrix3fv(uNormalMatrix, false, o3d.normalMatrix);
-		}
-
 		gl.uniform3f(uObjectColor, o3d.material.color.r, o3d.material.color.g, o3d.material.color.b);
 		gl.uniform1f(uObjectColorTrans, o3d.material.color.a);
 
@@ -215,6 +243,39 @@ public class Renderer implements AnimationCallback {
 		if (o3d.material.envMapTexture != null) {
 			gl.activeTexture(WebGLRenderingContext.TEXTURE1);
 			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, gpuUploader.cubeMapTextures.get(o3d.material.envMapTexture));
+		}
+	}
+
+	private void setObjectUniforms(Object3d o3d) {
+		gl.uniformMatrix4fv(uModelViewMatrix, false, o3d.modelViewMatrix);
+		if (o3d.normalMatrix != null) { // BUG
+			gl.uniformMatrix3fv(uNormalMatrix, false, o3d.normalMatrix);
+		}
+	}
+
+	private void setBlending(Blending blending) {
+		this.blending = blending;
+
+		switch(blending) {
+			case NoBlending:
+				gl.disable(WebGLRenderingContext.BLEND);
+				break;
+			case NormalBlending:
+				gl.enable(WebGLRenderingContext.BLEND);
+				gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+				break;
+			case AdditiveBlending:
+				gl.enable(WebGLRenderingContext.BLEND);
+				gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE);
+				break;
+			case SubtractiveBlending:
+				gl.enable(WebGLRenderingContext.BLEND);
+				gl.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_COLOR);
+				break;
+			case MultiplyBlending:
+				gl.enable(WebGLRenderingContext.BLEND);
+				gl.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.SRC_COLOR);
+				break;
 		}
 	}
 
@@ -272,6 +333,41 @@ public class Renderer implements AnimationCallback {
 		return gpuUploader;
 	}
 
+	/**
+	 * If true, framerate and memory is periodically calculated and Log'ed, and
+	 * gettable thru fps()
+	 */
+	public void setLogFps(boolean b) {
+		logFps = b;
+
+		if (logFps) { // init
+			timeLastSample = System.currentTimeMillis();
+			frameCount = 0;
+		}
+	}
+
+	private void doFps() {
+		frameCount++;
+
+		long now = System.currentTimeMillis();
+		long delta = now - timeLastSample;
+		if (delta >= FRAMERATE_SAMPLEINTERVAL_MS) {
+			fps = frameCount / (delta / 1000f);
+
+			log("FPS: " + Math.round(fps));
+
+			timeLastSample = now;
+			frameCount = 0;
+		}
+	}
+
+	/**
+	 * Returns last sampled framerate (logFps must be set to true)
+	 */
+	public float getFps() {
+		return fps;
+	}
+
 	public void requestRender() {
 		needsRedraw = true;
 	}
@@ -294,4 +390,8 @@ public class Renderer implements AnimationCallback {
 	public FocusWidget getCanvas() {
 		return webGLCanvas;
 	}
+
+	native void log( String message) /*-{
+        console.log(message);
+    }-*/;
 }

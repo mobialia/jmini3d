@@ -37,7 +37,7 @@ public class Demo implements EntryPoint, SceneController {
 
 		scene = new Scene(this);
 		renderer = new Renderer(new ResourceLoader("./"), scene, Window.getClientWidth(), Window.getClientHeight());
-		renderer.onResume();
+		renderer.setLogFps(true);
 
 		Window.addResizeHandler(new ResizeHandler() {
 			public void onResize(ResizeEvent event) {
@@ -46,6 +46,8 @@ public class Demo implements EntryPoint, SceneController {
 		});
 
 		RootPanel.get("canvas").add(renderer.getCanvas());
+
+		renderer.onResume();
 	}
 
 	public void initScene() {
