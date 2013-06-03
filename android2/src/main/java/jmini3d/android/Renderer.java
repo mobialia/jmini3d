@@ -86,9 +86,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 		glSurfaceView.setRenderer(this);
 		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-		glSurfaceView.setFocusable(true); // make sure we get key events
-		glSurfaceView.setFocusableInTouchMode(true);
-		glSurfaceView.requestFocus();
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig) {
