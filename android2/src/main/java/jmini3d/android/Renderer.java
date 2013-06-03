@@ -13,6 +13,7 @@ import com.mobialia.min3d.R;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import jmini3d.Blending;
 import jmini3d.GpuObjectStatus;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
@@ -47,6 +48,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 	public GLSurfaceView glSurfaceView;
 	private ActivityManager activityManager;
 	private ActivityManager.MemoryInfo memoryInfo;
+
+	Blending blending;
 
 	boolean stop = false;
 
@@ -136,16 +139,17 @@ public class Renderer implements GLSurfaceView.Renderer {
 		GLES20.glDepthRangef(0, 1f);
 		GLES20.glDepthMask(true);
 
-		GLES20.glDisable(GLES20.GL_DITHER); // For performance
+		// For performance
+		GLES20.glDisable(GLES20.GL_DITHER);
 
 		// For transparency
-		GLES20.glEnable(GLES20.GL_BLEND);
-		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+		GLES20.glDisable(GLES20.GL_BLEND);
+		blending = Blending.NoBlending;
 
 		// CCW frontfaces only, by default
-//		GLES20.glFrontFace(GLES20.GL_CCW);
-//		GLES20.glCullFace(GLES20.GL_BACK);
-//		GLES20.glEnable(GLES20.GL_CULL_FACE);
+		GLES20.glFrontFace(GLES20.GL_CCW);
+		GLES20.glCullFace(GLES20.GL_BACK);
+		GLES20.glEnable(GLES20.GL_CULL_FACE);
 	}
 
 	public void onDrawFrame(GL10 unused) {
@@ -173,6 +177,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 			if (o3d.visible) {
 				o3d.updateMatrices(scene.camera.modelViewMatrix, cameraChanged);
 				drawObject(o3d);
+
+				if (o3d.clearDepthAfterDraw) {
+					GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
+				}
 			}
 		}
 
@@ -192,16 +200,26 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	private void drawObject(Object3d o3d) {
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
+
+		if (blending != o3d.material.blending) {
+            setBlending(o3d.material.blending);
+		}
+
 		if (o3d.material.texture != null) {
 			gpuUploader.upload(o3d.material.texture);
-			if ((o3d.material.texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0)
+			if ((o3d.material.texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
+			}
 		}
 		if (o3d.material.envMapTexture != null) {
 			gpuUploader.upload(o3d.material.envMapTexture);
-			if ((o3d.material.envMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0)
+			if ((o3d.material.envMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
+			}
 		}
+
+		setMaterialUniforms(o3d);
+		setObjectUniforms(o3d);
 
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers.vertexBufferId);
 		GLES20.glVertexAttribPointer(vertexPositionAttribute, 3, GLES20.GL_FLOAT, false, 0, 0);
@@ -217,7 +235,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.texture));
 
-		setMaterialUniforms(o3d);
 		GLES20.glDrawElements(GLES20.GL_TRIANGLES, o3d.geometry3d.facesLength, GLES20.GL_UNSIGNED_SHORT, 0);
 	}
 
@@ -233,11 +250,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 	}
 
 	private void setMaterialUniforms(Object3d o3d) {
-		GLES20.glUniformMatrix4fv(uModelViewMatrix, 1, false, o3d.modelViewMatrix, 0);
-		if (o3d.normalMatrix != null) { // BUG
-			GLES20.glUniformMatrix3fv(uNormalMatrix, 1, false, o3d.normalMatrix, 0);
-		}
-
 		GLES20.glUniform3f(uObjectColor, o3d.material.color.r, o3d.material.color.g, o3d.material.color.b);
 		GLES20.glUniform1f(uObjectColorTrans, o3d.material.color.a);
 
@@ -247,6 +259,39 @@ public class Renderer implements GLSurfaceView.Renderer {
 		if (o3d.material.envMapTexture != null) {
 			GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, gpuUploader.cubeMapTextures.get(o3d.material.envMapTexture));
+		}
+	}
+
+	private void setObjectUniforms(Object3d o3d) {
+		GLES20.glUniformMatrix4fv(uModelViewMatrix, 1, false, o3d.modelViewMatrix, 0);
+		if (o3d.normalMatrix != null) { // BUG
+			GLES20.glUniformMatrix3fv(uNormalMatrix, 1, false, o3d.normalMatrix, 0);
+		}
+	}
+
+	private void setBlending(Blending blending) {
+		this.blending = blending;
+
+		switch(blending) {
+			case NoBlending:
+				GLES20.glDisable(GLES20.GL_BLEND);
+				break;
+			case NormalBlending:
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+				break;
+			case AdditiveBlending:
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE);
+				break;
+			case SubtractiveBlending:
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_ONE_MINUS_SRC_COLOR);
+				break;
+			case MultiplyBlending:
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_SRC_COLOR);
+				break;
 		}
 	}
 
