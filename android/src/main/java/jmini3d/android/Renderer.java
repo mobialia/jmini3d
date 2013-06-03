@@ -18,6 +18,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+import jmini3d.Blending;
 import jmini3d.Light;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
@@ -53,6 +54,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 	public GLSurfaceView glSurfaceView;
 	private ActivityManager activityManager;
 	private ActivityManager.MemoryInfo memoryInfo;
+
+	Blending blending;
 
 	float openGlVersion = 1.0f;
 
@@ -104,7 +107,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 		height = -1;
 	}
 
-	public void onSurfaceChanged(GL10 gl, int w, int h) {
+	public void onSurfaceChanged(GL10 unused, int w, int h) {
 		Log.i(TAG, "onSurfaceChanged() w=" + w + " h= " + h);
 		if (w != width || h != height) {
 			setSize(w, h);
@@ -148,8 +151,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 		GLES10.glHint(GLES10.GL_PERSPECTIVE_CORRECTION_HINT, GLES10.GL_NICEST);
 
 		// For transparency
-		GLES10.glEnable(GLES10.GL_BLEND);
-		GLES10.glBlendFunc(GLES10.GL_SRC_ALPHA, GLES10.GL_ONE_MINUS_SRC_ALPHA);
+		GLES10.glDisable(GLES10.GL_BLEND);
+		blending = Blending.NoBlending;
 
 		// CCW frontfaces only, by default
 		GLES10.glFrontFace(GLES10.GL_CCW);
@@ -198,15 +201,17 @@ public class Renderer implements GLSurfaceView.Renderer {
 		GLES10.glClear(GLES10.GL_COLOR_BUFFER_BIT | GLES10.GL_DEPTH_BUFFER_BIT);
 
 		for (Object3d o3d : scene.children) {
-			o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
-
-			GLES10.glPushMatrix();
-			GLES10.glMultMatrixf(o3d.modelViewMatrix, 0);
-			drawObject(o3d, cameraChanged);
-			GLES10.glPopMatrix();
-
-			if (o3d.clearDepthAfterDraw) {
-				GLES10.glClear(GLES10.GL_DEPTH_BUFFER_BIT);
+			if (o3d.visible) {
+                o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
+    
+                GLES10.glPushMatrix();
+                GLES10.glMultMatrixf(o3d.modelViewMatrix, 0);
+                drawObject(o3d, cameraChanged);
+                GLES10.glPopMatrix();
+    
+                if (o3d.clearDepthAfterDraw) {
+                    GLES10.glClear(GLES10.GL_DEPTH_BUFFER_BIT);
+                }
 			}
 		}
 
@@ -219,12 +224,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 		GLES10.glClear(GLES10.GL_DEPTH_BUFFER_BIT);
 
 		for (Object3d o3d : scene.hud) {
-			o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
-
-			GLES10.glPushMatrix();
-			GLES10.glMultMatrixf(o3d.modelViewMatrix, 0);
-			drawObject(o3d, false);
-			GLES10.glPopMatrix();
+			if (o3d.visible) {
+                o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
+    
+                GLES10.glPushMatrix();
+                GLES10.glMultMatrixf(o3d.modelViewMatrix, 0);
+                drawObject(o3d, false);
+                GLES10.glPopMatrix();
+			}
 		}
 
 		if (logFps) {
@@ -264,11 +271,11 @@ public class Renderer implements GLSurfaceView.Renderer {
 	}
 
 	protected void drawObject(Object3d o3d, boolean cameraChanged) {
-		if (!o3d.visible) {
-			return;
-		}
-
 		GeometryBuffers geometryBuffers = gpuUploader.upload(o3d.geometry3d);
+
+		if (blending != o3d.material.blending) {
+			setBlending(o3d.material.blending);
+		}
 
 		Texture texture = o3d.material.texture;
 		if (texture != null) {
@@ -359,6 +366,32 @@ public class Renderer implements GLSurfaceView.Renderer {
 			ShortBuffer facesBuffer = geometryBuffers.facesBuffer;
 			facesBuffer.position(0);
 			GLES10.glDrawElements(GLES10.GL_TRIANGLES, o3d.geometry3d.facesLength, GLES10.GL_UNSIGNED_SHORT, facesBuffer);
+		}
+	}
+
+	private void setBlending(Blending blending) {
+		this.blending = blending;
+
+		switch(blending) {
+			case NoBlending:
+				GLES10.glDisable(GLES10.GL_BLEND);
+				break;
+			case NormalBlending:
+				GLES10.glEnable(GLES10.GL_BLEND);
+				GLES10.glBlendFunc(GLES10.GL_SRC_ALPHA, GLES10.GL_ONE_MINUS_SRC_ALPHA);
+				break;
+			case AdditiveBlending:
+				GLES10.glEnable(GLES10.GL_BLEND);
+				GLES10.glBlendFunc(GLES10.GL_SRC_ALPHA, GLES10.GL_ONE);
+				break;
+			case SubtractiveBlending:
+				GLES10.glEnable(GLES10.GL_BLEND);
+				GLES10.glBlendFunc(GLES10.GL_ZERO, GLES10.GL_ONE_MINUS_SRC_COLOR);
+				break;
+			case MultiplyBlending:
+				GLES10.glEnable(GLES10.GL_BLEND);
+				GLES10.glBlendFunc(GLES10.GL_ZERO, GLES10.GL_SRC_COLOR);
+				break;
 		}
 	}
 
