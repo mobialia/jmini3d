@@ -5,6 +5,7 @@ public class Material {
 	public Texture texture;
 	public CubeMapTexture envMapTexture;
 	public float reflectivity = 0f;
+	public Blending blending = Blending.NoBlending;
 
 	public Material() {
 		color = new Color4(0, 0, 0, 0);
@@ -20,5 +21,9 @@ public class Material {
 		this.envMapTexture = envMapTexture;
 		this.reflectivity = reflectivity;
 		color = new Color4(0, 0, 0, 0);
+	}
+
+	public void setBlending(Blending blending) {
+		this.blending = blending;
 	}
 }
