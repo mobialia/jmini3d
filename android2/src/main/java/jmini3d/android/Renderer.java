@@ -202,7 +202,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
 
 		if (blending != o3d.material.blending) {
-            setBlending(o3d.material.blending);
+			setBlending(o3d.material.blending);
 		}
 
 		if (o3d.material.texture != null) {
@@ -272,7 +272,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 	private void setBlending(Blending blending) {
 		this.blending = blending;
 
-		switch(blending) {
+		switch (blending) {
 			case NoBlending:
 				GLES20.glDisable(GLES20.GL_BLEND);
 				break;
