@@ -1,5 +1,7 @@
 package jmini3d;
 
+import javax.rmi.CORBA.Util;
+
 public class Camera {
 	private Vector3 position = new Vector3();
 	private Vector3 target = new Vector3();
@@ -74,6 +76,10 @@ public class Camera {
 
 	public float getFovy() {
 		return fovy;
+	}
+
+	public float getFovx() {
+		return (float) (360 / Utils.PI * Math.atan( Math.tan(fovy * Utils.PI / 360) * width / height ));
 	}
 
 	public float getNear() {
