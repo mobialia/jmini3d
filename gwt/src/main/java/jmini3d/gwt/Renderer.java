@@ -64,12 +64,8 @@ public class Renderer implements AnimationCallback {
 		if (gl == null) {
 			gl = (WebGLRenderingContext) ((Canvas) webGLCanvas).getContext("experimental-webgl");
 		}
-//		if (gl == null && getUserAgent().contains("msie")) {
-//			webGLCanvas = new IeWebGLWidget();
-//			gl = ((IeWebGLWidget) webGLCanvas).getContext("webgl");
-//		}
 		if (gl == null) {
-			Window.alert("Sorry, Your browser doesn't support WebGL. Please Install Chrome or Firefox.");
+			Window.alert("Sorry, Your browser doesn't support WebGL. Please Install the last version of Firefox, Chrome or Internet Explorer (>=11).");
 			return;
 		}
 
