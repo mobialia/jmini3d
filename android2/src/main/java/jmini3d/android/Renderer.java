@@ -18,6 +18,7 @@ import jmini3d.GpuObjectStatus;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
 import jmini3d.Scene;
+import jmini3d.Texture;
 import jmini3d.android.compat.CompatibilityWrapper5;
 import jmini3d.android.input.TouchController;
 import jmini3d.input.TouchListener;
@@ -29,7 +30,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 	private GL10 gl;
 
 	// stats-related
-	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 1000;
+	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 10000;
 	private boolean logFps = false;
 	private long frameCount = 0;
 	private float fps = 0;
@@ -42,6 +43,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	public float[] ortho = new float[16];
 
+	boolean stop = false;
+
 	int width;
 	int height;
 
@@ -51,13 +54,16 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	Blending blending;
 
-	boolean stop = false;
-
 	private int shaderProgram;
 	private int vertexPositionAttribute, vertexNormalAttribute, textureCoordAttribute;
 	private int uPerspectiveMatrix, uModelViewMatrix, //
 			uNormalMatrix, uUseLighting, uAmbientColor, uPointLightingLocation, //
 			uPointLightingColor, uSampler, uEnvMap, uReflectivity, uObjectColor, uObjectColorTrans;
+
+	// cached values
+	Texture texture;
+	float sampler, useLighting, ambientColorR, ambientColorG, ambientColorB, pointLightingColorR, pointLightingColorG, pointLightingColorB, //
+			pointLightLocationX, pointLightLocationY, pointLightLocationZ, objectColorR, objectColorG, objectColorB, objectColorTrans, reflectivity, envMap;
 
 	public Renderer(Context context, Scene scene, ResourceLoader resourceLoader, boolean traslucent) {
 		this.scene = scene;
@@ -129,7 +135,11 @@ public class Renderer implements GLSurfaceView.Renderer {
 		needsRedraw = true;
 	}
 
-	private void reset() {
+	public void reset() {
+		texture = null;
+		sampler = useLighting = ambientColorR = ambientColorG = ambientColorB = pointLightingColorR = pointLightingColorG = pointLightingColorB = //
+				pointLightLocationX = pointLightLocationY = pointLightLocationZ = objectColorR = objectColorG = objectColorB = objectColorTrans = reflectivity = envMap = -9999;
+
 		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 		GLES20.glClearDepthf(1f);
 		GLES20.glDepthFunc(GLES20.GL_LEQUAL);
@@ -229,30 +239,64 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
 
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.texture));
+		if (texture != o3d.material.texture) {
+			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.texture));
+			texture = o3d.material.texture;
+		}
 
 		GLES20.glDrawElements(GLES20.GL_TRIANGLES, o3d.geometry3d.facesLength, GLES20.GL_UNSIGNED_SHORT, 0);
 	}
 
 	private void setSceneUniforms() {
-		GLES20.glUniform1i(uSampler, 0);
-
-		GLES20.glUniform1i(uUseLighting, 1);
-		GLES20.glUniform3f(uAmbientColor, scene.ambientColor.r, scene.ambientColor.g, scene.ambientColor.b);
-		GLES20.glUniform3f(uPointLightingColor, scene.pointLightColor.r, scene.pointLightColor.g, scene.pointLightColor.b);
-		GLES20.glUniform3f(uPointLightingLocation, scene.pointLightLocation.x, scene.pointLightLocation.y, scene.pointLightLocation.z);
-
+		if (sampler != 0) {
+			GLES20.glUniform1i(uSampler, 0);
+			sampler = 0;
+		}
+		if (useLighting != 1) {
+			GLES20.glUniform1i(uUseLighting, 1);
+			useLighting = 1;
+		}
+		if (ambientColorR != scene.ambientColor.r || ambientColorG != scene.ambientColor.g || ambientColorB != scene.ambientColor.b) {
+			GLES20.glUniform3f(uAmbientColor, scene.ambientColor.r, scene.ambientColor.g, scene.ambientColor.b);
+			ambientColorR = scene.ambientColor.r;
+			ambientColorG = scene.ambientColor.g;
+			ambientColorB = scene.ambientColor.b;
+		}
+		if (pointLightingColorR != scene.pointLightColor.r || pointLightingColorG != scene.pointLightColor.g || pointLightingColorB != scene.pointLightColor.b) {
+			GLES20.glUniform3f(uPointLightingColor, scene.pointLightColor.r, scene.pointLightColor.g, scene.pointLightColor.b);
+			pointLightingColorR = scene.pointLightColor.r;
+			pointLightingColorG = scene.pointLightColor.g;
+			pointLightingColorB = scene.pointLightColor.b;
+		}
+		if (pointLightLocationX != scene.pointLightLocation.x || pointLightLocationY != scene.pointLightLocation.y || pointLightLocationZ != scene.pointLightLocation.z) {
+			GLES20.glUniform3f(uPointLightingLocation, scene.pointLightLocation.x, scene.pointLightLocation.y, scene.pointLightLocation.z);
+			pointLightLocationX = scene.pointLightLocation.x;
+			pointLightLocationY = scene.pointLightLocation.y;
+			pointLightLocationZ = scene.pointLightLocation.z;
+		}
 		GLES20.glUniformMatrix4fv(uPerspectiveMatrix, 1, false, scene.camera.perspectiveMatrix, 0);
 	}
 
 	private void setMaterialUniforms(Object3d o3d) {
-		GLES20.glUniform3f(uObjectColor, o3d.material.color.r, o3d.material.color.g, o3d.material.color.b);
-		GLES20.glUniform1f(uObjectColorTrans, o3d.material.color.a);
-
-		GLES20.glUniform1f(uReflectivity, o3d.material.reflectivity);
-
-		GLES20.glUniform1i(uEnvMap, 1); // This out the if or fails
+		if (objectColorR != o3d.material.color.r || objectColorG != o3d.material.color.g || objectColorB != o3d.material.color.b) {
+			GLES20.glUniform3f(uObjectColor, o3d.material.color.r, o3d.material.color.g, o3d.material.color.b);
+			objectColorR = o3d.material.color.r;
+			objectColorG = o3d.material.color.g;
+			objectColorB = o3d.material.color.b;
+		}
+		if (objectColorTrans != o3d.material.color.a) {
+			GLES20.glUniform1f(uObjectColorTrans, o3d.material.color.a);
+			objectColorTrans = o3d.material.color.a;
+		}
+		if (reflectivity != o3d.material.reflectivity) {
+			GLES20.glUniform1f(uReflectivity, o3d.material.reflectivity);
+			reflectivity = o3d.material.reflectivity;
+		}
+		if (envMap != 1) {
+			GLES20.glUniform1i(uEnvMap, 1); // This out the if or fails
+			envMap = 1;
+		}
 		if (o3d.material.envMapTexture != null) {
 			GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, gpuUploader.cubeMapTextures.get(o3d.material.envMapTexture));
@@ -353,10 +397,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 		stop = true;
 	}
 
-	public GL10 getGl() {
-		return gl;
-	}
-
 	public GpuUploader getGpuUploader() {
 		return gpuUploader;
 	}
@@ -383,7 +423,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 			fps = frameCount / (delta / 1000f);
 
 			activityManager.getMemoryInfo(memoryInfo);
-			Log.v(TAG, "FPS: " + Math.round(fps) + ", availMem: " + Math.round(memoryInfo.availMem / 1048576) + "MB");
+			Log.v(TAG, "FPS: " + fps + ", availMem: " + Math.round(memoryInfo.availMem / 1048576) + "MB");
 
 			timeLastSample = now;
 			frameCount = 0;
@@ -401,14 +441,18 @@ public class Renderer implements GLSurfaceView.Renderer {
 		return resourceLoader;
 	}
 
-	public GLSurfaceView getView() {
-		return glSurfaceView;
-	}
-
 	public void setTouchListener(TouchListener listener) {
 		if (touchController == null) {
 			touchController = new TouchController(glSurfaceView);
 		}
 		touchController.setListener(listener);
+	}
+
+	public GLSurfaceView getView() {
+		return glSurfaceView;
+	}
+
+	public GL10 getGl() {
+		return gl;
 	}
 }
