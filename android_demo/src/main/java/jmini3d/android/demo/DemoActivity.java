@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 
 import java.util.Random;
 
+import jmini3d.Blending;
 import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Texture;
@@ -34,6 +35,8 @@ public class DemoActivity extends RendererActivity {
 	}
 
 	public void initScene() {
+		material.setBlending(Blending.AdditiveBlending);
+
 		scene.backgroundColor.setAll(0x00000000);
 		scene.getCamera().setTarget(0, 0, 0);
 		scene.getCamera().setUpAxis(0, 0, 1);
