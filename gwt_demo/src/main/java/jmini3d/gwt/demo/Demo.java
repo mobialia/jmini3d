@@ -1,13 +1,14 @@
 package jmini3d.gwt.demo;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.RootPanel;
 
 import java.util.Random;
 
+import jmini3d.Blending;
 import jmini3d.CubeMapTexture;
 import jmini3d.Material;
 import jmini3d.Object3d;
@@ -45,12 +46,18 @@ public class Demo implements EntryPoint, SceneController {
 			}
 		});
 
-		RootPanel.get("canvas").add(renderer.getCanvas());
+		appendToBody(renderer.getCanvas().getElement());
 
 		renderer.onResume();
 	}
 
+	public static native void appendToBody(Element element) /*-{
+		$doc.body.appendChild(element);
+	}-*/;
+
 	public void initScene() {
+		material.setBlending(Blending.AdditiveBlending);
+
 		scene.backgroundColor.setAll(0x00000000);
 		scene.getCamera().setTarget(0, 0, 0);
 		scene.getCamera().setUpAxis(0, 0, 1);
