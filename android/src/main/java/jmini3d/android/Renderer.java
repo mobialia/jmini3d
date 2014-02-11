@@ -35,7 +35,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 	private GL10 gl;
 
 	// stats-related
-	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 1000;
+	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 10000;
 	private boolean logFps = false;
 	private long frameCount = 0;
 	private float fps = 0;
@@ -433,7 +433,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 			fps = frameCount / (delta / 1000f);
 
 			activityManager.getMemoryInfo(memoryInfo);
-			Log.v(TAG, "FPS: " + Math.round(fps) + ", availMem: " + Math.round(memoryInfo.availMem / 1048576) + "MB");
+			Log.v(TAG, "FPS: " + fps + ", availMem: " + Math.round(memoryInfo.availMem / 1048576) + "MB");
 
 			timeLastSample = now;
 			frameCount = 0;
