@@ -1,7 +1,5 @@
 package jmini3d;
 
-import javax.rmi.CORBA.Util;
-
 public class Camera {
 	private Vector3 position = new Vector3();
 	private Vector3 target = new Vector3();

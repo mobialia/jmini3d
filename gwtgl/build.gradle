@@ -4,10 +4,10 @@ group = 'com.googlecode.gwtgl'
 version = '0.9.1'
 
 artifacts {
-    archives (file('gwtgl-0.9.1.jar')) {
+    archives(file('gwtgl-0.9.1.jar')) {
         name 'gwtgl'
     }
-    archives (file('gwtgl-0.9.1-sources.jar')) {
+    archives(file('gwtgl-0.9.1-sources.jar')) {
         name 'gwtgl'
         classifier 'sources'
     }

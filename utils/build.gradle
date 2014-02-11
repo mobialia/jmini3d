@@ -3,11 +3,7 @@ apply plugin: 'maven'
 
 archivesBaseName = 'jmini3d-utils'
 
-dependencies {
-    compile project(':core')
-}
-
-task sourcesJar(type: Jar, dependsOn:classes) {
+task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }

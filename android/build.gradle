@@ -23,10 +23,10 @@ android {
 
 apply plugin: 'maven'
 uploadArchives {
-  repositories {
-    mavenDeployer {
-      repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+    repositories {
+        mavenDeployer {
+            repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+        }
     }
-  }
 }
 task install(dependsOn: uploadArchives)
