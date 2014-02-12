@@ -13,7 +13,7 @@ Subprojects:
 * *android2:* the Android OpenGL ES 2.0 Renderer
 * *android_demo:* An Android demo application (we need more demos...)
 * *gwt:* the GWT library project implementing a WebGL Renderer (based on OpenGL ES 2.0 like android2)
-* *gwt_demo:* a small demo project in GWT (we also need more demos here)
+* *gwt_demo:* a small demo project in GWT (we also need more demos here), you can compile the project with "gradle compileGwt"
 * *utils:* includes an utility to generate Geometry files from OBJ models
 * *gwtgl:* a dependency for the gwt project, do a 'gradle install' in this folder to copy the gwtgl artifact to your maven local repo
 
