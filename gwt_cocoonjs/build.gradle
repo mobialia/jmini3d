@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+archivesBaseName = 'gwt_cocoonjs'
+
+dependencies {
+    compile 'com.google.gwt:gwt-user:2.6.0'
+    compile 'com.google.gwt:gwt-dev:2.6.0'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
