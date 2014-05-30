@@ -422,7 +422,7 @@ public class Renderer implements AnimationCallback {
 
 	public void setTouchListener(TouchListener listener) {
 		if (touchController == null) {
-			touchController = new TouchController(webGLCanvas);
+			touchController = new TouchController(webGLCanvas.getElement());
 		}
 		touchController.setListener(listener);
 	}
