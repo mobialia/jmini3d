@@ -149,9 +149,4 @@ public class TouchController {
 		this.listener = listener;
 	}
 
-	public static native void d(String tag, String message)
-	/*-{
-		console.debug(tag + ": " + message);
-    }-*/;
-
 }
