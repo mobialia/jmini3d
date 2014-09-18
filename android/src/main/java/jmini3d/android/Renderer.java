@@ -3,27 +3,18 @@ package jmini3d.android;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.opengl.GLES10;
-import android.opengl.GLES11;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.util.Log;
 
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
 
 import jmini3d.Blending;
-import jmini3d.Light;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
 import jmini3d.Scene;
-import jmini3d.Texture;
 import jmini3d.android.compat.CompatibilityWrapper5;
 import jmini3d.android.input.TouchController;
 import jmini3d.input.TouchListener;
@@ -48,16 +39,17 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	public float[] ortho = new float[16];
 
+	boolean stop = false;
+
+	Blending blending;
+	Program currentProgram = null;
+
 	int width;
 	int height;
 
 	public GLSurfaceView glSurfaceView;
 	private ActivityManager activityManager;
 	private ActivityManager.MemoryInfo memoryInfo;
-
-	Blending blending;
-
-	float openGlVersion = 1.0f;
 
 	public Renderer(Context context, Scene scene, ResourceLoader resourceLoader, boolean traslucent) {
 		this.scene = scene;
@@ -71,6 +63,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 		gpuUploader = new GpuUploader(resourceLoader);
 
 		glSurfaceView = new GLSurfaceView(context);
+		glSurfaceView.setEGLContextClientVersion(2);
+
+		// TODO
+		//glSurfaceView.setPreserveEGLContextOnPause(true);
 
 		if (traslucent) {
 			if (Build.VERSION.SDK_INT >= 5) {
@@ -78,17 +74,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 			}
 			glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-		} else {
-			// glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0); // FAILS with EGL_BAD_MATCH in some devices (Galaxy Mini, Xperia X)
-			glSurfaceView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
-				public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-					int[] attributes = new int[]{EGL10.EGL_DEPTH_SIZE, 16, EGL10.EGL_NONE};
-					EGLConfig[] configs = new EGLConfig[1];
-					int[] result = new int[1];
-					egl.eglChooseConfig(display, attributes, configs, 1, result);
-					return configs[0];
-				}
-			});
 		}
 
 		glSurfaceView.setRenderer(this);
@@ -97,8 +82,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig) {
 		Log.i(TAG, "onSurfaceCreated()");
-		gpuUploader.setGl(gl);
-		setGl(gl);
+		this.gl = gl;
 
 		width = -1;
 		height = -1;
@@ -124,287 +108,130 @@ public class Renderer implements GLSurfaceView.Renderer {
 	public void setSize(int width, int height) {
 		scene.camera.setWidth(width);
 		scene.camera.setHeight(height);
-		GLES10.glViewport(0, 0, scene.camera.getWidth(), scene.camera.getHeight());
+
+		GLES20.glViewport(0, 0, scene.camera.getWidth(), scene.camera.getHeight());
 
 		// Scene reload on size changed, needed to keep aspect ratios
 		reset();
 		gpuUploader.reset();
 		scene.reset();
 		scene.sceneController.initScene();
+
+		needsRedraw = true;
 	}
 
-	private void reset() {
-		GLES10.glMatrixMode(GLES10.GL_PROJECTION);
-		GLES10.glLoadIdentity();
+	public void reset() {
+		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+		GLES20.glClearDepthf(1f);
+		GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+		GLES20.glDepthRangef(0, 1f);
+		GLES20.glDepthMask(true);
 
-		GLES10.glEnable(GLES10.GL_DEPTH_TEST);
-		GLES10.glClearDepthf(1f);
-		GLES10.glDepthFunc(GLES10.GL_LEQUAL);
-		GLES10.glDepthRangef(0, 1f);
-		GLES10.glDepthMask(true);
-
-		GLES10.glDisable(GLES10.GL_DITHER); // For performance
-		// Without this looks horrible in the emulator
-		GLES10.glHint(GLES10.GL_PERSPECTIVE_CORRECTION_HINT, GLES10.GL_NICEST);
+		// For performance
+		GLES20.glDisable(GLES20.GL_DITHER);
 
 		// For transparency
-		GLES10.glDisable(GLES10.GL_BLEND);
+		GLES20.glDisable(GLES20.GL_BLEND);
 		blending = Blending.NoBlending;
 
 		// CCW frontfaces only, by default
-		GLES10.glFrontFace(GLES10.GL_CCW);
-		GLES10.glCullFace(GLES10.GL_BACK);
-		GLES10.glEnable(GLES10.GL_CULL_FACE);
-
-		GLES10.glEnableClientState(GLES10.GL_VERTEX_ARRAY);
-		GLES10.glDisableClientState(GLES10.GL_COLOR_ARRAY);
-
-		// Optimizations
-		GLES10.glDisable(GLES10.GL_LIGHTING);
-		GLES10.glDisable(GLES10.GL_COLOR_MATERIAL);
-
-		// Disable lights by default
-		for (int i = GLES10.GL_LIGHT0; i <= GLES10.GL_LIGHT7; i++) {
-			GLES10.glDisable(i);
-		}
+		GLES20.glFrontFace(GLES20.GL_CCW);
+		GLES20.glCullFace(GLES20.GL_BACK);
+		GLES20.glEnable(GLES20.GL_CULL_FACE);
 	}
 
-	public void onDrawFrame(GL10 gl) {
+	public void onDrawFrame(GL10 unused) {
 		boolean sceneUpdated = scene.sceneController.updateScene();
-		boolean cameraChanged = scene.getCamera().updateMatrices();
+		boolean cameraChanged = scene.camera.updateMatrices();
 
 		if (!needsRedraw && !sceneUpdated && !cameraChanged) {
 			return;
 		}
 
-		for (Object o : scene.unload) {
-			gpuUploader.unload(o);
+		for (int i = 0; i < scene.unload.size(); i++) {
+			gpuUploader.unload(scene.unload.get(i));
 		}
 		scene.unload.clear();
 
-		GLES10.glMatrixMode(GLES10.GL_PROJECTION);
-		GLES10.glLoadIdentity();
-		GLES10.glMultMatrixf(scene.camera.perspectiveMatrix, 0);
+		needsRedraw = false;
 
-		// Camera
-		GLES10.glMatrixMode(GLES10.GL_MODELVIEW);
-		GLES10.glLoadIdentity();
-		GLES10.glMultMatrixf(scene.camera.modelViewMatrix, 0);
+		GLES20.glClearColor(scene.getBackgroundColor().r, scene.getBackgroundColor().g, scene.getBackgroundColor().b, scene.getBackgroundColor().a);
+		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-		drawSetupLights();
+		currentProgram = null;
 
-		// Background color
-		GLES10.glClearColor(scene.getBackgroundColor().r, scene.getBackgroundColor().g, scene.getBackgroundColor().b, scene.getBackgroundColor().a);
-		GLES10.glClear(GLES10.GL_COLOR_BUFFER_BIT | GLES10.GL_DEPTH_BUFFER_BIT);
-
-		for (Object3d o3d : scene.children) {
+		for (int i = 0; i < scene.children.size(); i++) {
+			Object3d o3d = scene.children.get(i);
 			if (o3d.visible) {
-                o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
-    
-                GLES10.glPushMatrix();
-                GLES10.glMultMatrixf(o3d.modelViewMatrix, 0);
-                drawObject(o3d, cameraChanged);
-                GLES10.glPopMatrix();
-    
-                if (o3d.clearDepthAfterDraw) {
-                    GLES10.glClear(GLES10.GL_DEPTH_BUFFER_BIT);
-                }
+				o3d.updateMatrices();
+				drawObject(o3d, scene.camera.perspectiveMatrix);
+
+				if (o3d.clearDepthAfterDraw) {
+					GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
+				}
 			}
 		}
 
-		GLES10.glMatrixMode(GLES10.GL_PROJECTION);
-		GLES10.glLoadIdentity();
-		GLES10.glMultMatrixf(ortho, 0);
-		GLES10.glMatrixMode(GLES10.GL_MODELVIEW);
-		GLES10.glLoadIdentity();
-		GLES10.glDisable(GLES10.GL_LIGHTING);
-		GLES10.glClear(GLES10.GL_DEPTH_BUFFER_BIT);
-
-		for (Object3d o3d : scene.hud) {
+		for (int i = 0; i < scene.hud.size(); i++) {
+			Object3d o3d = scene.hud.get(i);
 			if (o3d.visible) {
-                o3d.updateMatrices(MatrixUtils.IDENTITY4, false);
-    
-                GLES10.glPushMatrix();
-                GLES10.glMultMatrixf(o3d.modelViewMatrix, 0);
-                drawObject(o3d, false);
-                GLES10.glPopMatrix();
+				o3d.updateMatrices();
+				drawObject(o3d, ortho);
 			}
 		}
-
 		if (logFps) {
 			doFps();
 		}
 	}
 
-	protected void drawSetupLights() {
-		boolean hasLights = false;
-		int lightIndex = GLES10.GL_LIGHT0;
-		for (Light light : scene.lights) {
-			hasLights = true;
+	private void drawObject(Object3d o3d, float[] perspectiveMatrix) {
+		Program program = gpuUploader.getProgram(scene, o3d.material);
 
-			GLES10.glEnable(GLES10.GL_LIGHTING);
-			GLES10.glEnable(lightIndex);
-
-			GLES10.glLightfv(lightIndex, GLES10.GL_POSITION, light.position, 0);
-			GLES10.glLightfv(lightIndex, GLES10.GL_AMBIENT, light.ambient, 0);
-			GLES10.glLightfv(lightIndex, GLES10.GL_DIFFUSE, light.diffuse, 0);
-			GLES10.glLightfv(lightIndex, GLES10.GL_SPECULAR, light.specular, 0);
-			GLES10.glLightfv(lightIndex, GLES10.GL_EMISSION, light.emission, 0);
-
-			GLES10.glLightfv(lightIndex, GLES10.GL_SPOT_DIRECTION, light.direction, 0);
-			GLES10.glLightf(lightIndex, GLES10.GL_SPOT_CUTOFF, light.spotCutoffAngle);
-			GLES10.glLightf(lightIndex, GLES10.GL_SPOT_EXPONENT, light.spotExponent);
-
-			GLES10.glLightf(lightIndex, GLES10.GL_CONSTANT_ATTENUATION, light.attenuation[0]);
-			GLES10.glLightf(lightIndex, GLES10.GL_LINEAR_ATTENUATION, light.attenuation[1]);
-			GLES10.glLightf(lightIndex, GLES10.GL_QUADRATIC_ATTENUATION, light.attenuation[2]);
-
-			lightIndex++;
+		if (program != currentProgram) {
+			GLES20.glUseProgram(program.webGLProgram);
+			program.setSceneUniforms(scene);
+			currentProgram = program;
 		}
-
-		if (hasLights) {
-			GLES10.glShadeModel(GLES10.GL_SMOOTH);
-		}
-	}
-
-	protected void drawObject(Object3d o3d, boolean cameraChanged) {
-		GeometryBuffers geometryBuffers = gpuUploader.upload(o3d.geometry3d);
 
 		if (blending != o3d.material.blending) {
 			setBlending(o3d.material.blending);
 		}
 
-		Texture texture = o3d.material.texture;
-		if (texture != null) {
-			gpuUploader.upload(texture);
-		}
-
-		// if (o3d.material.envMapTexture != null) {
-		// gpuUploader.upload(o3d.material.envMapTexture);
-		// }
-
-		// Normals
-		if (openGlVersion >= 1.1) {
-			GLES11.glBindBuffer(GLES11.GL_ARRAY_BUFFER, geometryBuffers.normalsBufferId);
-			GLES11.glNormalPointer(GLES10.GL_FLOAT, 0, 0);
-		} else {
-			geometryBuffers.normalsBuffer.position(0);
-			GLES10.glNormalPointer(GLES10.GL_FLOAT, 0, geometryBuffers.normalsBuffer);
-		}
-		GLES10.glEnableClientState(GLES10.GL_NORMAL_ARRAY);
-
-		// } else {
-		// GLES10.glDisableClientState(GLES10.GL_NORMAL_ARRAY);
-		// }
-
-		// boolean useLighting = (scene.getLightingEnabled() && o.hasNormals()
-		// && o.normalsEnabled() && o.lightingEnabled());
-		// if (useLighting) {
-		// GLES10.glEnable(GLES10.GL_LIGHTING);
-		// } else {
-		// GLES10.glDisable(GLES10.GL_LIGHTING);
-		// }
-
-		if (texture != null) {
-			GLES10.glActiveTexture(GLES10.GL_TEXTURE0);
-			GLES10.glClientActiveTexture(GLES10.GL_TEXTURE0);
-
-			if (openGlVersion >= 1.1) {
-				((GL11) gl).glBindBuffer(GLES11.GL_ARRAY_BUFFER, geometryBuffers.uvsBufferId);
-				((GL11) gl).glTexCoordPointer(2, GLES10.GL_FLOAT, 0, 0);
-				((GL11) gl).glBindBuffer(GLES11.GL_ARRAY_BUFFER, 0);
-			} else {
-				FloatBuffer uvsBuffer = geometryBuffers.uvsBuffer;
-				uvsBuffer.position(0);
-				GLES10.glTexCoordPointer(2, GLES10.GL_FLOAT, 0, uvsBuffer);
-			}
-
-			int glId = gpuUploader.textures.get(texture);
-			GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, glId);
-			GLES10.glEnable(GLES10.GL_TEXTURE_2D);
-			GLES10.glEnableClientState(GLES10.GL_TEXTURE_COORD_ARRAY);
-		} else {
-			GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, 0);
-			GLES10.glDisable(GLES10.GL_TEXTURE_2D);
-			GLES10.glDisableClientState(GLES10.GL_TEXTURE_COORD_ARRAY);
-		}
-
-		if (scene.lights.size() > 0) {
-			if (o3d.material.color != null && o3d.material.color.a != 0) {
-				float params[] = {o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, 1};
-				float materialShininess = 50f;
-				GLES10.glMaterialfv(GLES10.GL_FRONT_AND_BACK, GLES10.GL_AMBIENT_AND_DIFFUSE, params, 0);
-				GLES10.glMaterialfv(GLES10.GL_FRONT_AND_BACK, GLES10.GL_SPECULAR, params, 0);
-				GLES10.glMaterialf(GLES10.GL_FRONT_AND_BACK, GLES10.GL_SHININESS, materialShininess);
-			} else {
-				float materialAmbientAndDiffuse[] = {1f, 1f, 1f, 1f};
-				float materialSpecular[] = {1f, 1f, 1f, 1f};
-				float materialShininess = 50f;
-				GLES10.glMaterialfv(GLES10.GL_FRONT_AND_BACK, GLES10.GL_AMBIENT_AND_DIFFUSE, materialAmbientAndDiffuse, 0);
-				GLES10.glMaterialfv(GLES10.GL_FRONT_AND_BACK, GLES10.GL_SPECULAR, materialSpecular, 0);
-				GLES10.glMaterialf(GLES10.GL_FRONT_AND_BACK, GLES10.GL_SHININESS, materialShininess);
-			}
-		}
-
-		// Draw
-		if (openGlVersion >= 1.1) {
-			((GL11) gl).glBindBuffer(GLES11.GL_ARRAY_BUFFER, geometryBuffers.vertexBufferId);
-			((GL11) gl).glVertexPointer(3, GLES10.GL_FLOAT, 0, 0);
-			((GL11) gl).glBindBuffer(GLES11.GL_ELEMENT_ARRAY_BUFFER, geometryBuffers.facesBufferId);
-			((GL11) gl).glDrawElements(GLES10.GL_TRIANGLES, o3d.geometry3d.facesLength, GLES10.GL_UNSIGNED_SHORT, 0);
-
-			((GL11) gl).glBindBuffer(GLES11.GL_ARRAY_BUFFER, 0);
-			((GL11) gl).glBindBuffer(GLES11.GL_ELEMENT_ARRAY_BUFFER, 0);
-		} else {
-			FloatBuffer vertexBuffer = geometryBuffers.vertexBuffer;
-			vertexBuffer.position(0);
-			GLES10.glVertexPointer(3, GLES10.GL_FLOAT, 0, vertexBuffer);
-
-			ShortBuffer facesBuffer = geometryBuffers.facesBuffer;
-			facesBuffer.position(0);
-			GLES10.glDrawElements(GLES10.GL_TRIANGLES, o3d.geometry3d.facesLength, GLES10.GL_UNSIGNED_SHORT, facesBuffer);
-		}
+		program.drawObject(gpuUploader, o3d, perspectiveMatrix);
 	}
 
 	private void setBlending(Blending blending) {
 		this.blending = blending;
 
-		switch(blending) {
+		switch (blending) {
 			case NoBlending:
-				GLES10.glDisable(GLES10.GL_BLEND);
+				GLES20.glDisable(GLES20.GL_BLEND);
 				break;
 			case NormalBlending:
-				GLES10.glEnable(GLES10.GL_BLEND);
-				GLES10.glBlendFunc(GLES10.GL_SRC_ALPHA, GLES10.GL_ONE_MINUS_SRC_ALPHA);
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 				break;
 			case AdditiveBlending:
-				GLES10.glEnable(GLES10.GL_BLEND);
-				GLES10.glBlendFunc(GLES10.GL_SRC_ALPHA, GLES10.GL_ONE);
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE);
 				break;
 			case SubtractiveBlending:
-				GLES10.glEnable(GLES10.GL_BLEND);
-				GLES10.glBlendFunc(GLES10.GL_ZERO, GLES10.GL_ONE_MINUS_SRC_COLOR);
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_ONE_MINUS_SRC_COLOR);
 				break;
 			case MultiplyBlending:
-				GLES10.glEnable(GLES10.GL_BLEND);
-				GLES10.glBlendFunc(GLES10.GL_ZERO, GLES10.GL_SRC_COLOR);
+				GLES20.glEnable(GLES20.GL_BLEND);
+				GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_SRC_COLOR);
 				break;
 		}
 	}
 
-	private void setGl(GL10 gl) {
-		this.gl = gl;
-
-		// OpenGL ES version
-		if (gl instanceof GL11) {
-			openGlVersion = 1.1f;
-		} else {
-			openGlVersion = 1.0f;
-		}
+	public void requestRender() {
+		needsRedraw = true;
 	}
 
-	public GL10 getGl() {
-		return gl;
+	public void stop() {
+		stop = true;
 	}
 
 	public GpuUploader getGpuUploader() {
@@ -451,14 +278,18 @@ public class Renderer implements GLSurfaceView.Renderer {
 		return resourceLoader;
 	}
 
-	public GLSurfaceView getView() {
-		return glSurfaceView;
-	}
-
 	public void setTouchListener(TouchListener listener) {
 		if (touchController == null) {
 			touchController = new TouchController(glSurfaceView);
 		}
 		touchController.setListener(listener);
+	}
+
+	public GLSurfaceView getView() {
+		return glSurfaceView;
+	}
+
+	public GL10 getGl() {
+		return gl;
 	}
 }

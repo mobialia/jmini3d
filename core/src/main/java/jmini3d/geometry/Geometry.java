@@ -1,6 +1,6 @@
-package jmini3d;
+package jmini3d.geometry;
 
-public abstract class Geometry3d {
+public abstract class Geometry {
 
 	public int facesLength = 0;
 	public int status = 0;

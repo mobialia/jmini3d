@@ -2,8 +2,10 @@ package jmini3d;
 
 import java.util.ArrayList;
 
-public class Scene {
+import jmini3d.light.Light;
 
+public class Scene {
+	public int shaderKey = -1;
 	public SceneController sceneController;
 	public Camera camera = new Camera();
 	public ArrayList<Object3d> children = new ArrayList<Object3d>();
@@ -13,10 +15,6 @@ public class Scene {
 	public ArrayList<Object> unload = new ArrayList<Object>();
 
 	public Color4 backgroundColor = new Color4(0f, 0f, 0f, 1f);
-
-	public Color4 ambientColor = new Color4(0.4f, 0.4f, 0.4f, 1f);
-	public Color4 pointLightColor = new Color4(1f, 1f, 1f, 1f);
-	public Vector3 pointLightLocation = new Vector3(40, 40, 40);
 
 	public Scene(SceneController sceneController) {
 		this.sceneController = sceneController;
@@ -28,6 +26,7 @@ public class Scene {
 
 	public void addLight(Light l) {
 		lights.add(l);
+		shaderKey = -1;
 	}
 	
 	public void addChild(Object3d o) {

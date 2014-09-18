@@ -3,8 +3,8 @@ apply plugin: 'java'
 archivesBaseName = 'jmini3d-gwt_demo'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.6.0'
-    compile 'com.google.gwt:gwt-dev:2.6.0'
+    compile 'com.google.gwt:gwt-user:2.6.1'
+    compile 'com.google.gwt:gwt-dev:2.6.1'
     compile project(':core')
     compile project(path: ':core', configuration: 'archives')
     compile project(':gwt')
@@ -12,7 +12,7 @@ dependencies {
     compile project(':gwt_cocoonjs')
     compile project(path: ':gwt_cocoonjs', configuration: 'archives')
 
-    runtime 'com.google.gwt:gwt-codeserver:2.6.0'
+    runtime 'com.google.gwt:gwt-codeserver:2.6.1'
 }
 
 task compileGwt(dependsOn: classes, type: JavaExec) {
@@ -46,7 +46,7 @@ task compileGwt(dependsOn: classes, type: JavaExec) {
                     '-extra', extraDir,
                     '-logLevel', 'INFO',
                     '-localWorkers', '2',
-                    //'-style', 'PRETTY',
+                    '-style', 'PRETTY',
                     //'-optimize', '9',        // No effect?
                     '-XdisableCastChecking',   // Disables runtime checking of cast operations. This can reduce compiled file sizes.
                     '-XdisableClassMetadata',  // Disables some java.lang.Class methods. This can reduce compiled file sizes.

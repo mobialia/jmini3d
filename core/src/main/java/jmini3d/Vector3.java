@@ -137,8 +137,18 @@ public class Vector3 {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof Vector3)) {
+			return false;
+		}
+		return x == (((Vector3) o).x) && (y == ((Vector3) o).y) && (z == ((Vector3) o).z);
+	}
+
+	@Override
 	public String toString() {
 		return x + "," + y + "," + z;
 	}
-
 }

@@ -50,7 +50,7 @@ public class ResourceLoader {
 
 	public void freeBitmap(String name, Bitmap bitmap) {
 		bitmap.recycle();
-		if (customBitmaps.containsKey(name)) {
+		if (name != null && customBitmaps.containsKey(name)) {
 			customBitmaps.remove(name);
 		}
 	}
@@ -73,6 +73,7 @@ public class ResourceLoader {
 				String line;
 				while ((line = reader.readLine()) != null) {
 					strBuild.append(line);
+					strBuild.append("\n");
 				}
 			} finally {
 				reader.close();

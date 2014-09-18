@@ -1,8 +1,10 @@
 package jmini3d;
 
+import jmini3d.geometry.Geometry;
+
 public class Object3d {
 
-	public Geometry3d geometry3d;
+	public Geometry geometry3d;
 	public Material material;
 
 	public boolean visible = true;
@@ -18,7 +20,7 @@ public class Object3d {
 
 	private boolean needsMatrixUpdate = true;
 
-	public Object3d(Geometry3d geometry3d, Material material) {
+	public Object3d(Geometry geometry3d, Material material) {
 		this.geometry3d = geometry3d;
 		this.material = material;
 
@@ -56,11 +58,11 @@ public class Object3d {
 		needsMatrixUpdate = true;
 	}
 
-	public void updateMatrices(float[] cameraModelViewMatrix, boolean forceUpdate) {
-		if (needsMatrixUpdate || forceUpdate) {
+	public void updateMatrices() {
+		if (needsMatrixUpdate) {
 			needsMatrixUpdate = false;
 
-			MatrixUtils.copyMatrix(cameraModelViewMatrix, modelViewMatrix);
+			MatrixUtils.copyMatrix(MatrixUtils.IDENTITY4, modelViewMatrix);
 
 			if (position != null) {
 				MatrixUtils.translate(translationMatrix, position);

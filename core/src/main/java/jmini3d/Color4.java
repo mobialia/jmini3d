@@ -27,4 +27,21 @@ public class Color4 {
 		this.b = b / 255f;
 		this.a = a / 255f;
 	}
+
+	public void setAllFrom(Color4 color) {
+		this.r = color.r;
+		this.g = color.g;
+		this.b = color.b;
+		this.a = color.a;
+	}
+
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof Color4)) {
+			return false;
+		}
+		return r == ((Color4) o).r && g == ((Color4) o).g && b == ((Color4) o).b && a == ((Color4) o).a;
+	}
 }

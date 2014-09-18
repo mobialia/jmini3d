@@ -245,15 +245,13 @@ public class MatrixUtils {
 		// If we are transposing ourselves we can skip a few steps but have to
 		// cache some values
 		if (dest == null || mat == dest) {
-			float a01 = mat[1], a02 = mat[2];
-			float a12 = mat[5];
-
+			float a0 = mat[1], a2 = mat[2], a5 = mat[5];
 			mat[1] = mat[3];
 			mat[2] = mat[6];
-			mat[3] = a01;
+			mat[3] = a0;
 			mat[5] = mat[7];
-			mat[6] = a02;
-			mat[7] = a12;
+			mat[6] = a2;
+			mat[7] = a5;
 			return mat;
 		}
 

@@ -1,9 +1,9 @@
 package jmini3d;
 
 public class Camera {
-	private Vector3 position = new Vector3();
-	private Vector3 target = new Vector3();
-	private Vector3 upAxis = new Vector3();
+	public Vector3 position = new Vector3();
+	public Vector3 target = new Vector3();
+	public Vector3 upAxis = new Vector3();
 
 	private Vector3 vx = new Vector3();
 	private Vector3 vy = new Vector3();
@@ -16,7 +16,7 @@ public class Camera {
 	private float far = 1000;
 
 	public float[] perspectiveMatrix = new float[16];
-	public float[] modelViewMatrix = new float[16];
+	private float[] modelViewMatrix = new float[16];
 
 	private boolean needsMatrixUpdate = true;
 
@@ -100,6 +100,7 @@ public class Camera {
 		if (needsMatrixUpdate) {
 			MatrixUtils.perspective(perspectiveMatrix, fovy, ((float) width) / height, near, far);
 			MatrixUtils.lookAt(modelViewMatrix, position, target, upAxis, vx, vy, vz);
+			MatrixUtils.multiply(perspectiveMatrix, modelViewMatrix, perspectiveMatrix);
 
 			needsMatrixUpdate = false;
 			return true;

@@ -1,6 +1,9 @@
-package jmini3d;
+package jmini3d.geometry;
 
-public class VariableGeometry3d extends Geometry3d {
+import jmini3d.GpuObjectStatus;
+import jmini3d.Vector3;
+
+public class VariableGeometry extends Geometry {
 	float[] vertex;
 	float[] normals;
 	float[] uvs;
@@ -9,7 +12,7 @@ public class VariableGeometry3d extends Geometry3d {
 	int vertexPointer = 0;
 	int facePointer = 0;
 
-	public VariableGeometry3d(int vertexCount, int faceCount) {
+	public VariableGeometry(int vertexCount, int faceCount) {
 		vertex = new float[3 * vertexCount];
 		normals = new float[3 * vertexCount];
 		uvs = new float[2 * vertexCount];

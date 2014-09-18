@@ -11,30 +11,52 @@ import com.googlecode.gwtgl.binding.WebGLTexture;
 import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
-import jmini3d.Geometry3d;
+import jmini3d.Material;
+import jmini3d.MatrixUtils;
+import jmini3d.Scene;
+import jmini3d.geometry.Geometry;
 import jmini3d.GpuObjectStatus;
 import jmini3d.Texture;
 
 public class GpuUploader {
+	// Use our Axis system
 	static final int[] CUBE_MAP_SIDES = {WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
-			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z};
+			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y};
 
 	WebGLRenderingContext gl;
 	ResourceLoader resourceLoader;
 
-	HashMap<Geometry3d, GeometryBuffers> geometryBuffers = new HashMap<Geometry3d, GeometryBuffers>();
+	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
 	HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
 	HashMap<Texture, ImageElement> textureImages = new HashMap<Texture, ImageElement>();
 	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<CubeMapTexture, WebGLTexture>();
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
+	HashMap<Integer, Program> shaderPrograms = new HashMap<Integer, Program>();
 
 	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader) {
 		this.gl = gl;
 		this.resourceLoader = resourceLoader;
 	}
 
-	public GeometryBuffers upload(Geometry3d geometry3d) {
+	public Program getProgram(Scene scene, Material material) {
+		if (scene.shaderKey == -1) {
+			scene.shaderKey = Program.getSceneKey(scene);
+		}
+		if (material.shaderKey == -1) {
+			material.shaderKey = Program.getMaterialKey(material);
+		}
+		int key = scene.shaderKey & material.shaderKey;
+		Program program = shaderPrograms.get(key);
+		if (program == null) {
+			program = new Program(gl);
+			program.init(scene, material);
+			shaderPrograms.put(key, program);
+		}
+		return program;
+	}
+
+	public GeometryBuffers upload(Geometry geometry3d) {
 		GeometryBuffers buffers = geometryBuffers.get(geometry3d);
 		if (buffers == null) {
 			buffers = new GeometryBuffers();
@@ -142,7 +164,6 @@ public class GpuUploader {
 
 	public void textureLoaded(Texture texture) {
 		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, textures.get(texture));
-		// gl.pixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, 1);
 		gl.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
 				textureImages.get(texture));
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
@@ -171,7 +192,7 @@ public class GpuUploader {
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR);
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_WRAP_S, WebGLRenderingContext.CLAMP_TO_EDGE);
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_WRAP_T, WebGLRenderingContext.CLAMP_TO_EDGE);
-			// gl.generateMipmap(WebGLRenderingContext.TEXTURE_CUBE_MAP);
+			gl.generateMipmap(WebGLRenderingContext.TEXTURE_CUBE_MAP);
 			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, null);
 
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
@@ -180,9 +201,9 @@ public class GpuUploader {
 	}
 
 	public void unload(Object o) {
-		if (o instanceof Geometry3d) {
+		if (o instanceof Geometry) {
 			if (geometryBuffers.containsKey(o)) {
-				((Geometry3d) o).status = 0;
+				((Geometry) o).status = 0;
 				GeometryBuffers buffers = geometryBuffers.get(o);
 
 				if (buffers.vertexBufferId != null) {
@@ -216,13 +237,18 @@ public class GpuUploader {
 
 	public void reset() {
 		// Now force re-upload of all objects
-		for (Geometry3d geometry : geometryBuffers.keySet()) {
+		for (Geometry geometry : geometryBuffers.keySet()) {
 			geometry.status = 0;
 		}
 		for (Texture texture : textures.keySet()) {
 			texture.status = 0;
 		}
+		for (CubeMapTexture texture : cubeMapTextures.keySet()) {
+			texture.status = 0;
+		}
 		geometryBuffers.clear();
 		textures.clear();
+		cubeMapTextures.clear();
+		shaderPrograms.clear();
 	}
 }

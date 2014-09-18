@@ -23,6 +23,7 @@ public class RendererActivity extends Activity implements SceneController, Touch
 
 		scene = new Scene(this);
 		renderer = new Renderer(this, scene, new ResourceLoader(this), traslucent);
+
 		renderer.setTouchListener(this);
 
 		onCreateSetContentView();

@@ -21,6 +21,11 @@ public class Obj2Class {
 	
 
 	public static void main(String args[]) {
+		if (args.length < 3) {
+			System.out.println("Usage: Obj2Class file.obj file.java com.package.name");
+			System.out.println("Converts an OBJ file to a jmini3d geometry in a Java file");
+			return;
+		}
 		Obj2Class obj2Class = new Obj2Class();
 		
 		obj2Class.process(args[0], args[1], args[2]);
@@ -58,7 +63,6 @@ public class Obj2Class {
 					facesSB.append(addVertexNormalUv(Integer.valueOf(tokens[4]), Integer.valueOf(tokens[5]), Integer.valueOf(tokens[6])));
 					facesSB.append(", ");
 					facesSB.append(addVertexNormalUv(Integer.valueOf(tokens[7]), Integer.valueOf(tokens[8]), Integer.valueOf(tokens[9])));
-					
 				}
 			}
 			
@@ -81,8 +85,7 @@ public class Obj2Class {
 	
 	public int addVertexNormalUv(int vertexIndex, int uvIndex, int normalIndex) {
 		String key = vertexIndex + "/" + normalIndex + "/" + uvIndex;
-		//String key = vertexList.get(vertexIndex-1) + "/" + normalsList.get(normalIndex-1) + "/" + uvsList.get(uvIndex-1);
-		
+
 		if (!facesList.contains(key)) {
 			if (vertexSB.length() > 0) {
 				vertexSB.append(", ");
@@ -108,10 +111,10 @@ public class Obj2Class {
 		System.out.println(className);
 		
 		sb.append("package ").append(packageName).append(";\n");
-		sb.append("import com.mobialia.jmini3d.Geometry3d;");
+		sb.append("import jmini3d.geometry.Geometry;");
 
 		sb.append("\n");
-		sb.append("public class ").append(className).append(" extends Geometry3d {\n");
+		sb.append("public class ").append(className).append(" extends Geometry {\n");
 		sb.append("\n");
 
 		sb.append("public float[] vertex() {\n");

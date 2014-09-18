@@ -6,7 +6,7 @@ public class Utils {
 	public static void getRay(Camera camera, int x, int y, Vector3 ray) {
 		int[] viewport = { 0, 0, camera.getWidth(), camera.getHeight() };
 
-		gluUnProject(x, camera.getHeight() - y, 0.9f, camera.modelViewMatrix, camera.perspectiveMatrix, viewport, ray);
+		gluUnProject(x, camera.getHeight() - y, 0.9f, camera.perspectiveMatrix, viewport, ray);
 
 		// Ray vector
 		ray.x -= camera.getPosition().x;
@@ -14,16 +14,14 @@ public class Utils {
 		ray.z -= camera.getPosition().z;
 	}
 
-	public static boolean gluUnProject(float winx, float winy, float winz, final float[] modelViewMatrix, final float[] perspectiveMatrix,
+	public static boolean gluUnProject(float winx, float winy, float winz, final float[] perspectiveMatrix,
 			final int[] viewport, Vector3 outCoord) {
 		float[] finalMatrix = new float[16];
 		float[] in = new float[4];
 		float[] out = new float[4];
 
-		MatrixUtils.multiply(perspectiveMatrix, modelViewMatrix, finalMatrix);
-
 		// TODO cache
-		if (!MatrixUtils.invert(finalMatrix, finalMatrix)) {
+		if (!MatrixUtils.invert(perspectiveMatrix, finalMatrix)) {
 			return false;
 		}
 
@@ -60,4 +58,17 @@ public class Utils {
 	public static float p512(float n) {
 		return (2f * n - 1f) / (2f * 512f);
 	}
+
+	public static float p1024(float n) {
+		return (2f * n - 1f) / (2f * 1024f);
+	}
+
+	public static float p2048(float n) {
+		return (2f * n - 1f) / (2f * 2048f);
+	}
+
+	public static float p4096(float n) {
+		return (2f * n - 1f) / (2f * 4096f);
+	}
+
 }

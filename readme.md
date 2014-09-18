@@ -1,24 +1,19 @@
 JMini3D
 =======
 
-Minimalistic 3D library with support for Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
+Minimalistic OpenGL 2.0 3D library with support for Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
 
-This library helps you to develop 3D apps compatible with Android and GWT projects.
-
-The Android OpenGL 1.0/1.1 Renderer is extremely optimized for real time games. We are working to optimize also the Android OpenGL 2.0 and WebGL renderers.
+This library helps you to develop 3D apps compatible with Android and GWT projects. The CocoonJS linker allows to develop apps for CocoonJs's Canvas+ and use them in iOS.
 
 Subprojects:
 * *core:* includes the common classes between Android and GWT projects
-* *android:* the Android OpenGL ES 1.0/1.1 Renderer
-* *android2:* the Android OpenGL ES 2.0 Renderer
-* *android_demo:* An Android demo application (we need more demos...)
+* *android:* the Android OpenGL ES 2.0 Renderer
+* *android_demo:* An Android demo application
 * *gwt:* the GWT library project implementing a WebGL Renderer (based on OpenGL ES 2.0 like android2)
 * *gwt_cocoonjs:* GWT Linker to make Jmini3D work with the CocoonJS framework (it can create apps for iOS)
-* *gwt_demo:* a small demo project in GWT (we also need more demos here), you can compile the project with "gradle compileGwt"
+* *gwt_demo:* The demo project in GWT
 * *utils:* includes an utility to generate Geometry files from OBJ models
-* *gwtgl:* a dependency for the gwt project, do a 'gradle install' in this folder to copy the gwtgl artifact to your maven local repo
-
-This project is built with Gradle. Use "gradle assemble" to build the project, "gradle install" to upload this library's JARs and AARs to your local maven repo.
+* *gwtgl:* a dependency for the gwt project
 
 Also includes a touch abstraction library (JMini3D Input) for Android and GWT.
 
@@ -27,4 +22,58 @@ JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and 
 * Slot Racing: http://slot.mobialia.com http://www.mobialia.com/apps/slot
 * Mobialia Four in a Row: http://fourinarow.mobialia.com http://www.mobialia.com/apps/fourinarow
 
-It's released under the MIT License, so feel free to use it anywhere. 
+Axis
+====
+
+This library uses the same axis system than Blender, z is up, y is front.
+
+ z   y
+ |  /
+ | /
+ |------x
+
+Generate Geometries from OBJ files
+==================================
+
+Objects must have UV mapping.
+
+Export to OBJ from Blender with this options:
+
+* Write Normals
+* Include UVs
+* Triangulate faces
+* Y Forward
+* Z up
+
+An convert to a Java class with:
+
+ cd utils
+ gradle jar
+ java -cp ./build/libs/jmini3d-utils-0.2.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.android.demo
+
+The generated TeapotGeometry.java is a Java class in the jmini3d.android.demo package extending Geometry.
+
+Build
+=====
+
+This project is built with Gradle.
+
+Buld Android demo and install it to the connected device or emulator:
+ cd android_demo
+ gradle installDebug
+
+Build gwt demo in the gwt_demo/src/main/webapp/ directory, first you need to install the gwtgl artifact in your maven local repo:
+ cd gwtgl
+ gradle install
+ cd ../gwt_demo
+ gradle compileGwt
+
+Install this library's JARs and AARs to the local Maven repo:
+ gradle install
+
+Licenses
+========
+
+It's released under the MIT License, so feel free to use it anywhere.
+
+The cube texture in the demos is CC licensed from Humus http://www.humus.name
