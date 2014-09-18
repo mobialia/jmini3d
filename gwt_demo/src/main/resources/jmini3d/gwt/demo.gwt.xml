@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module rename-to="mini3d_demo">
+<module rename-to="jmini3d_demo">
     <inherits name="com.google.gwt.user.User"/>
 
     <inherits name="jmini3d"/>
