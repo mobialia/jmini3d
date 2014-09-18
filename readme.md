@@ -11,7 +11,7 @@ Subprojects:
 * *android_demo:* An Android demo application
 * *gwt:* the GWT library project implementing a WebGL Renderer
 * *gwt_cocoonjs:* GWT Linker to make Jmini3D work with the CocoonJS framework (it can create apps for iOS)
-* *gwt_demo:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d_gwt_emu/
+* *gwt_demo:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d_gwt_demo/
 * *utils:* includes an utility to generate Geometry files from OBJ models
 * *gwtgl:* a dependency for the gwt project
 
