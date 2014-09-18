@@ -27,10 +27,12 @@ Axis
 
 This library uses the same axis system than Blender, z is up, y is front.
 
+```
  z   y
  |  /
  | /
  |------x
+```
 
 Generate Geometries from OBJ files
 ==================================
@@ -46,10 +48,11 @@ Export to OBJ from Blender with this options:
 * Z up
 
 An convert to a Java class with:
-
- cd utils
- gradle jar
- java -cp ./build/libs/jmini3d-utils-0.2.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.android.demo
+```
+cd utils
+gradle jar
+java -cp ./build/libs/jmini3d-utils-0.2.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.android.demo
+```
 
 The generated TeapotGeometry.java is a Java class in the jmini3d.android.demo package extending Geometry.
 
@@ -59,17 +62,23 @@ Build
 This project is built with Gradle.
 
 Buld Android demo and install it to the connected device or emulator:
- cd android_demo
- gradle installDebug
+```
+cd android_demo
+gradle installDebug
+```
 
 Build gwt demo in the gwt_demo/src/main/webapp/ directory, first you need to install the gwtgl artifact in your maven local repo:
- cd gwtgl
- gradle install
- cd ../gwt_demo
- gradle compileGwt
+```
+cd gwtgl
+gradle install
+cd ../gwt_demo
+gradle compileGwt
+```
 
 Install this library's JARs and AARs to the local Maven repo:
- gradle install
+```
+gradle install
+```
 
 Licenses
 ========
