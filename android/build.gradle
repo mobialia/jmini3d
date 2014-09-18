@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: 'com.android.library'
 
-archivesBaseName = 'jmini3d-android2'
+archivesBaseName = 'jmini3d-android'
 
 dependencies {
     compile project(':core')
