@@ -9,9 +9,9 @@ Subprojects:
 * *core:* includes the common classes between Android and GWT projects
 * *android:* the Android OpenGL ES 2.0 Renderer
 * *android_demo:* An Android demo application
-* *gwt:* the GWT library project implementing a WebGL Renderer (based on OpenGL ES 2.0 like android2)
+* *gwt:* the GWT library project implementing a WebGL Renderer
 * *gwt_cocoonjs:* GWT Linker to make Jmini3D work with the CocoonJS framework (it can create apps for iOS)
-* *gwt_demo:* The demo project in GWT
+* *gwt_demo:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d_gwt_emu/
 * *utils:* includes an utility to generate Geometry files from OBJ models
 * *gwtgl:* a dependency for the gwt project
 
