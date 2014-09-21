@@ -1,1 +1,1 @@
-include 'core','android','android_demo','gwt','gwt_cocoonjs','gwt_demo','utils'
+include 'core', 'android', 'gwt', 'gwt-cocoonjs', 'demo-common', 'demo-android', 'demo-gwt', 'utils'
