@@ -4,9 +4,11 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import jmini3d.Blending;
+import jmini3d.CubeMapTexture;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
 import jmini3d.Scene;
+import jmini3d.Texture;
 
 public class Renderer3d {
 	public static final String TAG = "Renderer";
@@ -25,6 +27,8 @@ public class Renderer3d {
 
 	Blending blending;
 	Program currentProgram = null;
+	Texture mapTexture;
+	CubeMapTexture envMapTexture;
 
 	int width = -1;
 	int height = -1;
@@ -36,8 +40,8 @@ public class Renderer3d {
 	}
 
 	public void reset() {
-		Program.mapTexture = null;
-		Program.envMapTexture = null;
+		mapTexture = null;
+		envMapTexture = null;
 		gpuUploader.reset();
 
 		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -115,7 +119,7 @@ public class Renderer3d {
 			setBlending(o3d.material.blending);
 		}
 
-		program.drawObject(gpuUploader, o3d, perspectiveMatrix);
+		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix);
 	}
 
 	private void setBlending(Blending blending) {

@@ -44,8 +44,6 @@ public class Program {
 	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<String, WebGLUniformLocation>();
 
 	// *********************** BEGIN cached values to avoid setting uniforms two times
-	static Texture mapTexture;
-	static CubeMapTexture envMapTexture;
 	int map = -1;
 	int envMap = -1;
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -306,7 +304,7 @@ public class Program {
 		}
 	}
 
-	public void drawObject(GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
 			gl.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
@@ -354,20 +352,20 @@ public class Program {
 			gl.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
 			objectColor.setAllFrom(o3d.material.color);
 		}
-		if (useMap && mapTexture != o3d.material.map) {
+		if (useMap && renderer3d.mapTexture != o3d.material.map) {
 			gl.activeTexture(WebGLRenderingContext.TEXTURE0);
 			gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, gpuUploader.textures.get(o3d.material.map));
-			mapTexture = o3d.material.map;
+			renderer3d.mapTexture = o3d.material.map;
 		}
 		if (useEnvMap) {
 			if (reflectivity != o3d.material.reflectivity) {
 				gl.uniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
 				reflectivity = o3d.material.reflectivity;
 			}
-			if (envMapTexture != o3d.material.envMap) {
+			if (renderer3d.envMapTexture != o3d.material.envMap) {
 				gl.activeTexture(WebGLRenderingContext.TEXTURE1);
 				gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, gpuUploader.cubeMapTextures.get(o3d.material.envMap));
-				envMapTexture = o3d.material.envMap;
+				renderer3d.envMapTexture = o3d.material.envMap;
 			}
 		}
 

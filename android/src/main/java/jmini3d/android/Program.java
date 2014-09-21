@@ -44,8 +44,6 @@ public class Program {
 	HashMap<String, Integer> uniforms = new HashMap<String, Integer>();
 
 	// *********************** BEGIN cached values to avoid setting uniforms two times
-	static Texture mapTexture;
-	static CubeMapTexture envMapTexture;
 	int map = -1;
 	int envMap = -1;
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -310,7 +308,7 @@ public class Program {
 		}
 	}
 
-	public void drawObject(GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
 			GLES20.glUniformMatrix4fv(uniforms.get("perspectiveMatrix"), 1, false, perspectiveMatrix, 0);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
@@ -358,20 +356,20 @@ public class Program {
 			GLES20.glUniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
 			objectColor.setAllFrom(o3d.material.color);
 		}
-		if (useMap && mapTexture != o3d.material.map) {
+		if (useMap && renderer3d.mapTexture != o3d.material.map) {
 			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.map));
-			mapTexture = o3d.material.map;
+			renderer3d.mapTexture = o3d.material.map;
 		}
 		if (useEnvMap) {
 			if (reflectivity != o3d.material.reflectivity) {
 				GLES20.glUniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
 				reflectivity = o3d.material.reflectivity;
 			}
-			if (envMapTexture != o3d.material.envMap) {
+			if (renderer3d.envMapTexture != o3d.material.envMap) {
 				GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
 				GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, gpuUploader.cubeMapTextures.get(o3d.material.envMap));
-				envMapTexture = o3d.material.envMap;
+				renderer3d.envMapTexture = o3d.material.envMap;
 			}
 		}
 
