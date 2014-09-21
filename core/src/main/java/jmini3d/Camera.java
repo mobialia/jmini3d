@@ -98,7 +98,7 @@ public class Camera {
 	}
 
 	public float getFovx() {
-		return (float) (360 / Utils.PI * Math.atan( Math.tan(fovy * Utils.PI / 360) * width / height ));
+		return (float) (360 / Utils.PI * Math.atan(Math.tan(fovy * Utils.PI / 360) * width / height));
 	}
 
 	public float getNear() {

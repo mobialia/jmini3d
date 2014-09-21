@@ -2,7 +2,7 @@ package jmini3d;
 
 public class MatrixUtils {
 
-	public static float[] IDENTITY4 = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, };
+	public static float[] IDENTITY4 = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,};
 
 	/**
 	 * this is the old gl.glFustrum
@@ -145,11 +145,11 @@ public class MatrixUtils {
 	}
 
 	public static float[] cloneMatrix(float[] in) {
-		return new float[] { //
-		in[0], in[1], in[2], in[3], //
+		return new float[]{ //
+				in[0], in[1], in[2], in[3], //
 				in[4], in[5], in[6], in[7], //
 				in[8], in[9], in[10], in[11], //
-				in[12], in[13], in[14], in[15] };
+				in[12], in[13], in[14], in[15]};
 	}
 
 	public static void copyMatrix(float[] origin, float destiny[]) {
@@ -267,7 +267,7 @@ public class MatrixUtils {
 		return dest;
 	}
 
-    public static float[] multiply(float[] mat, float[] mat2, float[] dest) {
+	public static float[] multiply(float[] mat, float[] mat2, float[] dest) {
 		if (dest == null) {
 			dest = mat;
 		}
@@ -315,7 +315,7 @@ public class MatrixUtils {
 		return dest;
 	}
 
-    public static float[] multiplyVectorPost(float[] mat, float[] vec, float[] dest) {
+	public static float[] multiplyVectorPost(float[] mat, float[] vec, float[] dest) {
 		if (dest == null) {
 			dest = vec;
 		}

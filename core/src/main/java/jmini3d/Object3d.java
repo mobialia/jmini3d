@@ -8,7 +8,7 @@ public class Object3d {
 	public Material material;
 
 	public boolean visible = true;
-	public boolean clearDepthAfterDraw = false; 
+	public boolean clearDepthAfterDraw = false;
 
 	private Vector3 position;
 

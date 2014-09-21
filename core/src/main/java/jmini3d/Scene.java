@@ -22,7 +22,7 @@ public class Scene {
 		lights.add(l);
 		shaderKey = -1;
 	}
-	
+
 	public void addChild(Object3d o) {
 		if (children.contains(o)) {
 			return;

@@ -4,7 +4,7 @@ public class Utils {
 	public static float PI = (float) Math.PI;
 
 	public static void getRay(Camera camera, int x, int y, Vector3 ray) {
-		int[] viewport = { 0, 0, camera.getWidth(), camera.getHeight() };
+		int[] viewport = {0, 0, camera.getWidth(), camera.getHeight()};
 
 		gluUnProject(x, camera.getHeight() - y, 0.9f, camera.perspectiveMatrix, viewport, ray);
 
@@ -15,7 +15,7 @@ public class Utils {
 	}
 
 	public static boolean gluUnProject(float winx, float winy, float winz, final float[] perspectiveMatrix,
-			final int[] viewport, Vector3 outCoord) {
+									   final int[] viewport, Vector3 outCoord) {
 		float[] finalMatrix = new float[16];
 		float[] in = new float[4];
 		float[] out = new float[4];

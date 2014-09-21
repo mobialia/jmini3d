@@ -1,17 +1,16 @@
 package jmini3d.light;
 
 import jmini3d.Color4;
-import jmini3d.Vector3;
 
 public class Light {
 	public Color4 color;
-	public float diffuse[] = { 0.6f, 0.6f, 0.6f, 0f };
-	public float specular[] = { 0.8f, 0.8f, 0.8f, 0f };
-	public float emission[] = { 0f, 0f, 0f, 0f };
-	public float direction[] = { 0f, 0f, -1f };
+	public float diffuse[] = {0.6f, 0.6f, 0.6f, 0f};
+	public float specular[] = {0.8f, 0.8f, 0.8f, 0f};
+	public float emission[] = {0f, 0f, 0f, 0f};
+	public float direction[] = {0f, 0f, -1f};
 	public float spotCutoffAngle = 180;
 	public float spotExponent = 0f;
-	public float attenuation[] = { 0.5f, 0f, 0f };
+	public float attenuation[] = {0.5f, 0f, 0f};
 
 
 	public void setDiffuse(int r, int g, int b, int a) {

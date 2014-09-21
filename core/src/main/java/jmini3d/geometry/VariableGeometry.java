@@ -60,7 +60,7 @@ public class VariableGeometry extends Geometry {
 	}
 
 	public void addBox(Vector3 upperLeftFront, Vector3 upperRightFront, Vector3 lowerLeftFront, Vector3 lowerRightFront, Vector3 upperLeftBack,
-			Vector3 upperRightBack, Vector3 lowerLeftBack, Vector3 lowerRightBack) {
+					   Vector3 upperRightBack, Vector3 lowerLeftBack, Vector3 lowerRightBack) {
 		// Front
 		addQuad(upperLeftFront, upperRightFront, lowerLeftFront, lowerRightFront);
 		// Back
