@@ -1,11 +1,10 @@
 package jmini3d;
 
 public interface SceneController {
-	public void initScene();
 
 	/**
-	 * Returns true if something has changed, called at FPS
+	 * Called at FPS to update and return the scene
 	 */
-	public boolean updateScene();
+	public Scene getScene(int width, int height);
 
 }
