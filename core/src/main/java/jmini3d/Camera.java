@@ -20,44 +20,65 @@ public class Camera {
 
 	private boolean needsMatrixUpdate = true;
 
+	public Camera() {
+		setTarget(0, 0, 0);
+		setUpAxis(0, 0, 1);
+	}
+
 	public void setPosition(float x, float y, float z) {
-		position.setAll(x, y, z);
-		needsMatrixUpdate = true;
+		if (this.position.x != x || this.position.y != y || this.position.z != z) {
+			position.setAll(x, y, z);
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setTarget(float x, float y, float z) {
-		target.setAll(x, y, z);
-		needsMatrixUpdate = true;
+		if (this.target.x != x || this.target.y != y || this.target.z != z) {
+			target.setAll(x, y, z);
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setUpAxis(float x, float y, float z) {
-		upAxis.setAll(x, y, z);
-		needsMatrixUpdate = true;
+		if (this.upAxis.x != x || this.upAxis.y != y || this.upAxis.z != z) {
+			upAxis.setAll(x, y, z);
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setFovy(float fovy) {
-		this.fovy = fovy;
-		needsMatrixUpdate = true;
+		if (this.fovy != fovy) {
+			this.fovy = fovy;
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setNear(float near) {
-		this.near = near;
-		needsMatrixUpdate = true;
+		if (this.near != near) {
+			this.near = near;
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setFar(float far) {
-		this.far = far;
-		needsMatrixUpdate = true;
+		if (this.far != far) {
+			this.far = far;
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setWidth(int width) {
-		this.width = width;
-		needsMatrixUpdate = true;
+		if (this.width != width) {
+			this.width = width;
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public void setHeight(int height) {
-		this.height = height;
-		needsMatrixUpdate = true;
+		if (this.height != height) {
+			this.height = height;
+			needsMatrixUpdate = true;
+		}
 	}
 
 	public Vector3 getPosition() {
