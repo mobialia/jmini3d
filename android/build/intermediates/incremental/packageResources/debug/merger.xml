@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/home/rui/workspace/jmini3d/android2/src/main/res" >
+            <file
+                name="fragment_shader"
+                path="/home/rui/workspace/jmini3d/android2/src/main/res/raw/fragment_shader.glsl"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="vertex_shader"
+                path="/home/rui/workspace/jmini3d/android2/src/main/res/raw/vertex_shader.glsl"
+                qualifiers=""
+                type="raw" />
+        </source>
+        <source path="/home/rui/workspace/jmini3d/android2/build/generated/res/rs/debug" />
+        <source path="/home/rui/workspace/jmini3d/android2/build/generated/res/generated/debug" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/home/rui/workspace/jmini3d/android2/src/debug/res" />
+    </dataSet>
+
+</merger>
