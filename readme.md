@@ -10,7 +10,7 @@ Subprojects:
 * *gwt-cocoonjs:* GWT Linker to make Jmini3D work with the CocoonJS framework (it can create apps for iOS)
 * *demo-common:* The common files for the demo project with a SceneController and multiple Scenes
 * *demo-android:* The Android demo application
-* *demo-gwt:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d_gwt_demo/
+* *demo-gwt:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d-demo-gwt/
 * *utils:* includes an utility to generate Geometry files from OBJ models
 * *gwtgl:* a dependency for the gwt project
 
@@ -78,15 +78,15 @@ This project is built with Gradle.
 
 Buld Android demo and install it to the connected device or emulator:
 ```
-cd android_demo
+cd demo-android
 gradle installDebug
 ```
 
-Build gwt demo in the gwt_demo/src/main/webapp/ directory, first you need to install the gwtgl artifact in your maven local repo:
+Build gwt demo in the demo-gwt/src/main/webapp/ directory, first you need to install the gwtgl artifact in your maven local repo:
 ```
 cd gwtgl
 gradle install
-cd ../gwt_demo
+cd ../demo-gwt
 gradle compileGwt
 ```
 
