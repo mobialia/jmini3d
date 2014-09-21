@@ -5,14 +5,14 @@ Minimalistic OpenGL 2.0 3D library for mobile apps that supports Android and GWT
 
 Subprojects:
 * *core:* includes the common classes between Android and GWT projects
-* *android:* the Android OpenGL ES 2.0 Renderer
-* *gwt:* the GWT library project implementing a WebGL Renderer
-* *gwt-cocoonjs:* GWT Linker to make Jmini3D work with the CocoonJS framework (it can create apps for iOS)
+* *android:* the Android library project implementing the OpenGLES 2.0 Renderer, Activity3d, GlSurfaceView3d, etc.
+* *gwt:* the GWT library project implementing the WebGL Renderer, EntryPoint3d, Canvas3d, etc.
+* *gwt-cocoonjs:* GWT Linker to make JMini3D work with the CocoonJS framework (it can package WebGL apps for iOS)
+* *gwtgl:* a dependency for the gwt project
+* *utils:* includes an utility to generate Geometry files from OBJ models
 * *demo-common:* The common files for the demo project with a SceneController and multiple Scenes
 * *demo-android:* The Android demo application
 * *demo-gwt:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d-demo-gwt/
-* *utils:* includes an utility to generate Geometry files from OBJ models
-* *gwtgl:* a dependency for the gwt project
 
 Also includes a touch abstraction library (JMini3D Input) for Android and GWT.
 
