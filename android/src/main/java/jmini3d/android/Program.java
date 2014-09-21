@@ -48,11 +48,11 @@ public class Program {
 	static CubeMapTexture envMapTexture;
 	int map = -1;
 	int envMap = -1;
-	float perspectiveMatrix[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	float modelViewMatrix[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	float normalMatrix[] = {0,0,0,0,0,0,0,0,0};
-	Color4 objectColor = new Color4(-1, -1, -1 ,-1);
-	Color4 ambientColor = new Color4(0, 0, 0 ,0);
+	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+	Color4 objectColor = new Color4(-1, -1, -1, -1);
+	Color4 ambientColor = new Color4(0, 0, 0, 0);
 	Vector3 cameraPosition = new Vector3(0, 0, 0);
 	float reflectivity;
 	// *********************** END
@@ -73,7 +73,7 @@ public class Program {
 		int maxPointLights = 0;
 		int maxDirLights = 0;
 
-		for (Light light: scene.lights) {
+		for (Light light : scene.lights) {
 			if (light instanceof AmbientLight) {
 				useAmbientlight = true;
 			}
@@ -87,9 +87,9 @@ public class Program {
 			}
 		}
 		return 0xffff + //
-				(useAmbientlight ?  0x10000 : 0) + //
+				(useAmbientlight ? 0x10000 : 0) + //
 				(maxPointLights * 0x0100000) + //
-				(maxDirLights   * 0x1000000);
+				(maxDirLights * 0x1000000);
 	}
 
 	public static int getMaterialKey(Material material) {
@@ -144,7 +144,7 @@ public class Program {
 			defines.add("USE_LIGHTING");
 			useLighting = true;
 
-			for (Light light: scene.lights) {
+			for (Light light : scene.lights) {
 
 				if (light instanceof AmbientLight) {
 					defines.add("USE_AMBIENT_LIGHT");
@@ -190,16 +190,16 @@ public class Program {
 			uniformsInit.add("normalMatrix");
 		}
 
-		StringBuffer vertexShaderStringBuffer =  new StringBuffer();
-		StringBuffer fragmentShaderStringBuffer =  new StringBuffer();
+		StringBuffer vertexShaderStringBuffer = new StringBuffer();
+		StringBuffer fragmentShaderStringBuffer = new StringBuffer();
 
 		// TODO precision
-		for (String d: defines) {
+		for (String d : defines) {
 			vertexShaderStringBuffer.append("#define " + d + "\n");
 			fragmentShaderStringBuffer.append("#define " + d + "\n");
 		}
 
-		for (String k: definesValues.keySet()) {
+		for (String k : definesValues.keySet()) {
 			vertexShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
 			fragmentShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
 		}
@@ -234,14 +234,14 @@ public class Program {
 
 		for (String s : attributesInit) {
 			Integer attribLocation = GLES20.glGetAttribLocation(webGLProgram, s);
-			log("attribute: " + s + " = " + attribLocation);
+//			log("attribute: " + s + " = " + attribLocation);
 			GLES20.glEnableVertexAttribArray(attribLocation);
 			attributes.put(s, attribLocation);
 		}
 
 		for (String s : uniformsInit) {
 			uniforms.put(s, GLES20.glGetUniformLocation(webGLProgram, s));
-			log("uniform: " + s + " = " + GLES20.glGetUniformLocation(webGLProgram, s));
+//			log("uniform: " + s + " = " + GLES20.glGetUniformLocation(webGLProgram, s));
 		}
 		GLES20.glDeleteShader(vertexShader);
 		GLES20.glDeleteShader(fragmentShader);
@@ -270,7 +270,6 @@ public class Program {
 			for (Light light : scene.lights) {
 				if (light instanceof AmbientLight) {
 					if (!ambientColor.equals(light.color)) {
-						Log.d(TAG, "ambient uniform = " + uniforms.get("ambientColor"));
 						GLES20.glUniform3f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b);
 						ambientColor.setAllFrom(light.color);
 					}

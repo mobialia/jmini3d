@@ -38,7 +38,7 @@ public class MyInt16Array extends IntBasedTypedArray<MyInt16Array> {
 	 * @return the newly created {@link TypedArray}.
 	 */
 	public static native MyInt16Array create(ArrayBuffer buffer, int byteOffset) /*-{
-                return new Int16Array(buffer, byteOffset);
+				return new Int16Array(buffer, byteOffset);
   }-*/;
 
 	/**

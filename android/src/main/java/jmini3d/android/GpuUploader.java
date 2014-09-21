@@ -11,11 +11,11 @@ import java.nio.ShortBuffer;
 import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
+import jmini3d.GpuObjectStatus;
 import jmini3d.Material;
 import jmini3d.Scene;
-import jmini3d.geometry.Geometry;
-import jmini3d.GpuObjectStatus;
 import jmini3d.Texture;
+import jmini3d.geometry.Geometry;
 
 public class GpuUploader {
 	static final String TAG = "GpuUploader";
@@ -45,6 +45,8 @@ public class GpuUploader {
 		int key = scene.shaderKey & material.shaderKey;
 		Program program = shaderPrograms.get(key);
 		if (program == null) {
+			Log.d(TAG, "Uploading shader...");
+
 			program = new Program();
 			program.init(scene, material, resourceLoader);
 			shaderPrograms.put(key, program);
@@ -123,6 +125,7 @@ public class GpuUploader {
 	public void upload(Texture texture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
+
 			Bitmap bitmap;
 			try {
 				bitmap = resourceLoader.getImage(texture.image);
@@ -146,10 +149,8 @@ public class GpuUploader {
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-			// GLES20.generateMipmap(GLES20.TEXTURE_2D);
+			GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-
-			Renderer.needsRedraw = true;
 
 			resourceLoader.freeBitmap(texture.image, bitmap);
 		}
@@ -158,8 +159,6 @@ public class GpuUploader {
 	public void upload(final CubeMapTexture cubeMapTexture) {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
-
-			Log.d(TAG, "Uploading Envmap... " + cubeMapTexture + " " + cubeMapTexture.status);
 
 			Integer textureId = textures.get(cubeMapTexture);
 			if (textureId == null) {
@@ -191,8 +190,6 @@ public class GpuUploader {
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_CUBE_MAP);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, 0);
-
-			Renderer.needsRedraw = true;
 		}
 	}
 

@@ -11,12 +11,11 @@ import com.googlecode.gwtgl.binding.WebGLTexture;
 import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
-import jmini3d.Material;
-import jmini3d.MatrixUtils;
-import jmini3d.Scene;
-import jmini3d.geometry.Geometry;
 import jmini3d.GpuObjectStatus;
+import jmini3d.Material;
+import jmini3d.Scene;
 import jmini3d.Texture;
+import jmini3d.geometry.Geometry;
 
 public class GpuUploader {
 	// Use our Axis system
@@ -174,7 +173,7 @@ public class GpuUploader {
 		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, null);
 
 		texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
-		Renderer.needsRedraw = true;
+		// TODO force redraw
 	}
 
 	public void cubeTextureLoaded(CubeMapTexture cubeMapTexture) {
@@ -196,7 +195,7 @@ public class GpuUploader {
 			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, null);
 
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
-			Renderer.needsRedraw = true;
+			// TODO force redraw
 		}
 	}
 
