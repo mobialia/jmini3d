@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/home/rui/workspace/jmini3d/android2/src/main/assets" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="/home/rui/workspace/jmini3d/android2/src/release/assets" />
+    </dataSet>
+
+</merger>
