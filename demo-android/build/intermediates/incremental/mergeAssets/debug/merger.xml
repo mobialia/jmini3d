@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="0.3"><source path="/home/rui/workspace/jmini3d/android_demo/build/intermediates/exploded-aar/com.mobialia/android/0.3/assets"/></dataSet><dataSet config="main"><source path="/home/rui/workspace/jmini3d/android_demo/src/main/assets"/></dataSet><dataSet config="debug"><source path="/home/rui/workspace/jmini3d/android_demo/src/debug/assets"/></dataSet></merger>

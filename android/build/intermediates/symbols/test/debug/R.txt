@@ -1,2 +1,0 @@
-int raw fragment_shader 0x7f020000
-int raw vertex_shader 0x7f020001
