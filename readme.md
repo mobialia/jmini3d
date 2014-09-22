@@ -1,9 +1,23 @@
 JMini3D
 =======
+Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
 
-Minimalistic OpenGL 2.0 3D library for mobile apps that supports Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
+Also includes an input abstraction library (with key & pointer events) for Android and GWT.
 
-Subprojects:
+JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and HTML5 versions like:
+* Mobialia Chess: http://chess.mobialia.com http://www.mobialia.com/apps/chess
+* Slot Racing: http://slot.mobialia.com http://www.mobialia.com/apps/slot
+* Mobialia Four in a Row: http://fourinarow.mobialia.com http://www.mobialia.com/apps/fourinarow
+
+Features
+========
+* Optimized for speed and simplicity
+* Extremely fast model load (converts OBJ models to Java classes)
+* Multiple lights (Ambient/Point/Directional), only diffuse lighting (no specular), no attenuation with the distance
+* Reflections with environment mapping
+
+Subprojects
+===========
 * *core:* includes the common classes between Android and GWT projects
 * *android:* the Android library project implementing the OpenGLES 2.0 Renderer, Activity3d, GlSurfaceView3d, etc.
 * *gwt:* the GWT library project implementing the WebGL Renderer, EntryPoint3d, Canvas3d, etc.
@@ -14,16 +28,8 @@ Subprojects:
 * *demo-android:* The Android demo application
 * *demo-gwt:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d-demo-gwt/
 
-Also includes a touch abstraction library (JMini3D Input) for Android and GWT.
-
-JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and HTML5 versions like:
-* Mobialia Chess: http://chess.mobialia.com http://www.mobialia.com/apps/chess
-* Slot Racing: http://slot.mobialia.com http://www.mobialia.com/apps/slot
-* Mobialia Four in a Row: http://fourinarow.mobialia.com http://www.mobialia.com/apps/fourinarow
-
 Axis
 ====
-
 This library uses the same axis system than Blender, z is up, y is front.
 
 ```
@@ -35,7 +41,6 @@ This library uses the same axis system than Blender, z is up, y is front.
 
 Android
 =======
-
 To use the library in an Android app you can extend the Activity3d class or use the GlSurfaceView3d.
 
 The image resources must be in the "drawable-nodpi" resource folder.
@@ -43,7 +48,6 @@ The ResourceLoader is initialized with a reference to the Android context.
 
 GWT
 ===
-
 In GWT you must extend the EntryPoint3d or use the Canvas3d wrapper (that wraps a DOM canvas element).
 
 The image resources must be in a folder or subfolder of the web project location (src/main/webapp/).
@@ -51,8 +55,7 @@ The ResourceLoader is initialized with "./" if the resources are in that folder 
 
 Generate Geometries from OBJ files
 ==================================
-
-Objects must have UV mapping.
+Objects MUST have UV mapping.
 
 Export to OBJ from Blender with this options:
 
@@ -73,8 +76,7 @@ The generated TeapotGeometry.java is a Java class in the jmini3d.demo package ex
 
 Build
 =====
-
-This project is built with Gradle.
+This project is built with the Gradle build tool, you can download it from http://www.gradle.org
 
 Buld Android demo and install it to the connected device or emulator:
 ```

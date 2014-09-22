@@ -1,6 +1,7 @@
 package jmini3d.android.input;
 
 import android.os.Build;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -8,30 +9,39 @@ import android.view.View.OnTouchListener;
 import java.util.HashMap;
 
 import jmini3d.android.compat.CompatibilityWrapper5;
+import jmini3d.input.KeyListener;
 import jmini3d.input.TouchListener;
 import jmini3d.input.TouchPointer;
 
-public class TouchController implements OnTouchListener {
+public class InputController implements OnTouchListener, View.OnKeyListener {
 
-	TouchListener listener;
+	TouchListener touchListener;
+	KeyListener keyListener;
 
 	HashMap<Integer, TouchPointer> pointers = new HashMap<Integer, TouchPointer>();
 	HashMap<Integer, TouchPointer> pointersAux = new HashMap<Integer, TouchPointer>();
 
 	View view;
 
-	public TouchController(View view) {
+	public InputController(View view) {
 		this.view = view;
+	}
 
+	public void setTouchListener(TouchListener touchListener) {
+		this.touchListener = touchListener;
 		view.setOnTouchListener(this);
 	}
 
-	public void setListener(TouchListener listener) {
-		this.listener = listener;
+	public void setKeyListener(KeyListener keyListener) {
+		this.keyListener = keyListener;
+		view.setOnKeyListener(this);
 	}
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		if (touchListener == null) {
+			return false;
+		}
 		// = event.getActionMasked();
 		int action = event.getAction();
 		// = event.getActionIndex();
@@ -59,8 +69,8 @@ public class TouchController implements OnTouchListener {
 				}
 				touchPointer.status = TouchPointer.TOUCH_DOWN;
 				pointers.put(pointerId, touchPointer);
-				if (listener != null) {
-					listener.onTouch(pointers);
+				if (touchListener != null) {
+					touchListener.onTouch(pointers);
 				}
 				touchPointer.status = TouchPointer.TOUCH_MOVE;
 				break;
@@ -81,16 +91,16 @@ public class TouchController implements OnTouchListener {
 						movePointer.status = TouchPointer.TOUCH_MOVE;
 					}
 				}
-				if (listener != null) {
-					listener.onTouch(pointers);
+				if (touchListener != null) {
+					touchListener.onTouch(pointers);
 				}
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_UP:
 				TouchPointer upPointer = pointers.get(Integer.valueOf(pointerId));
 				upPointer.status = TouchPointer.TOUCH_UP;
-				if (listener != null) {
-					listener.onTouch(pointers);
+				if (touchListener != null) {
+					touchListener.onTouch(pointers);
 				}
 				pointers.remove(Integer.valueOf(pointerId));
 				pointersAux.put(pointerId, upPointer);
@@ -107,4 +117,43 @@ public class TouchController implements OnTouchListener {
 		}
 		return true;
 	}
+
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if (keyListener == null) {
+			return false;
+		}
+
+		int key;
+
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_DPAD_UP:
+				key = KeyListener.KEY_UP;
+				break;
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				key = KeyListener.KEY_DOWN;
+				break;
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				key = KeyListener.KEY_LEFT;
+				break;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				key = KeyListener.KEY_RIGHT;
+				break;
+			case KeyEvent.KEYCODE_DPAD_CENTER:
+				key = KeyListener.KEY_CENTER;
+				break;
+			default:
+				return false;
+		}
+
+		if (event.getAction() == KeyEvent.ACTION_DOWN) {
+			keyListener.onKeyDown(key);
+		}
+
+		if (event.getAction() == KeyEvent.ACTION_UP) {
+			keyListener.onKeyUp(key);
+		}
+		return true;
+	}
+
 }
