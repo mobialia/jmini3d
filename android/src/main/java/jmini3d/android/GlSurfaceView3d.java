@@ -15,14 +15,16 @@ import jmini3d.android.compat.CompatibilityWrapper5;
 public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Renderer {
 	public static final String TAG = "GlSurfaceView3d";
 
-	SceneController sceneController;
-	Renderer3d renderer3d;
-
 	int width, height;
+
+	Renderer3d renderer3d;
+	SceneController sceneController;
+	boolean renderContinuously;
 
 	public GlSurfaceView3d(Context ctx, SceneController sceneController, boolean renderContinuously) {
 		super(ctx);
 		this.sceneController = sceneController;
+		this.renderContinuously = renderContinuously;
 
 		setEGLContextClientVersion(2);
 
@@ -63,7 +65,15 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		}
 	}
 
+	public void requestRender() {
+		if (renderContinuously) {
+			return;
+		}
+		super.requestRender();
+	}
+
 	public void setRenderContinuously(boolean renderContinuously) {
+		this.renderContinuously = renderContinuously;
 		setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
 	}
 

@@ -24,8 +24,9 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback {
 
 	public Canvas3d(String resourceLoaderDir, SceneController sceneController, boolean renderContinuously) {
 		this.sceneController = sceneController;
-		webGLCanvas = DOM.createElement("canvas");
 		this.renderContinuously = renderContinuously;
+
+		webGLCanvas = DOM.createElement("canvas");
 
 		gl = (WebGLRenderingContext) getContext(webGLCanvas, "webgl");
 		if (gl == null) {
