@@ -48,6 +48,8 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback {
 		this.height = heigth;
 		webGLCanvas.setAttribute("width", width + "px");
 		webGLCanvas.setAttribute("height", heigth + "px");
+
+		requestRender();
 	}
 
 	public void onResume() {
@@ -65,9 +67,9 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback {
 
 	@Override
 	public void execute(double timestamp) {
-		if (!stopped) {
-			if (sceneController != null) {
-				Scene scene = sceneController.getScene(width, height);
+		if (!stopped && renderContinuously && sceneController != null) {
+			Scene scene = sceneController.getScene(width, height);
+			if (scene != null) {
 				renderer3d.render(scene);
 			}
 			AnimationScheduler.get().requestAnimationFrame(this);
@@ -75,8 +77,23 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback {
 	}
 
 	public void requestRender() {
+		if (renderContinuously) {
+			return;
+		}
 		Scene scene = sceneController.getScene(width, height);
-		renderer3d.render(scene);
+		if (scene != null) {
+			renderer3d.render(scene);
+		}
+	}
+
+	public void setRenderContinuously(boolean renderContinuously) {
+		if (this.renderContinuously != renderContinuously) {
+			this.renderContinuously = renderContinuously;
+
+			if (renderContinuously) {
+				AnimationScheduler.get().requestAnimationFrame(this);
+			}
+		}
 	}
 
 	public void setSceneController(SceneController sceneController) {

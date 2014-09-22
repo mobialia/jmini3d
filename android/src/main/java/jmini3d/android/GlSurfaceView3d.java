@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
-import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -30,7 +29,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		renderer3d = new Renderer3d(new ResourceLoader(ctx));
 
 		setRenderer(this);
-		setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
+		setRenderContinuously(renderContinuously);
 	}
 
 	public void setTraslucent(boolean traslucent) {
@@ -58,8 +57,14 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	public void onDrawFrame(GL10 unused) {
 		if (sceneController != null) {
 			Scene scene = sceneController.getScene(width, height);
-			renderer3d.render(scene);
+			if (scene != null) {
+				renderer3d.render(scene);
+			}
 		}
+	}
+
+	public void setRenderContinuously(boolean renderContinuously) {
+		setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
 	}
 
 	public void setSceneController(SceneController sceneController) {
