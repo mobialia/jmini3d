@@ -13,7 +13,7 @@ public class DemoSceneController implements SceneController, TouchListener {
 	long initialTime;
 
 	int sceneIndex = 0;
-	Scene scenes[] = {new TeapotScene(), new CubeScene(), new CubesScene(), new DiscoBallScene()};
+	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new DiscoBallScene()};
 
 	public DemoSceneController() {
 		initialTime = System.currentTimeMillis();

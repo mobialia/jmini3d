@@ -2,29 +2,27 @@ package jmini3d.demo;
 
 import java.util.Random;
 
-import jmini3d.Blending;
+import jmini3d.Color4;
 import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Scene;
-import jmini3d.Texture;
+import jmini3d.Vector3;
 import jmini3d.geometry.BoxGeometry;
 import jmini3d.geometry.Geometry;
+import jmini3d.light.AmbientLight;
+import jmini3d.light.PointLight;
 
 public class CubesScene extends Scene {
 
 	public CubesScene() {
 		Random r = new Random();
 
-		Texture map = new Texture("texture");
+		addLight(new AmbientLight(new Color4(50, 50, 50, 255)));
+		addLight(new PointLight(new Vector3(0, 0, 0), new Color4(255, 255, 255, 255)));
 
-		Material material1 = new Material(map);
-		material1.setBlending(Blending.AdditiveBlending);
-
-		Material material2 = new Material(map);
-		material2.color.setAll(255, 0, 0, 128);
-
-		Material material3 = new Material(map);
-		material3.color.setAll(0, 0, 255, 128);
+		Material material1 = new Material(new Color4(255, 0, 0, 255));
+		Material material2 = new Material(new Color4(0, 255, 0, 255));
+		Material material3 = new Material(new Color4(0, 0, 255, 255));
 
 		for (int i = 0; i < 200; i++) {
 			float x = r.nextFloat() * 50 - 25;

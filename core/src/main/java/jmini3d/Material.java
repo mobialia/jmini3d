@@ -11,7 +11,7 @@ public class Material {
 	public float reflectivity = 0f;
 
 	public Material() {
-		color = new Color4(0, 0, 0, 0);
+		color = new Color4();
 	}
 
 	public Material(Color4 color) {
@@ -20,14 +20,14 @@ public class Material {
 
 	public Material(Texture texture) {
 		this.map = texture;
-		color = new Color4(0, 0, 0, 0);
+		color = new Color4();
 	}
 
 	public Material(Texture texture, CubeMapTexture envMapTexture, float reflectivity) {
 		this.map = texture;
 		this.envMap = envMapTexture;
 		this.reflectivity = reflectivity;
-		color = new Color4(0, 0, 0, 0);
+		color = new Color4();
 	}
 
 	public void setBlending(Blending blending) {

@@ -12,7 +12,7 @@ public class Scene {
 	public ArrayList<Light> lights = new ArrayList<Light>();
 	public ArrayList<Object> unload = new ArrayList<Object>();
 
-	public Color4 backgroundColor = new Color4(0f, 0f, 0f, 1f);
+	public Color4 backgroundColor = new Color4(0, 0, 0, 255);
 
 	public Color4 getBackgroundColor() {
 		return backgroundColor;

@@ -7,11 +7,18 @@ public class Color4 {
 	public float b;
 	public float a;
 
-	public Color4(float r, float g, float b, float a) {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
+	public Color4() {
+		this.r = 0;
+		this.g = 0;
+		this.b = 0;
+		this.a = 0;
+	}
+
+	public Color4(int r, int g, int b, int a) {
+		this.r = r / 255f;
+		this.g = g / 255f;
+		this.b = b / 255f;
+		this.a = a / 255f;
 	}
 
 	public void setAll(long argb32) {

@@ -22,9 +22,9 @@ public class CubeScene extends Scene {
 
 		addChild(o3d);
 
-		addLight(new AmbientLight(new Color4(0.4f, 0.4f, 0.4f, 1)));
-		addLight(new PointLight(new Vector3(0, 50, 0), new Color4(0f, 0f, 1f, 1)));
-		addLight(new PointLight(new Vector3(0, -1.1f, 0), new Color4(1f, 0f, 0f, 1)));
-		addLight(new DirectionalLight(new Vector3(1, 0, 0), new Color4(0f, 1f, 0f, 1)));
+		addLight(new AmbientLight(new Color4(100, 100, 100, 255)));
+		addLight(new PointLight(new Vector3(0, 50, 0), new Color4(0, 0, 255, 255)));
+		addLight(new PointLight(new Vector3(0, -1.1f, 0), new Color4(255, 0, 0, 255)));
+		addLight(new DirectionalLight(new Vector3(1, 0, 0), new Color4(0, 255, 0, 255)));
 	}
 }
