@@ -5,7 +5,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.RootPanel;
 
 import jmini3d.Scene;
 import jmini3d.SceneController;
@@ -17,6 +16,7 @@ public class EntryPoint3d implements EntryPoint, SceneController {
 	public void onModuleLoad() {
 		canvas3d = new Canvas3d("./", this, true);
 
+		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
 		Window.addResizeHandler(new ResizeHandler() {
 			public void onResize(ResizeEvent event) {
 				canvas3d.setSize(event.getWidth(), event.getHeight());
@@ -25,7 +25,6 @@ public class EntryPoint3d implements EntryPoint, SceneController {
 
 		onCreateSetContentView();
 
-		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
 		canvas3d.onResume();
 	}
 
@@ -40,8 +39,4 @@ public class EntryPoint3d implements EntryPoint, SceneController {
 	public Scene getScene(int width, int height) {
 		return null;
 	}
-
-	native void log(String message) /*-{
-		console.log(message);
-    }-*/;
 }
