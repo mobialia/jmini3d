@@ -24,6 +24,8 @@ import jmini3d.light.PointLight;
 public class Program {
 	static final String TAG = "Program";
 
+	int key = -1;
+
 	WebGLProgram webGLProgram;
 
 	int maxPointLights;
@@ -259,7 +261,8 @@ public class Program {
 			int pointLightIndex = 0;
 			int dirLightIndex = 0;
 
-			for (Light light : scene.lights) {
+			for (int i = 0; i < scene.lights.size(); i++) {
+				Light light = scene.lights.get(i);
 				if (light instanceof AmbientLight) {
 					if (!ambientColor.equals(light.color)) {
 						gl.uniform3f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b);

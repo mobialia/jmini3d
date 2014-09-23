@@ -8,6 +8,7 @@ import com.googlecode.gwtgl.array.Float32Array;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLTexture;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
@@ -31,7 +32,7 @@ public class GpuUploader {
 	HashMap<Texture, ImageElement> textureImages = new HashMap<Texture, ImageElement>();
 	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<CubeMapTexture, WebGLTexture>();
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
-	HashMap<Integer, Program> shaderPrograms = new HashMap<Integer, Program>();
+	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
 
 	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader) {
 		this.gl = gl;
@@ -46,11 +47,18 @@ public class GpuUploader {
 			material.shaderKey = Program.getMaterialKey(material);
 		}
 		int key = scene.shaderKey & material.shaderKey;
-		Program program = shaderPrograms.get(key);
+		Program program = null;
+		// Use ArrayList instead HashMap to avoid Integer creation
+		for (int i = 0; i < shaderPrograms.size(); i++) {
+			if (key == shaderPrograms.get(i).key) {
+				program = shaderPrograms.get(i);
+			}
+		}
 		if (program == null) {
 			program = new Program(gl);
+			program.key = key;
 			program.init(scene, material);
-			shaderPrograms.put(key, program);
+			shaderPrograms.add(program);
 		}
 		return program;
 	}

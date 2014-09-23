@@ -8,6 +8,7 @@ import android.util.Log;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
@@ -20,6 +21,7 @@ import jmini3d.geometry.Geometry;
 public class GpuUploader {
 	static final String TAG = "GpuUploader";
 
+	// Use our Axis system
 	static final int[] CUBE_MAP_SIDES = {GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, //
 			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, //
 			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y};
@@ -29,7 +31,7 @@ public class GpuUploader {
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
 	HashMap<Texture, Integer> textures = new HashMap<Texture, Integer>();
 	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<CubeMapTexture, Integer>();
-	HashMap<Integer, Program> shaderPrograms = new HashMap<Integer, Program>();
+	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
 
 	public GpuUploader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
@@ -43,13 +45,18 @@ public class GpuUploader {
 			material.shaderKey = Program.getMaterialKey(material);
 		}
 		int key = scene.shaderKey & material.shaderKey;
-		Program program = shaderPrograms.get(key);
+		Program program = null;
+		// Use ArrayList instead HashMap to avoid Integer creation
+		for (int i = 0; i < shaderPrograms.size(); i++) {
+			if (key == shaderPrograms.get(i).key) {
+				program = shaderPrograms.get(i);
+			}
+		}
 		if (program == null) {
-			Log.d(TAG, "Uploading shader...");
-
 			program = new Program();
+			program.key = key;
 			program.init(scene, material, resourceLoader);
-			shaderPrograms.put(key, program);
+			shaderPrograms.add(program);
 		}
 		return program;
 	}
