@@ -10,12 +10,13 @@ public class Activity3d extends Activity implements SceneController {
 	public static final String TAG = "RendererActivity";
 
 	public GlSurfaceView3d glSurfaceView3d;
+	public boolean traslucent = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		glSurfaceView3d = new GlSurfaceView3d(this, this, true);
+		glSurfaceView3d = new GlSurfaceView3d(this, this, true, traslucent);
 
 		onCreateSetContentView();
 	}

@@ -21,20 +21,14 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	SceneController sceneController;
 	boolean renderContinuously;
 
-	public GlSurfaceView3d(Context ctx, SceneController sceneController, boolean renderContinuously) {
+	GL10 gl;
+
+	public GlSurfaceView3d(Context ctx, SceneController sceneController, boolean renderContinuously, boolean traslucent) {
 		super(ctx);
 		this.sceneController = sceneController;
 		this.renderContinuously = renderContinuously;
 
 		setEGLContextClientVersion(2);
-
-		renderer3d = new Renderer3d(new ResourceLoader(ctx));
-
-		setRenderer(this);
-		setRenderContinuously(renderContinuously);
-	}
-
-	public void setTraslucent(boolean traslucent) {
 		if (traslucent) {
 			if (Build.VERSION.SDK_INT >= 5) {
 				CompatibilityWrapper5.setZOrderOnTop(this);
@@ -42,10 +36,16 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			getHolder().setFormat(PixelFormat.TRANSLUCENT);
 		}
+
+		renderer3d = new Renderer3d(new ResourceLoader(ctx));
+
+		setRenderer(this);
+		setRenderContinuously(renderContinuously);
 	}
 
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig) {
+		this.gl = gl;
 	}
 
 	@Override
@@ -83,5 +83,9 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 	public Renderer3d getRenderer3d() {
 		return renderer3d;
+	}
+
+	public GL10 getGl() {
+		return gl;
 	}
 }
