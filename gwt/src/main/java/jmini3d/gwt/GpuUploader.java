@@ -121,7 +121,7 @@ public class GpuUploader {
 		return buffers;
 	}
 
-	public void upload(final Texture texture) {
+	public void upload(final Renderer3d renderer3d, final Texture texture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
@@ -137,7 +137,7 @@ public class GpuUploader {
 				Event.setEventListener(textureImage, new EventListener() {
 					@Override
 					public void onBrowserEvent(Event event) {
-						textureLoaded(texture);
+						textureLoaded(renderer3d, texture);
 					}
 				});
 				Event.sinkEvents(textureImage, Event.ONLOAD);
@@ -145,7 +145,7 @@ public class GpuUploader {
 		}
 	}
 
-	public void upload(final CubeMapTexture cubeMapTexture) {
+	public void upload(final Renderer3d renderer3d, final CubeMapTexture cubeMapTexture) {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
@@ -161,7 +161,7 @@ public class GpuUploader {
 				Event.setEventListener(textureImages[i], new EventListener() {
 					@Override
 					public void onBrowserEvent(Event event) {
-						cubeTextureLoaded(cubeMapTexture);
+						cubeTextureLoaded(renderer3d, cubeMapTexture);
 					}
 				});
 				Event.sinkEvents(textureImages[i], Event.ONLOAD);
@@ -169,8 +169,13 @@ public class GpuUploader {
 		}
 	}
 
-	public void textureLoaded(Texture texture) {
-		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, textures.get(texture));
+	public void textureLoaded(Renderer3d renderer3d, Texture texture) {
+		WebGLTexture mapTextureId = textures.get(texture);
+
+		gl.activeTexture(WebGLRenderingContext.TEXTURE0);
+		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, mapTextureId);
+		renderer3d.mapTextureId = mapTextureId;
+
 		gl.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
 				textureImages.get(texture));
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
@@ -178,17 +183,19 @@ public class GpuUploader {
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_S, WebGLRenderingContext.CLAMP_TO_EDGE);
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_T, WebGLRenderingContext.CLAMP_TO_EDGE);
 		gl.generateMipmap(WebGLRenderingContext.TEXTURE_2D);
-		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, null);
 
 		texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 		// TODO force redraw
 	}
 
-	public void cubeTextureLoaded(CubeMapTexture cubeMapTexture) {
+	public void cubeTextureLoaded(Renderer3d renderer3d, CubeMapTexture cubeMapTexture) {
 		cubeMapTexture.loadCount++;
 		if (cubeMapTexture.loadCount == 6) {
-			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, cubeMapTextures.get(cubeMapTexture));
-			// gl.pixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, 1);
+			WebGLTexture envMapTextureId = cubeMapTextures.get(cubeMapTexture);
+
+			gl.activeTexture(WebGLRenderingContext.TEXTURE1);
+			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, envMapTextureId);
+			renderer3d.envMapTextureId = envMapTextureId;
 
 			for (int i = 0; i < 6; i++) {
 				gl.texImage2D(CUBE_MAP_SIDES[i], 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
@@ -196,11 +203,10 @@ public class GpuUploader {
 			}
 
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
-			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR);
+			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR_MIPMAP_LINEAR);
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_WRAP_S, WebGLRenderingContext.CLAMP_TO_EDGE);
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_WRAP_T, WebGLRenderingContext.CLAMP_TO_EDGE);
 			gl.generateMipmap(WebGLRenderingContext.TEXTURE_CUBE_MAP);
-			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, null);
 
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 			// TODO force redraw

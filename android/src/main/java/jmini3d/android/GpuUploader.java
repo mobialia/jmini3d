@@ -129,7 +129,7 @@ public class GpuUploader {
 		return buffers;
 	}
 
-	public void upload(Texture texture) {
+	public void upload(Renderer3d renderer3d, Texture texture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 
@@ -137,7 +137,6 @@ public class GpuUploader {
 			try {
 				bitmap = resourceLoader.getImage(texture.image);
 			} catch (Exception e) {
-				Log.e(TAG, "Texture image not found in resources: " + texture.image);
 				return;
 			}
 			Integer textureId = textures.get(texture);
@@ -148,22 +147,22 @@ public class GpuUploader {
 				textures.put(texture, textureId);
 			}
 
+			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-			//GLES20.glPixelStorei(GLES20.GL_UNPACK_FLIP_Y_WEBGL, 1);
+			renderer3d.mapTextureId = textureId;
+
 			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-			//GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, bitmap);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
-			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
 			resourceLoader.freeBitmap(texture.image, bitmap);
 		}
 	}
 
-	public void upload(final CubeMapTexture cubeMapTexture) {
+	public void upload(Renderer3d renderer3d, CubeMapTexture cubeMapTexture) {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 
@@ -176,7 +175,9 @@ public class GpuUploader {
 			}
 			cubeMapTextures.put(cubeMapTexture, textureId);
 
-			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, cubeMapTextures.get(cubeMapTexture));
+			GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureId);
+			renderer3d.envMapTextureId = textureId;
 
 			for (int i = 0; i < 6; i++) {
 				Bitmap bitmap;
@@ -192,11 +193,10 @@ public class GpuUploader {
 				resourceLoader.freeBitmap(null, bitmap);
 			}
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_CUBE_MAP);
-			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, 0);
 		}
 	}
 

@@ -1,13 +1,12 @@
 package jmini3d.gwt;
 
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
+import com.googlecode.gwtgl.binding.WebGLTexture;
 
 import jmini3d.Blending;
-import jmini3d.CubeMapTexture;
 import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
 import jmini3d.Scene;
-import jmini3d.Texture;
 
 public class Renderer3d {
 	public static final String TAG = "Renderer";
@@ -26,8 +25,8 @@ public class Renderer3d {
 
 	Blending blending;
 	Program currentProgram = null;
-	Texture mapTexture;
-	CubeMapTexture envMapTexture;
+	WebGLTexture mapTextureId = null;
+	WebGLTexture envMapTextureId = null;
 
 	int width = -1;
 	int height = -1;
@@ -43,8 +42,8 @@ public class Renderer3d {
 	}
 
 	public void reset() {
-		mapTexture = null;
-		envMapTexture = null;
+		mapTextureId = null;
+		envMapTextureId = null;
 		gpuUploader.reset();
 
 		gl.enable(WebGLRenderingContext.DEPTH_TEST);

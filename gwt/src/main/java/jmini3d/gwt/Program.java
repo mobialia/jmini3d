@@ -4,6 +4,7 @@ import com.googlecode.gwtgl.array.Float32Array;
 import com.googlecode.gwtgl.binding.WebGLProgram;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
+import com.googlecode.gwtgl.binding.WebGLTexture;
 import com.googlecode.gwtgl.binding.WebGLUniformLocation;
 
 import java.util.ArrayList;
@@ -322,13 +323,13 @@ public class Program {
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
 
 		if (useMap) {
-			gpuUploader.upload(o3d.material.map);
+			gpuUploader.upload(renderer3d, o3d.material.map);
 			if ((o3d.material.map.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
 			}
 		}
 		if (useEnvMap) {
-			gpuUploader.upload(o3d.material.envMap);
+			gpuUploader.upload(renderer3d, o3d.material.envMap);
 			if ((o3d.material.envMap.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
 			}
@@ -353,20 +354,24 @@ public class Program {
 			gl.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
 			objectColor.setAllFrom(o3d.material.color);
 		}
-		if (useMap && renderer3d.mapTexture != o3d.material.map) {
-			gl.activeTexture(WebGLRenderingContext.TEXTURE0);
-			gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, gpuUploader.textures.get(o3d.material.map));
-			renderer3d.mapTexture = o3d.material.map;
+		if (useMap) {
+			WebGLTexture mapTextureId = gpuUploader.textures.get(o3d.material.map);
+			if (renderer3d.mapTextureId == null || renderer3d.mapTextureId != mapTextureId) {
+				gl.activeTexture(WebGLRenderingContext.TEXTURE0);
+				gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, mapTextureId);
+				renderer3d.mapTextureId = mapTextureId;
+			}
 		}
 		if (useEnvMap) {
 			if (reflectivity != o3d.material.reflectivity) {
 				gl.uniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
 				reflectivity = o3d.material.reflectivity;
 			}
-			if (renderer3d.envMapTexture != o3d.material.envMap) {
+			WebGLTexture envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
+			if (renderer3d.envMapTextureId == null || renderer3d.envMapTextureId != envMapTextureId) {
 				gl.activeTexture(WebGLRenderingContext.TEXTURE1);
-				gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, gpuUploader.cubeMapTextures.get(o3d.material.envMap));
-				renderer3d.envMapTexture = o3d.material.envMap;
+				gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, envMapTextureId);
+				renderer3d.envMapTextureId = envMapTextureId;
 			}
 		}
 
