@@ -48,9 +48,10 @@ public class ResourceLoader {
 	}
 
 	public void freeBitmap(String name, Bitmap bitmap) {
-		bitmap.recycle();
 		if (name != null && customBitmaps.containsKey(name)) {
-			customBitmaps.remove(name);
+//			customBitmaps.remove(name);
+		} else {
+			bitmap.recycle();
 		}
 	}
 
