@@ -11,10 +11,11 @@ JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and 
 
 Features
 ========
-* Optimized for speed and simplicity
-* Extremely fast model load (converts OBJ models to Java classes)
+* Optimized for speed and smooth rendering
+* Extremely fast model loading (converts OBJ models to Java classes)
 * Multiple lights (Ambient/Point/Directional), only diffuse lighting (no specular), no attenuation with the distance
 * Reflections with environment mapping
+* HUD support
 
 Subprojects
 ===========
