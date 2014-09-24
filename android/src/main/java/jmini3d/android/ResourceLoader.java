@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 public class ResourceLoader {
-
 	Context context;
 
 	HashMap<String, Bitmap> customBitmaps = new HashMap<String, Bitmap>();
