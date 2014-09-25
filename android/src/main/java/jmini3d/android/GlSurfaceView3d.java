@@ -40,7 +40,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		renderer3d = new Renderer3d(new ResourceLoader(ctx));
 
 		setRenderer(this);
-		setRenderContinuously(renderContinuously);
+		setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
 	}
 
 	@Override
@@ -73,8 +73,10 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	}
 
 	public void setRenderContinuously(boolean renderContinuously) {
-		this.renderContinuously = renderContinuously;
-		setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
+		if (this.renderContinuously != renderContinuously) {
+			this.renderContinuously = renderContinuously;
+			setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
+		}
 	}
 
 	public void setSceneController(SceneController sceneController) {
