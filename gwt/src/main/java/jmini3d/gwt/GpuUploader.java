@@ -34,9 +34,12 @@ public class GpuUploader {
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
 	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
 
-	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader) {
+	TextureLoadedListener textureLoadedListener;
+
+	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader, TextureLoadedListener textureLoadedListener) {
 		this.gl = gl;
 		this.resourceLoader = resourceLoader;
+		this.textureLoadedListener = textureLoadedListener;
 	}
 
 	public Program getProgram(Scene scene, Material material) {
@@ -184,7 +187,10 @@ public class GpuUploader {
 		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_T, WebGLRenderingContext.CLAMP_TO_EDGE);
 
 		texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
-		// TODO force redraw
+
+		if (textureLoadedListener != null) {
+			textureLoadedListener.onTextureLoaded();
+		}
 	}
 
 	public void cubeTextureLoaded(Renderer3d renderer3d, CubeMapTexture cubeMapTexture) {
@@ -207,7 +213,10 @@ public class GpuUploader {
 			gl.texParameteri(WebGLRenderingContext.TEXTURE_CUBE_MAP, WebGLRenderingContext.TEXTURE_WRAP_T, WebGLRenderingContext.CLAMP_TO_EDGE);
 
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
-			// TODO force redraw
+
+			if (textureLoadedListener != null) {
+				textureLoadedListener.onTextureLoaded();
+			}
 		}
 	}
 

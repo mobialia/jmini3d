@@ -10,7 +10,7 @@ import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import jmini3d.Scene;
 import jmini3d.SceneController;
 
-public class Canvas3d implements AnimationScheduler.AnimationCallback {
+public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLoadedListener {
 
 	Element webGLCanvas;
 	WebGLRenderingContext gl;
@@ -37,7 +37,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback {
 			return;
 		}
 
-		renderer3d = new Renderer3d(gl, new ResourceLoader(resourceLoaderDir));
+		renderer3d = new Renderer3d(gl, new ResourceLoader(resourceLoaderDir), this);
 	}
 
 	public final native Context getContext(Element el, String contextId) /*-{
@@ -107,5 +107,10 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback {
 
 	public Element getElement() {
 		return webGLCanvas;
+	}
+
+	@Override
+	public void onTextureLoaded() {
+		requestRender();
 	}
 }

@@ -33,11 +33,11 @@ public class Renderer3d {
 
 	WebGLRenderingContext gl;
 
-	public Renderer3d(WebGLRenderingContext gl, ResourceLoader resourceLoader) {
+	public Renderer3d(WebGLRenderingContext gl, ResourceLoader resourceLoader, TextureLoadedListener textureLoadedListener) {
 		this.gl = gl;
 		this.resourceLoader = resourceLoader;
 		MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
-		gpuUploader = new GpuUploader(gl, resourceLoader);
+		gpuUploader = new GpuUploader(gl, resourceLoader, textureLoadedListener);
 		reset();
 	}
 
