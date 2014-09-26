@@ -56,8 +56,6 @@ The ResourceLoader is initialized with "./" if the resources are in that folder 
 
 Generate Geometries from OBJ files
 ==================================
-Objects MUST have UV mapping.
-
 Export to OBJ from Blender with this options:
 
 * Write Normals
@@ -70,7 +68,7 @@ An convert to a Java class with:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.2.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.4.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
 ```
 
 The generated TeapotGeometry.java is a Java class in the jmini3d.demo package extending Geometry.

@@ -57,12 +57,12 @@ public class Obj2Class {
 					if (facesSB.length() > 0) {
 						facesSB.append(", ");
 					}
-					
-					facesSB.append(addVertexNormalUv(Integer.valueOf(tokens[1]), Integer.valueOf(tokens[2]), Integer.valueOf(tokens[3])));
+
+					facesSB.append(addVertexNormalUv(tokens[1], tokens[2], tokens[3]));
 					facesSB.append(", ");
-					facesSB.append(addVertexNormalUv(Integer.valueOf(tokens[4]), Integer.valueOf(tokens[5]), Integer.valueOf(tokens[6])));
+					facesSB.append(addVertexNormalUv(tokens[4], tokens[5], tokens[6]));
 					facesSB.append(", ");
-					facesSB.append(addVertexNormalUv(Integer.valueOf(tokens[7]), Integer.valueOf(tokens[8]), Integer.valueOf(tokens[9])));
+					facesSB.append(addVertexNormalUv(tokens[7], tokens[8], tokens[9]));
 				}
 			}
 			
@@ -71,10 +71,10 @@ public class Obj2Class {
 			System.out.println("Normals size=" + normalsList.size());
 			System.out.println("Uvs size=" + uvsList.size());
 			System.out.println("FaceList (vertex+normals+uvs) size=" + facesList.size());
-			System.out.println(vertexSB.toString());
-			System.out.println(normalsSB.toString());
-			System.out.println(uvsSB.toString());
-			System.out.println(facesSB.toString());
+			//System.out.println(vertexSB.toString());
+			//System.out.println(normalsSB.toString());
+			//System.out.println(uvsSB.toString());
+			//System.out.println(facesSB.toString());
 			
 			writeFile(packageName, outFile);
 			
@@ -82,23 +82,31 @@ public class Obj2Class {
 			e.printStackTrace();
 		}
 	}
-	
-	public int addVertexNormalUv(int vertexIndex, int uvIndex, int normalIndex) {
+
+	public int addVertexNormalUv(String vertexIndex, String uvIndex, String normalIndex) {
 		String key = vertexIndex + "/" + normalIndex + "/" + uvIndex;
+
+		Integer vertexInt = Integer.valueOf(vertexIndex);
+		Integer uvInt = "".equals(uvIndex) ? -1 : Integer.valueOf(uvIndex);
+		Integer normalInt = Integer.valueOf(normalIndex);
 
 		if (!facesList.contains(key)) {
 			if (vertexSB.length() > 0) {
 				vertexSB.append(", ");
 				normalsSB.append(", ");
-				uvsSB.append(", ");
-			}		
-			vertexSB.append(vertexList.get(vertexIndex - 1));
-			normalsSB.append(normalsList.get(normalIndex - 1));
-			uvsSB.append(uvsList.get(uvIndex - 1));
-			
+				if (uvInt != -1) {
+					uvsSB.append(", ");
+				}
+			}
+			vertexSB.append(vertexList.get(vertexInt - 1));
+			normalsSB.append(normalsList.get(normalInt - 1));
+			if (uvInt != -1) {
+				uvsSB.append(uvsList.get(uvInt - 1));
+			}
+
 			facesList.add(key);
 		}
-		
+
 		return facesList.indexOf(key);
 	}
 	
@@ -131,12 +139,18 @@ public class Obj2Class {
 		sb.append("    return normals;\n");
 		sb.append("}\n");
 
-		sb.append("public float[] uvs() {\n");
-		sb.append("    final float uvs[] = {\n");
-		sb.append(uvsSB);
-		sb.append("    };\n");
-		sb.append("    return uvs;\n");
-		sb.append("}\n");
+		if (uvsList.size() > 0) {
+			sb.append("public float[] uvs() {\n");
+			sb.append("    final float uvs[] = {\n");
+			sb.append(uvsSB);
+			sb.append("    };\n");
+			sb.append("    return uvs;\n");
+			sb.append("}\n");
+		} else {
+			sb.append("public float[] uvs() {\n");
+			sb.append("    return null;\n");
+			sb.append("}\n");
+		}
 
 		sb.append("public short[] faces() {\n");
 		sb.append("    final short faces[] = {\n");
