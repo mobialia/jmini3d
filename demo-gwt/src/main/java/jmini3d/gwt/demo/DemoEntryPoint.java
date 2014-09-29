@@ -11,6 +11,7 @@ public class DemoEntryPoint extends EntryPoint3d {
 
 	@Override
 	public void onModuleLoad() {
+		resourceDir = "./resources/";
 		super.onModuleLoad();
 		DemoSceneController sceneController = new DemoSceneController();
 		canvas3d.setSceneController(sceneController);

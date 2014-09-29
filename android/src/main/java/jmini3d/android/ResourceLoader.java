@@ -25,15 +25,15 @@ public class ResourceLoader {
 			return customBitmaps.get(image);
 		}
 
-		String uri = "drawable/" + image;
-		int imageResource = context.getResources().getIdentifier(uri, null, context.getPackageName());
-
-		return makeBitmapFromResourceId(imageResource);
+		try {
+			return makeBitmapFromInputStream(context.getAssets().open(image));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public Bitmap makeBitmapFromResourceId(int id) {
-		InputStream is = context.getResources().openRawResource(id);
-
+	public Bitmap makeBitmapFromInputStream(InputStream is) {
 		Bitmap bitmap;
 		try {
 			bitmap = BitmapFactory.decodeStream(is);

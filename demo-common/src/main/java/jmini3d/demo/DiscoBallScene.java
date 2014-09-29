@@ -17,7 +17,7 @@ public class DiscoBallScene extends Scene {
 
 
 	public DiscoBallScene() {
-		CubeMapTexture envMap = new CubeMapTexture(new String[]{"posx", "negx", "posy", "negy", "posz", "negz"});
+		CubeMapTexture envMap = new CubeMapTexture(new String[]{"posx.png", "negx.png", "posy.png", "negy.png", "posz.png", "negz.png"});
 		Material mirrorMat = new Material(null, envMap, 0.8f);
 
 		VariableGeometry skyboxGeometry = new SkyboxGeometry(300);

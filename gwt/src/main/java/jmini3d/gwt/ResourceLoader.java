@@ -5,19 +5,19 @@ import com.google.gwt.user.client.DOM;
 
 public class ResourceLoader {
 
-	String imagePath;
+	String resourcePath;
 
 	/**
-	 * @param imagePath Path where images are located, with the trailing slash i.e.
-	 *                  "img/"
+	 * @param resourcePath Path where images are located, with the trailing slash i.e.
+	 *                     "img/"
 	 */
-	public ResourceLoader(String imagePath) {
-		this.imagePath = imagePath;
+	public ResourceLoader(String resourcePath) {
+		this.resourcePath = resourcePath;
 	}
 
 	public ImageElement getImage(String image) {
 		ImageElement img = ImageElement.as(DOM.createImg());
-		img.setSrc(imagePath + image + ".png");
+		img.setSrc(resourcePath + image);
 
 		return img;
 	}

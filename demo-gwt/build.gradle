@@ -82,3 +82,13 @@ task gwtSuperDev(dependsOn: classes, type: JavaExec) {
 
     maxHeapSize = '512M'
 }
+
+task copyResources(type: Copy)
+
+copyResources {
+    from '../demo-common/resources'
+    into 'src/main/webapp/resources'
+    include('**/*')
+}
+
+compileGwt.dependsOn copyResources

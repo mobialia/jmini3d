@@ -10,7 +10,7 @@ import jmini3d.geometry.Geometry;
 public class EnvMapCubeScene extends Scene {
 
 	public EnvMapCubeScene() {
-		CubeMapTexture envMap = new CubeMapTexture(new String[]{"posx", "negx", "posy", "negy", "posz", "negz"});
+		CubeMapTexture envMap = new CubeMapTexture(new String[]{"posx.png", "negx.png", "posy.png", "negy.png", "posz.png", "negz.png"});
 
 		Material material1 = new Material(null, envMap, 0);
 		material1.useEnvMapAsMap = true;

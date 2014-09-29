@@ -15,7 +15,7 @@ import jmini3d.light.PointLight;
 public class CubeScene extends Scene {
 
 	public CubeScene() {
-		Texture map = new Texture("texture");
+		Texture map = new Texture("texture.png");
 		Material material1 = new Material(map);
 		Geometry geometry = new BoxGeometry(1);
 		Object3d o3d = new Object3d(geometry, material1);

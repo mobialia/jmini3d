@@ -20,3 +20,14 @@ android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
 }
+
+
+task copyResources(type: Copy)
+
+copyResources {
+    from '../demo-common/resources'
+    into 'src/main/assets'
+    include('**/*')
+}
+
+preBuild.dependsOn copyResources

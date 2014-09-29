@@ -12,9 +12,10 @@ import jmini3d.SceneController;
 public class EntryPoint3d implements EntryPoint, SceneController {
 
 	public Canvas3d canvas3d;
+	public String resourceDir = "./";
 
 	public void onModuleLoad() {
-		canvas3d = new Canvas3d("./", this, true);
+		canvas3d = new Canvas3d(resourceDir, this, true);
 
 		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
 		Window.addResizeHandler(new ResizeHandler() {
