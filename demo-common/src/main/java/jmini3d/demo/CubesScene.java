@@ -3,7 +3,6 @@ package jmini3d.demo;
 import java.util.Random;
 
 import jmini3d.Color4;
-import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Vector3;
@@ -11,6 +10,7 @@ import jmini3d.geometry.BoxGeometry;
 import jmini3d.geometry.Geometry;
 import jmini3d.light.AmbientLight;
 import jmini3d.light.PointLight;
+import jmini3d.material.Material;
 
 public class CubesScene extends Scene {
 

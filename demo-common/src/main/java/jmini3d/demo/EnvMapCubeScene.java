@@ -1,11 +1,11 @@
 package jmini3d.demo;
 
 import jmini3d.CubeMapTexture;
-import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.geometry.BoxGeometry;
 import jmini3d.geometry.Geometry;
+import jmini3d.material.Material;
 
 public class EnvMapCubeScene extends Scene {
 

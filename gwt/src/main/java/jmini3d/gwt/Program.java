@@ -13,7 +13,6 @@ import java.util.HashMap;
 
 import jmini3d.Color4;
 import jmini3d.GpuObjectStatus;
-import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Vector3;
@@ -21,6 +20,7 @@ import jmini3d.light.AmbientLight;
 import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
 import jmini3d.light.PointLight;
+import jmini3d.material.Material;
 
 public class Program {
 	static final String TAG = "Program";

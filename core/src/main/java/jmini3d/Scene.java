@@ -14,6 +14,8 @@ public class Scene {
 
 	public Color4 backgroundColor = new Color4(0, 0, 0, 255);
 
+	int width = -1, height = -1;
+
 	public Color4 getBackgroundColor() {
 		return backgroundColor;
 	}
@@ -56,5 +58,20 @@ public class Scene {
 		hud.clear();
 		unload.clear();
 		lights.clear();
+	}
+
+	public void setViewPort(int width, int height) {
+		if (this.width != width || this.height != height) {
+			this.width = width;
+			this.height = height;
+
+			camera.setWidth(width);
+			camera.setHeight(height);
+			onViewPortChanged(width, height);
+		}
+	}
+
+	public void onViewPortChanged(int width, int height) {
+
 	}
 }

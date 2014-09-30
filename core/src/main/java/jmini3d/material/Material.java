@@ -1,4 +1,9 @@
-package jmini3d;
+package jmini3d.material;
+
+import jmini3d.Blending;
+import jmini3d.Color4;
+import jmini3d.CubeMapTexture;
+import jmini3d.Texture;
 
 public class Material {
 	public int shaderKey = -1;

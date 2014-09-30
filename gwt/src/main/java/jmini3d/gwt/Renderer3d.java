@@ -72,6 +72,7 @@ public class Renderer3d {
 			width = scene.camera.getWidth();
 			height = scene.camera.getHeight();
 			gl.viewport(0, 0, width, height);
+			MatrixUtils.ortho(ortho, 0, width, height, 0, -5, 1);
 		}
 
 		for (int i = 0; i < scene.unload.size(); i++) {

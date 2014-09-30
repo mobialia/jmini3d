@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import jmini3d.Color4;
 import jmini3d.GpuObjectStatus;
-import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Vector3;
@@ -17,6 +16,7 @@ import jmini3d.light.AmbientLight;
 import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
 import jmini3d.light.PointLight;
+import jmini3d.material.Material;
 
 public class Program {
 	public static final String TAG = "Program";
@@ -202,8 +202,8 @@ public class Program {
 			fragmentShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
 		}
 
-		fragmentShaderStringBuffer.append(resourceLoader.loadRawResource(R.raw.fragment_shader));
-		vertexShaderStringBuffer.append(resourceLoader.loadRawResource(R.raw.vertex_shader));
+		fragmentShaderStringBuffer.append(resourceLoader.loadRawString(R.raw.fragment_shader));
+		vertexShaderStringBuffer.append(resourceLoader.loadRawString(R.raw.vertex_shader));
 
 		vertexShaderString = vertexShaderStringBuffer.toString();
 		fragmentShaderString = fragmentShaderStringBuffer.toString();

@@ -19,7 +19,6 @@ public class DemoEntryPoint extends EntryPoint3d {
 		setTouchListener(sceneController);
 	}
 
-
 	public void setTouchListener(TouchListener listener) {
 		if (touchController == null) {
 			touchController = new InputController(canvas3d.getElement());

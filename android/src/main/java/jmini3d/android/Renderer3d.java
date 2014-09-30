@@ -33,7 +33,6 @@ public class Renderer3d {
 
 	public Renderer3d(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
-		MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
 		gpuUploader = new GpuUploader(resourceLoader);
 	}
 
@@ -68,6 +67,7 @@ public class Renderer3d {
 			width = scene.camera.getWidth();
 			height = scene.camera.getHeight();
 			GLES20.glViewport(0, 0, width, height);
+			MatrixUtils.ortho(ortho, 0, width, height, 0, -5, 1);
 		}
 
 		for (int i = 0; i < scene.unload.size(); i++) {

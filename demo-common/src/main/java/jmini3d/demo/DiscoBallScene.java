@@ -2,7 +2,6 @@ package jmini3d.demo;
 
 import jmini3d.Color4;
 import jmini3d.CubeMapTexture;
-import jmini3d.Material;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Utils;
@@ -12,6 +11,7 @@ import jmini3d.geometry.VariableGeometry;
 import jmini3d.light.AmbientLight;
 import jmini3d.light.DirectionalLight;
 import jmini3d.light.PointLight;
+import jmini3d.material.Material;
 
 public class DiscoBallScene extends Scene {
 

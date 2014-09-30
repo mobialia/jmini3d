@@ -13,10 +13,10 @@ import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
 import jmini3d.GpuObjectStatus;
-import jmini3d.Material;
 import jmini3d.Scene;
 import jmini3d.Texture;
 import jmini3d.geometry.Geometry;
+import jmini3d.material.Material;
 
 public class GpuUploader {
 	static final String TAG = "GpuUploader";

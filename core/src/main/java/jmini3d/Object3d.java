@@ -1,6 +1,7 @@
 package jmini3d;
 
 import jmini3d.geometry.Geometry;
+import jmini3d.material.Material;
 
 public class Object3d {
 
@@ -47,6 +48,10 @@ public class Object3d {
 	public void setPosition(float x, float y, float z) {
 		this.position.setAll(x, y, z);
 		needsMatrixUpdate = true;
+	}
+
+	public Geometry getGeometry3d() {
+		return geometry3d;
 	}
 
 	public void setRotationMatrix(Vector3 direction, Vector3 up, Vector3 side) {

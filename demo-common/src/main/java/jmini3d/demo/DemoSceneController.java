@@ -21,8 +21,7 @@ public class DemoSceneController implements SceneController, TouchListener {
 
 	@Override
 	public Scene getScene(int width, int height) {
-		scenes[sceneIndex].camera.setWidth(width);
-		scenes[sceneIndex].camera.setHeight(height);
+		scenes[sceneIndex].setViewPort(width, height);
 
 		// Rotate camera...
 		cameraAngle = 0.0005f * (System.currentTimeMillis() - initialTime);

@@ -14,6 +14,13 @@ public class Color4 {
 		this.a = 0;
 	}
 
+	public Color4(int r, int g, int b) {
+		this.r = r / 255f;
+		this.g = g / 255f;
+		this.b = b / 255f;
+		this.a = 1;
+	}
+
 	public Color4(int r, int g, int b, int a) {
 		this.r = r / 255f;
 		this.g = g / 255f;
