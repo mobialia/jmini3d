@@ -26,7 +26,7 @@ task copyResources(type: Copy)
 
 copyResources {
     from '../demo-common/resources'
-    into 'src/main/assets'
+    into 'src/main/res/drawable-nodpi'
     include('**/*')
 }
 
