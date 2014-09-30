@@ -17,7 +17,10 @@ public class Object3d {
 	public float[] normalMatrix = new float[9];
 
 	private float rotationMatrix[];
+	private float scaleMatrix[];
 	private float[] translationMatrix = new float[16];
+
+	float scale = 1;
 
 	private boolean needsMatrixUpdate = true;
 
@@ -63,6 +66,20 @@ public class Object3d {
 		needsMatrixUpdate = true;
 	}
 
+	public void setScale(float scale) {
+		if (this.scale != scale) {
+			this.scale = scale;
+			if (scaleMatrix == null) {
+				scaleMatrix = new float[16];
+				MatrixUtils.copyMatrix(MatrixUtils.IDENTITY4, scaleMatrix);
+			}
+			scaleMatrix[0] = scale;
+			scaleMatrix[5] = scale;
+			scaleMatrix[10] = scale;
+			needsMatrixUpdate = true;
+		}
+	}
+
 	public void updateMatrices() {
 		if (needsMatrixUpdate) {
 			needsMatrixUpdate = false;
@@ -76,6 +93,10 @@ public class Object3d {
 
 			if (rotationMatrix != null) {
 				MatrixUtils.multiply(modelViewMatrix, rotationMatrix, modelViewMatrix);
+			}
+
+			if (scale != 1 && scaleMatrix != null) {
+				MatrixUtils.multiply(modelViewMatrix, scaleMatrix, modelViewMatrix);
 			}
 
 			normalMatrix = MatrixUtils.toInverseMat3(modelViewMatrix, normalMatrix);
