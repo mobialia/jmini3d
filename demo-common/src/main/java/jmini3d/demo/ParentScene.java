@@ -43,9 +43,14 @@ public class ParentScene extends Scene {
 	 */
 	@Override
 	public void onViewPortChanged(int width, int height) {
+		// DO not exceed screen width
 		float titleScale = ((float) width) / ((float) fm.right);
+		if (titleScale > 1.5f) {
+			titleScale = 1.5f;
+		}
 		titleObject3d.setScale(titleScale);
-		titleObject3d.setPosition(0, fm.bottom * titleScale * 0.5f, 0);
+		// center in screen
+		titleObject3d.setPosition((width - (((float) fm.right) * titleScale)) / 2, fm.bottom * titleScale * 0.5f, 0);
 
 		float buttonWidth = Math.min(width, height) / 5;
 		((SpriteGeometry) buttonLeft.getGeometry3d()).setSpritePosition(0, 0, height - buttonWidth, buttonWidth, height);

@@ -14,7 +14,7 @@ import jmini3d.material.Material;
 public class CubesScene extends ParentScene {
 
 	public CubesScene() {
-		super("Multiple cubes, light at the center of the scene");
+		super("Multiple cubes with a light");
 
 		Random r = new Random();
 
