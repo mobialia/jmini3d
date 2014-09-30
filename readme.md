@@ -15,7 +15,8 @@ Features
 * Extremely fast model loading (converts OBJ models to Java classes)
 * Multiple lights (Ambient/Point/Directional), only diffuse lighting (no specular), no attenuation with the distance
 * Reflections with environment mapping
-* HUD support
+* HUD and 2D sprites support
+* Bitmap font support
 
 Subprojects
 ===========
@@ -24,7 +25,7 @@ Subprojects
 * *gwt:* the GWT library project implementing the WebGL Renderer, EntryPoint3d, Canvas3d, etc.
 * *gwt-cocoonjs:* GWT Linker to make JMini3D work with the CocoonJS framework (it can package WebGL apps for iOS)
 * *gwtgl:* a dependency for the gwt project
-* *utils:* includes an utility to generate Geometry files from OBJ models
+* *utils:* includes utilities to generate Geometry classes from OBJ models and Font classes from FNT files
 * *demo-common:* The common files for the demo project with a SceneController and multiple Scenes
 * *demo-android:* The Android demo application
 * *demo-gwt:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d-demo-gwt/
@@ -39,6 +40,20 @@ This library uses the same axis system than Blender, z is up, y is front.
  | /
  |------x
 ```
+
+HUD Coordinates
+===============
+This lib uses a standard system for HUD sprites:
+```
+       x
+  0------- width
+  |
+y |
+  |
+height
+```
+With the width an height in screen pixels. When the screen size changes, the Scene must
+be notified with setViewPort(int width, int height) readjusting the HUD elements.
 
 Android
 =======
@@ -68,10 +83,22 @@ An convert to a Java class with:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.4.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.5.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
 ```
 
 The generated TeapotGeometry.java is a Java class in the jmini3d.demo package extending Geometry.
+
+Generate Fonts from FNT files
+=============================
+
+Jmini3D can use bitmap fonts exported with BMfont http://www.angelcode.com/products/bmfont/. In the export options
+select "White text with alpha" and convert the fnt generated FNT file to a Java class:
+```
+cd utils
+gradle jar
+java -cp ./build/libs/jmini3d-utils-0.5.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
+```
+The font texture must be placed in the images folder. It supports fonts with only one texture.
 
 Build
 =====
@@ -90,8 +117,9 @@ gradle install
 cd ../demo-gwt
 gradle compileGwt
 ```
+Then upload the content of demo-gwt/src/main/webapp/ to a web server (or access it with a local web server).
 
-Install this library's JARs and AARs to the local Maven repo:
+To install this library's JARs and AARs to the local Maven repo:
 ```
 gradle install
 ```

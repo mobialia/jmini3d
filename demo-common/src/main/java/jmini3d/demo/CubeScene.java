@@ -2,7 +2,6 @@ package jmini3d.demo;
 
 import jmini3d.Color4;
 import jmini3d.Object3d;
-import jmini3d.Scene;
 import jmini3d.Texture;
 import jmini3d.Vector3;
 import jmini3d.geometry.BoxGeometry;
@@ -12,9 +11,11 @@ import jmini3d.light.DirectionalLight;
 import jmini3d.light.PointLight;
 import jmini3d.material.Material;
 
-public class CubeScene extends Scene {
+public class CubeScene extends ParentScene {
 
 	public CubeScene() {
+		super("A simple cube with different lights");
+
 		Texture map = new Texture("texture.png");
 		Material material1 = new Material(map);
 		Geometry geometry = new BoxGeometry(1);

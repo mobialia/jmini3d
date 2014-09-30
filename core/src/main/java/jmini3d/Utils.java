@@ -51,6 +51,10 @@ public class Utils {
 		return true;
 	}
 
+	public static float p(float n, float x) {
+		return (2f * n - 1f) / (2f * x);
+	}
+
 	public static float p256(float n) {
 		return (2f * n - 1f) / (2f * 256f);
 	}
