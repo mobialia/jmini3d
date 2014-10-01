@@ -45,7 +45,7 @@ This library uses the same axis system than Blender, z is up, y is front.
 
 HUD Coordinates
 ===============
-This lib uses a standard system for HUD sprites:
+The coordinates for HUD sprites starts in the top left corner with width and height in screen pixels:
 ```
        x
   0------- width
@@ -54,8 +54,7 @@ y |
   |
 height
 ```
-With the width an height in screen pixels. When the screen size changes, the Scene must
-be notified with setViewPort(int width, int height) readjusting the HUD elements.
+When the screen size changes, the Scene must be notified with setViewPort(int width, int height) and it must readjust the HUD elements.
 
 Android
 =======
@@ -81,7 +80,7 @@ Export to OBJ from Blender with this options:
 * Y Forward
 * Z up
 
-An convert to a Java class with:
+And convert to a Java class with:
 ```
 cd utils
 gradle jar
