@@ -1,5 +1,6 @@
 package jmini3d.demo;
 
+import jmini3d.Font;
 import jmini3d.Object3d;
 import jmini3d.Rect;
 import jmini3d.Scene;
@@ -9,7 +10,7 @@ import jmini3d.material.SpriteMaterial;
 
 public class ParentScene extends Scene {
 
-	ArialFont font = new ArialFont();
+	Font font = new ArialFont();
 
 	String title;
 
@@ -45,8 +46,8 @@ public class ParentScene extends Scene {
 	public void onViewPortChanged(int width, int height) {
 		// DO not exceed screen width
 		float titleScale = ((float) width) / ((float) fm.right);
-		if (titleScale > 1.5f) {
-			titleScale = 1.5f;
+		if (titleScale > 1) {
+			titleScale = 1f;
 		}
 		titleObject3d.setScale(titleScale);
 		// center in screen
