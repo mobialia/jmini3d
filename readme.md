@@ -2,6 +2,8 @@ JMini3D
 =======
 Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
 
+HTML5 demo: http://www.mobialia.com/jmini3d-demo-gwt/
+
 Also includes an input abstraction library (with key & pointer events) for Android and GWT.
 
 JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and HTML5 versions like:
@@ -28,7 +30,7 @@ Subprojects
 * *utils:* includes utilities to generate Geometry classes from OBJ models and Font classes from FNT files
 * *demo-common:* The common files for the demo project with a SceneController and multiple Scenes
 * *demo-android:* The Android demo application
-* *demo-gwt:* The demo project in GWT, you can view it at http://www.mobialia.com/jmini3d-demo-gwt/
+* *demo-gwt:* The demo project in GWT
 
 Axis
 ====
