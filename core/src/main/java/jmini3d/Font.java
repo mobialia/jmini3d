@@ -98,11 +98,14 @@ public class Font {
 				System.out.print("Character " + c + " not found in bitmap texture");
 				continue;
 			}
-			// Check kernings
+			for (Kerning k : kernings) {
+				if (k.first == oldChar && k.second == c) {
+					x += k.amount;
+				}
+			}
 
-
-			geometry.addSprite(x + cs.xoffset, y + cs.yoffset, x + cs.xoffset + cs.width + 1, y + cs.yoffset + cs.height + 1, //
-					Utils.p(cs.x, scaleW), Utils.p(cs.y, scaleH), Utils.p(cs.x + cs.width + 1, scaleW), Utils.p(cs.y + cs.height + 1, scaleH));
+			geometry.addSprite(x + cs.xoffset, y + cs.yoffset, x + cs.xoffset + cs.width, y + cs.yoffset + cs.height, //
+					Utils.p(cs.x + 1, scaleW), Utils.p(cs.y + 1, scaleH), Utils.p(cs.x + cs.width + 1, scaleW), Utils.p(cs.y + cs.height + 1, scaleH));
 			x += cs.xadvance;
 			oldChar = c;
 		}
