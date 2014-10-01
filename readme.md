@@ -91,8 +91,10 @@ The generated TeapotGeometry.java is a Java class in the jmini3d.demo package ex
 Generate Fonts from FNT files
 =============================
 
-Jmini3D can use bitmap fonts exported with BMfont http://www.angelcode.com/products/bmfont/. In the export options
-select "White text with alpha" and convert the fnt generated FNT file to a Java class:
+Jmini3D can use FNT bitmap fonts in text format exported with BMfont http://www.angelcode.com/products/bmfont/ or Littera (online, flash) http://kvazars.com/littera/.
+In BMFont export options select "White text with alpha".
+
+To convert the FNT file to a Java class:
 ```
 cd utils
 gradle jar
