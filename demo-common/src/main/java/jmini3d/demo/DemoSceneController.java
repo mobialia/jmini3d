@@ -31,8 +31,9 @@ public class DemoSceneController implements SceneController, TouchListener {
 		Vector3 target = scenes[sceneIndex].getCamera().getTarget();
 		scenes[sceneIndex].getCamera().setPosition((float) (target.x - d * Math.cos(cameraAngle)), //
 				(float) (target.y - d * Math.sin(cameraAngle)), //
-				target.z + (cameraModes[sceneIndex] == 0 ? (float) (d * Math.sin(cameraAngle)) : d)//
+				target.z + (cameraModes[sceneIndex] == 0 ? (float) (d * Math.sin(cameraAngle)) : d / 2)//
 		);
+		((ParentScene) scenes[sceneIndex]).update();
 
 		return scenes[sceneIndex];
 	}

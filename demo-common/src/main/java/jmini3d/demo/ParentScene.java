@@ -57,4 +57,8 @@ public class ParentScene extends Scene {
 		((SpriteGeometry) buttonLeft.getGeometry3d()).setSpritePosition(0, 0, height - buttonWidth, buttonWidth, height);
 		((SpriteGeometry) buttonRight.getGeometry3d()).setSpritePosition(0, width - buttonWidth, height - buttonWidth, width, height);
 	}
+
+	public void update() {
+
+	}
 }

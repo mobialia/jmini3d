@@ -11,6 +11,8 @@ import jmini3d.material.Material;
 
 public class NormalMapScene extends ParentScene {
 
+	PointLight pointLight;
+
 	public NormalMapScene() {
 		super("Normal map in one of the two textures");
 
@@ -34,6 +36,12 @@ public class NormalMapScene extends ParentScene {
 		plane2.setPosition(2, 0, 0);
 		addChild(plane2);
 
-		addLight(new PointLight(new Vector3(0, 0, 1), new Color4(128, 128, 128, 255)));
+		pointLight = new PointLight(new Vector3(0, 0, 0.5f), new Color4(128, 128, 128, 255));
+		addLight(pointLight);
+	}
+
+	@Override
+	public void update() {
+		pointLight.position.setAllFrom(camera.getPosition());
 	}
 }
