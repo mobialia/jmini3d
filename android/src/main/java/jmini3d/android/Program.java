@@ -27,18 +27,16 @@ public class Program {
 
 	int maxPointLights;
 	int maxDirLights;
+	float pointLightPositions[];
+	float pointLightColors[];
+	float dirLightDirections[];
+	float dirLightColors[];
 
 	boolean useLighting = false;
 	boolean useNormals = false;
 	boolean useMap = false;
 	boolean useEnvMap = false;
-
-	String vertexShaderString;
-	String fragmentShaderString;
-	float pointLightPositions[];
-	float pointLightColors[];
-	float dirLightDirections[];
-	float dirLightColors[];
+	boolean useNormalMap = false;
 
 	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
 	HashMap<String, Integer> uniforms = new HashMap<String, Integer>();
@@ -46,6 +44,7 @@ public class Program {
 	// *********************** BEGIN cached values to avoid setting uniforms two times
 	int map = -1;
 	int envMap = -1;
+	int normalMap = -1;
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -95,11 +94,13 @@ public class Program {
 		boolean useMap = material.map != null;
 		boolean useEnvMap = material.envMap != null;
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
+		boolean useNormalMap = material.normalMap != null;
 
 		return (useLight ? 0xffff0000 : 0) + //
 				(useMap ? 0x01 : 0) + //
 				(useEnvMap ? 0x02 : 0) + //
-				(useEnvMapAsMap ? 0x04 : 0);
+				(useEnvMapAsMap ? 0x04 : 0) + //
+				(useNormalMap ? 0x08 : 0);
 	}
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
@@ -133,6 +134,12 @@ public class Program {
 
 		if (material.useEnvMapAsMap) {
 			defines.add("USE_ENVMAP_AS_MAP");
+		}
+
+		if (material.normalMap != null) {
+			defines.add("USE_NORMAL_MAP");
+			useNormalMap = true;
+			uniformsInit.add("normalMap");
 		}
 
 		maxPointLights = 0;
@@ -205,8 +212,8 @@ public class Program {
 		fragmentShaderStringBuffer.append(resourceLoader.loadRawString(R.raw.fragment_shader));
 		vertexShaderStringBuffer.append(resourceLoader.loadRawString(R.raw.vertex_shader));
 
-		vertexShaderString = vertexShaderStringBuffer.toString();
-		fragmentShaderString = fragmentShaderStringBuffer.toString();
+		String vertexShaderString = vertexShaderStringBuffer.toString();
+		String fragmentShaderString = fragmentShaderStringBuffer.toString();
 
 //		log(vertexShaderStringBuffer.toString());
 //		log(fragmentShaderStringBuffer.toString());
@@ -259,6 +266,10 @@ public class Program {
 				GLES20.glUniform3f(uniforms.get("cameraPosition"), scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
 				cameraPosition.setAllFrom(scene.camera.position);
 			}
+		}
+		if (useNormalMap && normalMap != 2) {
+			GLES20.glUniform1i(uniforms.get("normalMap"), 2);
+			normalMap = 2;
 		}
 
 		if (useLighting) {
@@ -326,14 +337,20 @@ public class Program {
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
 
 		if (useMap) {
-			gpuUploader.upload(renderer3d, o3d.material.map);
+			gpuUploader.upload(renderer3d, o3d.material.map, GLES20.GL_TEXTURE0);
 			if ((o3d.material.map.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
 			}
 		}
 		if (useEnvMap) {
-			gpuUploader.upload(renderer3d, o3d.material.envMap);
+			gpuUploader.upload(renderer3d, o3d.material.envMap, GLES20.GL_TEXTURE1);
 			if ((o3d.material.envMap.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
+				return;
+			}
+		}
+		if (useNormalMap) {
+			gpuUploader.upload(renderer3d, o3d.material.normalMap, GLES20.GL_TEXTURE2);
+			if ((o3d.material.normalMap.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
 			}
 		}
@@ -375,6 +392,14 @@ public class Program {
 				GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
 				GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, envMapTextureId);
 				renderer3d.envMapTextureId = envMapTextureId;
+			}
+		}
+		if (useNormalMap) {
+			Integer normalMapTextureId = gpuUploader.textures.get(o3d.material.normalMap);
+			if (renderer3d.normalMapTextureId != normalMapTextureId) {
+				GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+				GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.normalMap));
+				renderer3d.normalMapTextureId = normalMapTextureId;
 			}
 		}
 

@@ -27,6 +27,7 @@ public class Renderer3d {
 	Program currentProgram = null;
 	Integer mapTextureId = -1;
 	Integer envMapTextureId = -1;
+	Integer normalMapTextureId = -1;
 
 	int width = -1;
 	int height = -1;

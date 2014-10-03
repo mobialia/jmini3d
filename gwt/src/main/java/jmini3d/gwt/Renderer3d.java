@@ -27,14 +27,15 @@ public class Renderer3d {
 	Program currentProgram = null;
 	WebGLTexture mapTextureId = null;
 	WebGLTexture envMapTextureId = null;
+	WebGLTexture normalMapTextureId = null;
 
 	int width = -1;
 	int height = -1;
 
-	WebGLRenderingContext gl;
+	WebGLRenderingContext GLES20;
 
 	public Renderer3d(WebGLRenderingContext gl, ResourceLoader resourceLoader, TextureLoadedListener textureLoadedListener) {
-		this.gl = gl;
+		this.GLES20 = gl;
 		this.resourceLoader = resourceLoader;
 		MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
 		gpuUploader = new GpuUploader(gl, resourceLoader, textureLoadedListener);
@@ -46,23 +47,23 @@ public class Renderer3d {
 		envMapTextureId = null;
 		gpuUploader.reset();
 
-		gl.enable(WebGLRenderingContext.DEPTH_TEST);
-		gl.clearDepth(1f);
-		gl.depthFunc(WebGLRenderingContext.LEQUAL);
-		gl.depthRange(0, 1f);
-		gl.depthMask(true);
+		GLES20.enable(WebGLRenderingContext.DEPTH_TEST);
+		GLES20.clearDepth(1f);
+		GLES20.depthFunc(WebGLRenderingContext.LEQUAL);
+		GLES20.depthRange(0, 1f);
+		GLES20.depthMask(true);
 
 		// For performance
-		gl.disable(WebGLRenderingContext.DITHER);
+		GLES20.disable(WebGLRenderingContext.DITHER);
 
 		// For transparency
-		gl.disable(WebGLRenderingContext.BLEND);
+		GLES20.disable(WebGLRenderingContext.BLEND);
 		blending = Blending.NoBlending;
 
 		// CCW frontfaces only, by default
-		gl.frontFace(WebGLRenderingContext.CCW);
-		gl.cullFace(WebGLRenderingContext.BACK);
-		gl.enable(WebGLRenderingContext.CULL_FACE);
+		GLES20.frontFace(WebGLRenderingContext.CCW);
+		GLES20.cullFace(WebGLRenderingContext.BACK);
+		GLES20.enable(WebGLRenderingContext.CULL_FACE);
 	}
 
 	public void render(Scene scene) {
@@ -71,7 +72,7 @@ public class Renderer3d {
 		if (width != scene.camera.getWidth() || height != scene.camera.getHeight()) {
 			width = scene.camera.getWidth();
 			height = scene.camera.getHeight();
-			gl.viewport(0, 0, width, height);
+			GLES20.viewport(0, 0, width, height);
 			MatrixUtils.ortho(ortho, 0, width, height, 0, -5, 1);
 		}
 
@@ -80,8 +81,8 @@ public class Renderer3d {
 		}
 		scene.unload.clear();
 
-		gl.clearColor(scene.getBackgroundColor().r, scene.getBackgroundColor().g, scene.getBackgroundColor().b, scene.getBackgroundColor().a);
-		gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT);
+		GLES20.clearColor(scene.getBackgroundColor().r, scene.getBackgroundColor().g, scene.getBackgroundColor().b, scene.getBackgroundColor().a);
+		GLES20.clear(WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT);
 
 		currentProgram = null;
 
@@ -92,7 +93,7 @@ public class Renderer3d {
 				drawObject(scene, o3d, scene.camera.perspectiveMatrix);
 
 				if (o3d.clearDepthAfterDraw) {
-					gl.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
+					GLES20.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
 				}
 			}
 		}
@@ -113,7 +114,7 @@ public class Renderer3d {
 		Program program = gpuUploader.getProgram(scene, o3d.material);
 
 		if (program != currentProgram) {
-			gl.useProgram(program.webGLProgram);
+			GLES20.useProgram(program.webGLProgram);
 			program.setSceneUniforms(scene);
 			currentProgram = program;
 		}
@@ -130,23 +131,23 @@ public class Renderer3d {
 
 		switch (blending) {
 			case NoBlending:
-				gl.disable(WebGLRenderingContext.BLEND);
+				GLES20.disable(WebGLRenderingContext.BLEND);
 				break;
 			case NormalBlending:
-				gl.enable(WebGLRenderingContext.BLEND);
-				gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+				GLES20.enable(WebGLRenderingContext.BLEND);
+				GLES20.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
 				break;
 			case AdditiveBlending:
-				gl.enable(WebGLRenderingContext.BLEND);
-				gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE);
+				GLES20.enable(WebGLRenderingContext.BLEND);
+				GLES20.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE);
 				break;
 			case SubtractiveBlending:
-				gl.enable(WebGLRenderingContext.BLEND);
-				gl.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_COLOR);
+				GLES20.enable(WebGLRenderingContext.BLEND);
+				GLES20.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_COLOR);
 				break;
 			case MultiplyBlending:
-				gl.enable(WebGLRenderingContext.BLEND);
-				gl.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.SRC_COLOR);
+				GLES20.enable(WebGLRenderingContext.BLEND);
+				GLES20.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.SRC_COLOR);
 				break;
 		}
 	}

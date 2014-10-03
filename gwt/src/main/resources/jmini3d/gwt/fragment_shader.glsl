@@ -23,6 +23,10 @@ varying vec4 vPosition;
     varying vec4 vPositionEnvMap;
 #endif
 
+#ifdef USE_NORMAL_MAP
+    uniform sampler2D normalMap;
+#endif
+
 #ifdef USE_LIGHTING
 
     #ifdef USE_AMBIENT_LIGHT
@@ -44,7 +48,7 @@ void main(void) {
     vec4 fragmentColor = vec4(0, 0, 0, 0);
 
     #ifdef USE_MAP
-        fragmentColor = texture2D(map, vec2(vTextureCoord.s, vTextureCoord.t));
+        fragmentColor = texture2D(map, vTextureCoord));
     #endif
 
     #ifdef USE_ENVMAP_AS_MAP
@@ -70,17 +74,23 @@ void main(void) {
             lighting = lighting + ambientColor;
         #endif
 
+        #ifdef USE_NORMAL_MAP
+            vec3 normal = normalize(texture2D(normalMap, vTextureCoord).rgb * 2.0 - 1.0);
+        #else
+            vec3 normal = vNormal;
+        #endif
+
         #if MAX_POINT_LIGHTS > 0
             for (int i = 0 ; i < MAX_POINT_LIGHTS ; i++) {
                 vec3 vertexToLight = normalize(pointLightPosition[i] - vPosition.xyz);
-                float weight = max(dot(normalize(vNormal.xyz), vertexToLight), 0.0);
+                float weight = max(dot(normalize(normal.xyz), vertexToLight), 0.0);
                 lighting = lighting + pointLightColor[i] * weight;
             }
         #endif
 
         #if MAX_DIR_LIGHTS > 0
             for (int i = 0 ; i < MAX_DIR_LIGHTS ; i++) {
-                float weight = max(dot(normalize(vNormal.xyz), -normalize(dirLightDirection[i])), 0.0);
+                float weight = max(dot(normalize(normal.xyz), -normalize(dirLightDirection[i])), 0.0);
                 lighting = lighting + dirLightColor[i] * weight;
             }
         #endif

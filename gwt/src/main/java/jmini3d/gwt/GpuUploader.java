@@ -124,7 +124,7 @@ public class GpuUploader {
 		return buffers;
 	}
 
-	public void upload(final Renderer3d renderer3d, final Texture texture) {
+	public void upload(final Renderer3d renderer3d, final Texture texture, final int activeTexture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
@@ -140,7 +140,7 @@ public class GpuUploader {
 				Event.setEventListener(textureImage, new EventListener() {
 					@Override
 					public void onBrowserEvent(Event event) {
-						textureLoaded(renderer3d, texture);
+						textureLoaded(renderer3d, texture, activeTexture);
 					}
 				});
 				Event.sinkEvents(textureImage, Event.ONLOAD);
@@ -148,7 +148,7 @@ public class GpuUploader {
 		}
 	}
 
-	public void upload(final Renderer3d renderer3d, final CubeMapTexture cubeMapTexture) {
+	public void upload(final Renderer3d renderer3d, final CubeMapTexture cubeMapTexture, final int activeTexture) {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
@@ -164,7 +164,7 @@ public class GpuUploader {
 				Event.setEventListener(textureImages[i], new EventListener() {
 					@Override
 					public void onBrowserEvent(Event event) {
-						cubeTextureLoaded(renderer3d, cubeMapTexture);
+						cubeTextureLoaded(renderer3d, cubeMapTexture, activeTexture);
 					}
 				});
 				Event.sinkEvents(textureImages[i], Event.ONLOAD);
@@ -172,10 +172,10 @@ public class GpuUploader {
 		}
 	}
 
-	public void textureLoaded(Renderer3d renderer3d, Texture texture) {
+	public void textureLoaded(Renderer3d renderer3d, Texture texture, int activeTexture) {
 		WebGLTexture mapTextureId = textures.get(texture);
 
-		gl.activeTexture(WebGLRenderingContext.TEXTURE0);
+		gl.activeTexture(activeTexture);
 		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, mapTextureId);
 		renderer3d.mapTextureId = mapTextureId;
 
@@ -193,12 +193,12 @@ public class GpuUploader {
 		}
 	}
 
-	public void cubeTextureLoaded(Renderer3d renderer3d, CubeMapTexture cubeMapTexture) {
+	public void cubeTextureLoaded(Renderer3d renderer3d, CubeMapTexture cubeMapTexture, int activeTexture) {
 		cubeMapTexture.loadCount++;
 		if (cubeMapTexture.loadCount == 6) {
 			WebGLTexture envMapTextureId = cubeMapTextures.get(cubeMapTexture);
 
-			gl.activeTexture(WebGLRenderingContext.TEXTURE1);
+			gl.activeTexture(activeTexture);
 			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, envMapTextureId);
 			renderer3d.envMapTextureId = envMapTextureId;
 

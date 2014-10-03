@@ -40,6 +40,7 @@ public class Program {
 	boolean useNormals = false;
 	boolean useMap = false;
 	boolean useEnvMap = false;
+	boolean useNormalMap = false;
 
 	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
 	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<String, WebGLUniformLocation>();
@@ -47,6 +48,7 @@ public class Program {
 	// *********************** BEGIN cached values to avoid setting uniforms two times
 	int map = -1;
 	int envMap = -1;
+	int normalMap = -1;
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -56,10 +58,10 @@ public class Program {
 	float reflectivity;
 	// *********************** END
 
-	private WebGLRenderingContext gl;
+	private WebGLRenderingContext GLES20;
 
-	public Program(WebGLRenderingContext gl) {
-		this.gl = gl;
+	public Program(WebGLRenderingContext GLES20) {
+		this.GLES20 = GLES20;
 	}
 
 	native void log(String message) /*-{
@@ -98,11 +100,13 @@ public class Program {
 		boolean useMap = material.map != null;
 		boolean useEnvMap = material.envMap != null;
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
+		boolean useNormalMap = material.normalMap != null;
 
 		return (useLight ? 0xffff0000 : 0) + //
 				(useMap ? 0x01 : 0) + //
 				(useEnvMap ? 0x02 : 0) + //
-				(useEnvMapAsMap ? 0x04 : 0);
+				(useEnvMapAsMap ? 0x04 : 0) + //
+				(useNormalMap ? 0x08 : 0);
 	}
 
 	public void init(Scene scene, Material material) {
@@ -136,6 +140,12 @@ public class Program {
 
 		if (material.useEnvMapAsMap) {
 			defines.add("USE_ENVMAP_AS_MAP");
+		}
+
+		if (material.normalMap != null) {
+			defines.add("USE_NORMAL_MAP");
+			useNormalMap = true;
+			uniformsInit.add("normalMap");
 		}
 
 		maxPointLights = 0;
@@ -217,45 +227,49 @@ public class Program {
 		WebGLShader vertexShader = getShader(WebGLRenderingContext.VERTEX_SHADER, vertexShaderString);
 		WebGLShader fragmentShader = getShader(WebGLRenderingContext.FRAGMENT_SHADER, fragmentShaderString);
 
-		webGLProgram = gl.createProgram();
-		gl.attachShader(webGLProgram, vertexShader);
-		gl.attachShader(webGLProgram, fragmentShader);
-		gl.linkProgram(webGLProgram);
+		webGLProgram = GLES20.createProgram();
+		GLES20.attachShader(webGLProgram, vertexShader);
+		GLES20.attachShader(webGLProgram, fragmentShader);
+		GLES20.linkProgram(webGLProgram);
 
-		if (!gl.getProgramParameterb(webGLProgram, WebGLRenderingContext.LINK_STATUS)) {
+		if (!GLES20.getProgramParameterb(webGLProgram, WebGLRenderingContext.LINK_STATUS)) {
 			throw new RuntimeException("Could not initialize shaders");
 		}
-		gl.useProgram(webGLProgram);
+		GLES20.useProgram(webGLProgram);
 
 		for (String s : attributesInit) {
-			Integer attribLocation = gl.getAttribLocation(webGLProgram, s);
+			Integer attribLocation = GLES20.getAttribLocation(webGLProgram, s);
 //			log("attribute: " + s + " = " + attribLocation);
-			gl.enableVertexAttribArray(attribLocation);
+			GLES20.enableVertexAttribArray(attribLocation);
 			attributes.put(s, attribLocation);
 		}
 
 		for (String s : uniformsInit) {
-			uniforms.put(s, gl.getUniformLocation(webGLProgram, s));
-//			log("uniform: " + s + " = " + gl.getUniformLocation(webGLProgram, s));
+			uniforms.put(s, GLES20.getUniformLocation(webGLProgram, s));
+//			log("uniform: " + s + " = " + GLES20.getUniformLocation(webGLProgram, s));
 		}
-		gl.deleteShader(vertexShader);
-		gl.deleteShader(fragmentShader);
+		GLES20.deleteShader(vertexShader);
+		GLES20.deleteShader(fragmentShader);
 	}
 
 	public void setSceneUniforms(Scene scene) {
 		if (useMap && map != 0) {
-			gl.uniform1i(uniforms.get("map"), 0);
+			GLES20.uniform1i(uniforms.get("map"), 0);
 			map = 0;
 		}
 		if (useEnvMap) {
 			if (envMap != 1) {
-				gl.uniform1i(uniforms.get("envMap"), 1);
+				GLES20.uniform1i(uniforms.get("envMap"), 1);
 				envMap = 1;
 			}
 			if (!cameraPosition.equals(scene.camera.position)) {
-				gl.uniform3f(uniforms.get("cameraPosition"), scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
+				GLES20.uniform3f(uniforms.get("cameraPosition"), scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
 				cameraPosition.setAllFrom(scene.camera.position);
 			}
+		}
+		if (useNormalMap && normalMap != 2) {
+			GLES20.uniform1i(uniforms.get("normalMap"), 2);
+			normalMap = 2;
 		}
 
 		if (useLighting) {
@@ -266,7 +280,7 @@ public class Program {
 				Light light = scene.lights.get(i);
 				if (light instanceof AmbientLight) {
 					if (!ambientColor.equals(light.color)) {
-						gl.uniform3f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b);
+						GLES20.uniform3f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b);
 						ambientColor.setAllFrom(light.color);
 					}
 				}
@@ -296,96 +310,110 @@ public class Program {
 				}
 			}
 			if (maxPointLights > 0) {
-				gl.uniform3fv(uniforms.get("pointLightPosition"), pointLightPositions);
-				gl.uniform3fv(uniforms.get("pointLightColor"), pointLightColors);
+				GLES20.uniform3fv(uniforms.get("pointLightPosition"), pointLightPositions);
+				GLES20.uniform3fv(uniforms.get("pointLightColor"), pointLightColors);
 			}
 			if (maxDirLights > 0) {
-				gl.uniform3fv(uniforms.get("dirLightDirection"), dirLightDirections);
-				gl.uniform3fv(uniforms.get("dirLightColor"), dirLightColors);
+				GLES20.uniform3fv(uniforms.get("dirLightDirection"), dirLightDirections);
+				GLES20.uniform3fv(uniforms.get("dirLightColor"), dirLightColors);
 			}
 		}
 	}
 
 	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
-			gl.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
+			GLES20.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
 		}
 		if (!Arrays.equals(modelViewMatrix, o3d.modelViewMatrix)) {
-			gl.uniformMatrix4fv(uniforms.get("modelViewMatrix"), false, o3d.modelViewMatrix);
+			GLES20.uniformMatrix4fv(uniforms.get("modelViewMatrix"), false, o3d.modelViewMatrix);
 			System.arraycopy(o3d.modelViewMatrix, 0, modelViewMatrix, 0, 16);
 		}
 		if (useNormals && o3d.normalMatrix != null && !Arrays.equals(normalMatrix, o3d.normalMatrix)) {
-			gl.uniformMatrix3fv(uniforms.get("normalMatrix"), false, o3d.normalMatrix);
+			GLES20.uniformMatrix3fv(uniforms.get("normalMatrix"), false, o3d.normalMatrix);
 			System.arraycopy(o3d.normalMatrix, 0, normalMatrix, 0, 9);
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
 
 		if (useMap) {
-			gpuUploader.upload(renderer3d, o3d.material.map);
+			gpuUploader.upload(renderer3d, o3d.material.map, WebGLRenderingContext.TEXTURE0);
 			if ((o3d.material.map.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
 			}
 		}
 		if (useEnvMap) {
-			gpuUploader.upload(renderer3d, o3d.material.envMap);
+			gpuUploader.upload(renderer3d, o3d.material.envMap, WebGLRenderingContext.TEXTURE1);
 			if ((o3d.material.envMap.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 				return;
 			}
 		}
+		if (useNormalMap) {
+			gpuUploader.upload(renderer3d, o3d.material.normalMap, WebGLRenderingContext.TEXTURE2);
+			if ((o3d.material.normalMap.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
+				return;
+			}
+		}
 
-		gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
-		gl.vertexAttribPointer(attributes.get("vertexPosition"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+		GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
+		GLES20.vertexAttribPointer(attributes.get("vertexPosition"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
 
 		if (useNormals) {
-			gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
-			gl.vertexAttribPointer(attributes.get("vertexNormal"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
+			GLES20.vertexAttribPointer(attributes.get("vertexNormal"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
 		}
 
 		if (useMap) {
-			gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
-			gl.vertexAttribPointer(attributes.get("textureCoord"), 2, WebGLRenderingContext.FLOAT, false, 0, 0);
+			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
+			GLES20.vertexAttribPointer(attributes.get("textureCoord"), 2, WebGLRenderingContext.FLOAT, false, 0, 0);
 		}
 
-		gl.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
+		GLES20.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
 
 		if (!objectColor.equals(o3d.material.color)) {
-			gl.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
+			GLES20.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
 			objectColor.setAllFrom(o3d.material.color);
 		}
 		if (useMap) {
 			WebGLTexture mapTextureId = gpuUploader.textures.get(o3d.material.map);
 			if (renderer3d.mapTextureId == null || renderer3d.mapTextureId != mapTextureId) {
-				gl.activeTexture(WebGLRenderingContext.TEXTURE0);
-				gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, mapTextureId);
+				GLES20.activeTexture(WebGLRenderingContext.TEXTURE0);
+				GLES20.bindTexture(WebGLRenderingContext.TEXTURE_2D, mapTextureId);
 				renderer3d.mapTextureId = mapTextureId;
 			}
 		}
 		if (useEnvMap) {
 			if (reflectivity != o3d.material.reflectivity) {
-				gl.uniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
+				GLES20.uniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
 				reflectivity = o3d.material.reflectivity;
 			}
 			WebGLTexture envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
 			if (renderer3d.envMapTextureId == null || renderer3d.envMapTextureId != envMapTextureId) {
-				gl.activeTexture(WebGLRenderingContext.TEXTURE1);
-				gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, envMapTextureId);
+				GLES20.activeTexture(WebGLRenderingContext.TEXTURE1);
+				GLES20.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, envMapTextureId);
 				renderer3d.envMapTextureId = envMapTextureId;
 			}
 		}
+		if (useNormalMap) {
+			WebGLTexture normalMapTextureId = gpuUploader.textures.get(o3d.material.normalMap);
+			if (renderer3d.normalMapTextureId != normalMapTextureId) {
+				GLES20.activeTexture(WebGLRenderingContext.TEXTURE2);
+				GLES20.bindTexture(WebGLRenderingContext.TEXTURE_2D, gpuUploader.textures.get(o3d.material.normalMap));
+				renderer3d.normalMapTextureId = normalMapTextureId;
+			}
+		}
 
-		gl.drawElements(WebGLRenderingContext.TRIANGLES, o3d.geometry3d.facesLength, WebGLRenderingContext.UNSIGNED_SHORT, 0);
+		GLES20.drawElements(WebGLRenderingContext.TRIANGLES, o3d.geometry3d.facesLength, WebGLRenderingContext.UNSIGNED_SHORT, 0);
 	}
 
 	private WebGLShader getShader(int type, String source) {
-		WebGLShader shader = gl.createShader(type);
+		WebGLShader shader = GLES20.createShader(type);
 
-		gl.shaderSource(shader, source);
-		gl.compileShader(shader);
+		GLES20.shaderSource(shader, source);
+		GLES20.compileShader(shader);
 
-		if (!gl.getShaderParameterb(shader, WebGLRenderingContext.COMPILE_STATUS)) {
-			throw new RuntimeException(gl.getShaderInfoLog(shader));
+		if (!GLES20.getShaderParameterb(shader, WebGLRenderingContext.COMPILE_STATUS)) {
+			throw new RuntimeException(GLES20.getShaderInfoLog(shader));
 		}
 		return shader;
 	}
