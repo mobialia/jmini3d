@@ -48,7 +48,7 @@ void main(void) {
     vec4 fragmentColor = vec4(0, 0, 0, 0);
 
     #ifdef USE_MAP
-        fragmentColor = texture2D(map, vTextureCoord));
+        fragmentColor = texture2D(map, vTextureCoord);
     #endif
 
     #ifdef USE_ENVMAP_AS_MAP
