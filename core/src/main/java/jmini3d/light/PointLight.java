@@ -10,4 +10,12 @@ public class PointLight extends Light {
 		this.position = position;
 		this.color = color;
 	}
+
+	public Vector3 getPosition() {
+		return position;
+	}
+
+	public void setPosition(Vector3 position) {
+		this.position = position;
+	}
 }
