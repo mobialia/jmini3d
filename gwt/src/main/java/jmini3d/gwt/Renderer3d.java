@@ -98,6 +98,10 @@ public class Renderer3d {
 			}
 		}
 
+		if (scene.hud.size() > 0) {
+			GLES20.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
+		}
+
 		for (int i = 0; i < scene.hud.size(); i++) {
 			Object3d o3d = scene.hud.get(i);
 			if (o3d.visible) {
