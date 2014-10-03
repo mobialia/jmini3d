@@ -13,7 +13,8 @@ public class DemoSceneController implements SceneController, TouchListener {
 	long initialTime;
 
 	int sceneIndex = 0;
-	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene()};
+	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene()};
+	int cameraModes[] = {0, 0, 0, 0, 1};
 
 	public DemoSceneController() {
 		initialTime = System.currentTimeMillis();
@@ -30,7 +31,7 @@ public class DemoSceneController implements SceneController, TouchListener {
 		Vector3 target = scenes[sceneIndex].getCamera().getTarget();
 		scenes[sceneIndex].getCamera().setPosition((float) (target.x - d * Math.cos(cameraAngle)), //
 				(float) (target.y - d * Math.sin(cameraAngle)), //
-				target.z + (float) (d * Math.sin(cameraAngle)) //
+				target.z + (cameraModes[sceneIndex] == 0 ? (float) (d * Math.sin(cameraAngle)) : d)//
 		);
 
 		return scenes[sceneIndex];
