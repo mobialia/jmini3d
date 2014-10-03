@@ -136,12 +136,6 @@ public class Program {
 			defines.add("USE_ENVMAP_AS_MAP");
 		}
 
-		if (material.normalMap != null) {
-			defines.add("USE_NORMAL_MAP");
-			useNormalMap = true;
-			uniformsInit.add("normalMap");
-		}
-
 		maxPointLights = 0;
 		maxDirLights = 0;
 
@@ -190,9 +184,17 @@ public class Program {
 		definesValues.put("MAX_DIR_LIGHTS", String.valueOf(maxDirLights));
 
 		if (useNormals) {
-			defines.add("USE_NORMALS");
-			attributesInit.add("vertexNormal");
-			uniformsInit.add("normalMatrix");
+			if (material.normalMap != null) {
+				defines.add("USE_NORMAL_MAP");
+				useNormalMap = true;
+				useNormals = false;
+				uniformsInit.add("normalMap");
+				uniformsInit.add("normalMatrix");
+			} else {
+				defines.add("USE_NORMALS");
+				attributesInit.add("vertexNormal");
+				uniformsInit.add("normalMatrix");
+			}
 		}
 
 		StringBuffer vertexShaderStringBuffer = new StringBuffer();
@@ -329,7 +331,7 @@ public class Program {
 			GLES20.glUniformMatrix4fv(uniforms.get("modelViewMatrix"), 1, false, o3d.modelViewMatrix, 0);
 			System.arraycopy(o3d.modelViewMatrix, 0, modelViewMatrix, 0, 16);
 		}
-		if (useNormals && o3d.normalMatrix != null && !Arrays.equals(normalMatrix, o3d.normalMatrix)) {
+		if ((useNormals || useNormalMap) && o3d.normalMatrix != null && !Arrays.equals(normalMatrix, o3d.normalMatrix)) {
 			GLES20.glUniformMatrix3fv(uniforms.get("normalMatrix"), 1, false, o3d.normalMatrix, 0);
 			System.arraycopy(o3d.normalMatrix, 0, normalMatrix, 0, 9);
 		}

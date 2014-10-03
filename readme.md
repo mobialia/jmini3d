@@ -16,7 +16,8 @@ Features
 * Optimized for speed and smooth rendering
 * Extremely fast model loading (converts OBJ models to Java classes)
 * Multiple lights (Ambient/Point/Directional), only diffuse lighting (no specular), no attenuation with the distance
-* Reflections with environment mapping
+* Reflections with cube environment mapping
+* Normal maps
 * HUD and 2D sprites support
 * Bitmap font support
 

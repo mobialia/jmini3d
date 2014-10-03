@@ -8,6 +8,11 @@ varying vec4 vPosition;
     varying vec3 vNormal;
 #endif
 
+#ifdef USE_NORMAL_MAP
+    uniform sampler2D normalMap;
+    uniform mat3 normalMatrix;
+#endif
+
 #ifdef USE_MAP
     varying vec2 vTextureCoord;
     uniform sampler2D map;
@@ -21,10 +26,6 @@ varying vec4 vPosition;
 
 #ifdef USE_ENVMAP_AS_MAP
     varying vec4 vPositionEnvMap;
-#endif
-
-#ifdef USE_NORMAL_MAP
-    uniform sampler2D normalMap;
 #endif
 
 #ifdef USE_LIGHTING
@@ -75,7 +76,7 @@ void main(void) {
         #endif
 
         #ifdef USE_NORMAL_MAP
-            vec3 normal = normalize(texture2D(normalMap, vTextureCoord).rgb * 2.0 - 1.0);
+            vec3 normal = normalize(normalMatrix * (texture2D(normalMap, vTextureCoord).rgb * 2.0 - 1.0));
         #else
             vec3 normal = vNormal;
         #endif
