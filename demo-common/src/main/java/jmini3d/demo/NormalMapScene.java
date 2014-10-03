@@ -26,14 +26,14 @@ public class NormalMapScene extends ParentScene {
 		materialMap.setMap(map);
 		materialMap.setNormalMap(normalMap);
 
-		Geometry planeGeometry = new PlaneGeometry(2);
+		Geometry planeGeometry = new PlaneGeometry(1);
 
 		Object3d plane1 = new Object3d(planeGeometry, material);
-		plane1.setPosition(-2, 0, 0);
+		plane1.setPosition(-1, 0, 0);
 		addChild(plane1);
 
 		Object3d plane2 = new Object3d(planeGeometry, materialMap);
-		plane2.setPosition(2, 0, 0);
+		plane2.setPosition(1, 0, 0);
 		addChild(plane2);
 
 		pointLight = new PointLight(new Vector3(0, 0, 0.5f), new Color4(128, 128, 128, 255));
