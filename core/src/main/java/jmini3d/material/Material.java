@@ -12,6 +12,7 @@ public class Material {
 	public Color4 color;
 	public Texture map;
 	public CubeMapTexture envMap;
+	public Texture normalMap;
 	public boolean useEnvMapAsMap = false;
 	public float reflectivity = 0f;
 
@@ -46,5 +47,17 @@ public class Material {
 	public void setLighting(boolean lighting) {
 		this.lighting = lighting;
 		shaderKey = -1;
+	}
+
+	public void setMap(Texture map) {
+		this.map = map;
+	}
+
+	public void setNormalMap(Texture normalMap) {
+		this.normalMap = normalMap;
+	}
+
+	public void setEnvMap(CubeMapTexture envMap) {
+		this.envMap = envMap;
 	}
 }
