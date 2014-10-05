@@ -73,7 +73,7 @@ The ResourceLoader is initialized with "./" if the resources are in that folder 
 
 Generate Geometries from OBJ files
 ==================================
-Export to OBJ from Blender with this options:
+Export to OBJ from Blender (faces must be triangulated and normals outside) with this options:
 
 * Write Normals
 * Include UVs
