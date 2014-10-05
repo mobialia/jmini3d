@@ -46,17 +46,18 @@ varying vec4 vPosition;
 #endif
 
 void main(void) {
-    vec4 fragmentColor = vec4(0, 0, 0, 0);
-
-    #ifdef USE_MAP
-        fragmentColor = texture2D(map, vTextureCoord);
-    #endif
 
     #ifdef USE_ENVMAP_AS_MAP
-        fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+        vec4 fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+        fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
+    #else
+        #ifdef USE_MAP
+            vec4 fragmentColor = texture2D(map, vTextureCoord);
+            fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
+        #else
+            vec4 fragmentColor = objectColor;
+        #endif
     #endif
-
-    fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
 
     #ifdef USE_ENVMAP
         if (reflectivity > 0.0) {
