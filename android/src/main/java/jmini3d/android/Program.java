@@ -95,12 +95,14 @@ public class Program {
 		boolean useEnvMap = material.envMap != null;
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
 		boolean useNormalMap = material.normalMap != null;
+		boolean useApplyColorToAlpha = material.applyColorToAlpha;
 
 		return (useLight ? 0xffff0000 : 0) + //
 				(useMap ? 0x01 : 0) + //
 				(useEnvMap ? 0x02 : 0) + //
 				(useEnvMapAsMap ? 0x04 : 0) + //
-				(useNormalMap ? 0x08 : 0);
+				(useNormalMap ? 0x08 : 0) + //
+				(useApplyColorToAlpha ? 0x10 : 0);
 	}
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
@@ -134,6 +136,10 @@ public class Program {
 
 		if (material.useEnvMapAsMap) {
 			defines.add("USE_ENVMAP_AS_MAP");
+		}
+
+		if (material.applyColorToAlpha) {
+			defines.add("APPLY_COLOR_TO_ALPHA");
 		}
 
 		maxPointLights = 0;

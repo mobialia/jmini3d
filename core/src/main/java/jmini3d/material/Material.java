@@ -14,6 +14,7 @@ public class Material {
 	public CubeMapTexture envMap;
 	public Texture normalMap;
 	public boolean useEnvMapAsMap = false;
+	public boolean applyColorToAlpha = false;
 	public float reflectivity = 0f;
 
 	public Material() {
@@ -40,12 +41,13 @@ public class Material {
 		this.blending = blending;
 	}
 
-	public String getFragmentShader() {
-		return "";
-	}
-
 	public void setLighting(boolean lighting) {
 		this.lighting = lighting;
+		shaderKey = -1;
+	}
+
+	public void setApplyColorToAlpha(boolean applyColorToAlpha) {
+		this.applyColorToAlpha = applyColorToAlpha;
 		shaderKey = -1;
 	}
 

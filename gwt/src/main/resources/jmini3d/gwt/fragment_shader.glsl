@@ -53,7 +53,13 @@ void main(void) {
     #else
         #ifdef USE_MAP
             vec4 fragmentColor = texture2D(map, vTextureCoord);
-            fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
+            #ifdef APPLY_COLOR_TO_ALPHA
+                if (fragmentColor.a < 1.0) {
+                     fragmentColor = vec4(fragmentColor.r * objectColor.r, fragmentColor.g * objectColor.g, fragmentColor.b * objectColor.b, 1);
+                }
+            #else
+                fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
+            #endif
         #else
             vec4 fragmentColor = objectColor;
         #endif
