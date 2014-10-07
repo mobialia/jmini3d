@@ -7,12 +7,12 @@ import jmini3d.Texture;
 
 public class Material {
 	public int shaderKey = -1;
-	public boolean lighting = true;
 	public Blending blending = Blending.NoBlending;
 	public Color4 color;
 	public Texture map;
 	public CubeMapTexture envMap;
 	public Texture normalMap;
+	public boolean lighting = true;
 	public boolean useEnvMapAsMap = false;
 	public boolean applyColorToAlpha = false;
 	public float reflectivity = 0f;
@@ -43,6 +43,11 @@ public class Material {
 
 	public void setLighting(boolean lighting) {
 		this.lighting = lighting;
+		shaderKey = -1;
+	}
+
+	public void setUseEnvMapAsMap(boolean useEnvMapAsMap) {
+		this.useEnvMapAsMap = useEnvMapAsMap;
 		shaderKey = -1;
 	}
 
