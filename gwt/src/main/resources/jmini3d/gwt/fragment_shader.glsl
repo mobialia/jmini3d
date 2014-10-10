@@ -31,17 +31,17 @@ varying vec4 vPosition;
 #ifdef USE_LIGHTING
 
     #ifdef USE_AMBIENT_LIGHT
-        uniform vec3 ambientColor;
+        uniform vec4 ambientColor;
     #endif
 
     #if MAX_POINT_LIGHTS > 0
         uniform vec3 pointLightPosition[MAX_POINT_LIGHTS];
-        uniform vec3 pointLightColor[MAX_POINT_LIGHTS];
+        uniform vec4 pointLightColor[MAX_POINT_LIGHTS];
     #endif
 
     #if MAX_DIR_LIGHTS > 0
         uniform vec3 dirLightDirection[MAX_DIR_LIGHTS];
-        uniform vec3 dirLightColor[MAX_DIR_LIGHTS];
+        uniform vec4 dirLightColor[MAX_DIR_LIGHTS];
     #endif
 #endif
 
@@ -79,7 +79,7 @@ void main(void) {
         vec3 lighting = vec3(0,0,0);
 
         #ifdef USE_AMBIENT_LIGHT
-            lighting = lighting + ambientColor;
+            lighting = lighting + ambientColor.rgb * ambientColor.a;
         #endif
 
         #ifdef USE_NORMAL_MAP
@@ -91,15 +91,15 @@ void main(void) {
         #if MAX_POINT_LIGHTS > 0
             for (int i = 0 ; i < MAX_POINT_LIGHTS ; i++) {
                 vec3 vertexToLight = normalize(pointLightPosition[i] - vPosition.xyz);
-                float weight = max(dot(normalize(normal.xyz), vertexToLight), 0.0);
-                lighting = lighting + pointLightColor[i] * weight;
+                float weight = pointLightColor[i].a * max(dot(normalize(normal.xyz), vertexToLight), 0.0);
+                lighting = lighting + pointLightColor[i].rgb * weight;
             }
         #endif
 
         #if MAX_DIR_LIGHTS > 0
             for (int i = 0 ; i < MAX_DIR_LIGHTS ; i++) {
-                float weight = max(dot(normalize(normal.xyz), -normalize(dirLightDirection[i])), 0.0);
-                lighting = lighting + dirLightColor[i] * weight;
+                float weight =  dirLightColor[i].a * max(dot(normalize(normal.xyz), -normalize(dirLightDirection[i])), 0.0);
+                lighting = lighting + dirLightColor[i].rgb * weight;
             }
         #endif
 

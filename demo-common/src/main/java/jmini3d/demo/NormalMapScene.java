@@ -36,7 +36,7 @@ public class NormalMapScene extends ParentScene {
 		plane2.setPosition(1, 0, 0);
 		addChild(plane2);
 
-		pointLight = new PointLight(new Vector3(0, 0, 0.5f), new Color4(128, 128, 128, 255));
+		pointLight = new PointLight(new Vector3(0, 0, 0.5f), new Color4(128, 128, 128), 3);
 		addLight(pointLight);
 	}
 

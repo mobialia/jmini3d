@@ -171,7 +171,7 @@ public class Program {
 				uniformsInit.add("pointLightColor");
 
 				pointLightPositions = new float[maxPointLights * 3];
-				pointLightColors = new float[maxPointLights * 3];
+				pointLightColors = new float[maxPointLights * 4];
 			}
 
 			if (maxDirLights > 0) {
@@ -180,7 +180,7 @@ public class Program {
 				uniformsInit.add("dirLightColor");
 
 				dirLightDirections = new float[maxDirLights * 3];
-				dirLightColors = new float[maxDirLights * 3];
+				dirLightColors = new float[maxDirLights * 4];
 			}
 
 			useNormals = true;
@@ -288,7 +288,7 @@ public class Program {
 				Light light = scene.lights.get(i);
 				if (light instanceof AmbientLight) {
 					if (!ambientColor.equals(light.color)) {
-						GLES20.glUniform3f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b);
+						GLES20.glUniform4f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b, light.color.a);
 						ambientColor.setAllFrom(light.color);
 					}
 				}
@@ -298,9 +298,10 @@ public class Program {
 					pointLightPositions[pointLightIndex * 3 + 1] = ((PointLight) light).position.y;
 					pointLightPositions[pointLightIndex * 3 + 2] = ((PointLight) light).position.z;
 
-					pointLightColors[pointLightIndex * 3] = light.color.r;
-					pointLightColors[pointLightIndex * 3 + 1] = light.color.g;
-					pointLightColors[pointLightIndex * 3 + 2] = light.color.b;
+					pointLightColors[pointLightIndex * 4] = light.color.r;
+					pointLightColors[pointLightIndex * 4 + 1] = light.color.g;
+					pointLightColors[pointLightIndex * 4 + 2] = light.color.b;
+					pointLightColors[pointLightIndex * 4 + 3] = light.color.a;
 
 					pointLightIndex++;
 				}
@@ -310,20 +311,21 @@ public class Program {
 					dirLightDirections[dirLightIndex * 3 + 1] = ((DirectionalLight) light).direction.y;
 					dirLightDirections[dirLightIndex * 3 + 2] = ((DirectionalLight) light).direction.z;
 
-					dirLightColors[dirLightIndex * 3] = light.color.r;
-					dirLightColors[dirLightIndex * 3 + 1] = light.color.g;
-					dirLightColors[dirLightIndex * 3 + 2] = light.color.b;
+					dirLightColors[dirLightIndex * 4] = light.color.r;
+					dirLightColors[dirLightIndex * 4 + 1] = light.color.g;
+					dirLightColors[dirLightIndex * 4 + 2] = light.color.b;
+					dirLightColors[dirLightIndex * 4 + 3] = light.color.a;
 
 					dirLightIndex++;
 				}
 			}
 			if (maxPointLights > 0) {
 				GLES20.glUniform3fv(uniforms.get("pointLightPosition"), maxPointLights, pointLightPositions, 0);
-				GLES20.glUniform3fv(uniforms.get("pointLightColor"), maxPointLights, pointLightColors, 0);
+				GLES20.glUniform4fv(uniforms.get("pointLightColor"), maxPointLights, pointLightColors, 0);
 			}
 			if (maxDirLights > 0) {
 				GLES20.glUniform3fv(uniforms.get("dirLightDirection"), maxDirLights, dirLightDirections, 0);
-				GLES20.glUniform3fv(uniforms.get("dirLightColor"), maxDirLights, dirLightColors, 0);
+				GLES20.glUniform4fv(uniforms.get("dirLightColor"), maxDirLights, dirLightColors, 0);
 			}
 		}
 	}

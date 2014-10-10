@@ -33,9 +33,9 @@ public class TeapotScene extends ParentScene {
 		teapotO3d.setPosition(0, 0, -0.5f);
 		addChild(teapotO3d);
 
-		addLight(new AmbientLight(new Color4(150, 150, 150, 255)));
-		addLight(new PointLight(new Vector3(0, 50, 0), new Color4(0, 0, 255, 255)));
-		addLight(new PointLight(new Vector3(0, -1.1f, 0), new Color4(255, 0, 0, 255)));
-		addLight(new DirectionalLight(new Vector3(1, 0, 0), new Color4(0, 255, 0, 255)));
+		addLight(new AmbientLight(new Color4(255, 255, 255), 0.5f));
+		addLight(new PointLight(new Vector3(0, 50, 0), new Color4(0, 0, 255)));
+		addLight(new PointLight(new Vector3(0, -1.1f, 0), new Color4(255, 0, 0), 2));
+		addLight(new DirectionalLight(new Vector3(1, 0, 0), new Color4(0, 255, 0)));
 	}
 }

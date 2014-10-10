@@ -18,8 +18,8 @@ public class CubesScene extends ParentScene {
 
 		Random r = new Random();
 
-		addLight(new AmbientLight(new Color4(50, 50, 50, 255)));
-		addLight(new PointLight(new Vector3(0, 0, 0), new Color4(255, 255, 255, 255)));
+		addLight(new AmbientLight(new Color4(255, 255, 255), 0.5f));
+		addLight(new PointLight(new Vector3(0, 0, 0), new Color4(255, 255, 255), 1.1f));
 
 		Material material1 = new Material(new Color4(255, 0, 0, 255));
 		Material material2 = new Material(new Color4(0, 255, 0, 255));

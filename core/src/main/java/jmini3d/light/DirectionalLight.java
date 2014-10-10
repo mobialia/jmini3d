@@ -11,4 +11,10 @@ public class DirectionalLight extends Light {
 		this.direction = direction;
 		this.color = color;
 	}
+
+	public DirectionalLight(Vector3 direction, Color4 color, float intensity) {
+		this.direction = direction;
+		this.color = color;
+		this.color.a = intensity;
+	}
 }
