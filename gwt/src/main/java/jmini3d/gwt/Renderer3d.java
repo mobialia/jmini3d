@@ -23,11 +23,12 @@ public class Renderer3d {
 
 	public float[] ortho = new float[16];
 
-	Blending blending;
+	Blending blending = null;
 	Program currentProgram = null;
 	WebGLTexture mapTextureId = null;
 	WebGLTexture envMapTextureId = null;
 	WebGLTexture normalMapTextureId = null;
+	int activeTexture = -1;
 
 	int width = -1;
 	int height = -1;
@@ -57,8 +58,7 @@ public class Renderer3d {
 		GLES20.disable(WebGLRenderingContext.DITHER);
 
 		// For transparency
-		GLES20.disable(WebGLRenderingContext.BLEND);
-		blending = Blending.NoBlending;
+		setBlending(Blending.NoBlending);
 
 		// CCW frontfaces only, by default
 		GLES20.frontFace(WebGLRenderingContext.CCW);
@@ -131,28 +131,30 @@ public class Renderer3d {
 	}
 
 	private void setBlending(Blending blending) {
-		this.blending = blending;
+		if (this.blending == null || !this.blending.equals(blending)) {
+			this.blending = blending;
 
-		switch (blending) {
-			case NoBlending:
-				GLES20.disable(WebGLRenderingContext.BLEND);
-				break;
-			case NormalBlending:
-				GLES20.enable(WebGLRenderingContext.BLEND);
-				GLES20.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
-				break;
-			case AdditiveBlending:
-				GLES20.enable(WebGLRenderingContext.BLEND);
-				GLES20.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE);
-				break;
-			case SubtractiveBlending:
-				GLES20.enable(WebGLRenderingContext.BLEND);
-				GLES20.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_COLOR);
-				break;
-			case MultiplyBlending:
-				GLES20.enable(WebGLRenderingContext.BLEND);
-				GLES20.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.SRC_COLOR);
-				break;
+			switch (blending) {
+				case NoBlending:
+					GLES20.disable(WebGLRenderingContext.BLEND);
+					break;
+				case NormalBlending:
+					GLES20.enable(WebGLRenderingContext.BLEND);
+					GLES20.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+					break;
+				case AdditiveBlending:
+					GLES20.enable(WebGLRenderingContext.BLEND);
+					GLES20.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE);
+					break;
+				case SubtractiveBlending:
+					GLES20.enable(WebGLRenderingContext.BLEND);
+					GLES20.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_COLOR);
+					break;
+				case MultiplyBlending:
+					GLES20.enable(WebGLRenderingContext.BLEND);
+					GLES20.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.SRC_COLOR);
+					break;
+			}
 		}
 	}
 

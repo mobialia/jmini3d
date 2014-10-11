@@ -37,6 +37,7 @@ public class Program {
 	boolean useMap = false;
 	boolean useEnvMap = false;
 	boolean useNormalMap = false;
+	boolean useCameraPosition = false;
 
 	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
 	HashMap<String, Integer> uniforms = new HashMap<String, Integer>();
@@ -116,7 +117,6 @@ public class Program {
 
 		uniformsInit.add("perspectiveMatrix");
 		uniformsInit.add("modelViewMatrix");
-		uniformsInit.add("cameraPosition");
 		uniformsInit.add("objectColor");
 
 		if (material.map != null) {
@@ -130,6 +130,7 @@ public class Program {
 			defines.add("USE_ENVMAP");
 			useNormals = true;
 			useEnvMap = true;
+			useCameraPosition = true;
 			uniformsInit.add("reflectivity");
 			uniformsInit.add("envMap");
 		}
@@ -169,6 +170,7 @@ public class Program {
 				defines.add("USE_POINT_LIGHT");
 				uniformsInit.add("pointLightPosition");
 				uniformsInit.add("pointLightColor");
+				useCameraPosition = true;
 
 				pointLightPositions = new float[maxPointLights * 3];
 				pointLightColors = new float[maxPointLights * 4];
@@ -178,6 +180,7 @@ public class Program {
 				defines.add("USE_DIR_LIGHT");
 				uniformsInit.add("dirLightDirection");
 				uniformsInit.add("dirLightColor");
+				useCameraPosition = true;
 
 				dirLightDirections = new float[maxDirLights * 3];
 				dirLightColors = new float[maxDirLights * 4];
@@ -188,6 +191,11 @@ public class Program {
 
 		definesValues.put("MAX_POINT_LIGHTS", String.valueOf(maxPointLights));
 		definesValues.put("MAX_DIR_LIGHTS", String.valueOf(maxDirLights));
+
+		if (useCameraPosition) {
+			defines.add("USE_CAMERA_POSITION");
+			uniformsInit.add("cameraPosition");
+		}
 
 		if (useNormals) {
 			if (material.normalMap != null) {
@@ -242,7 +250,6 @@ public class Program {
 			GLES20.glDeleteProgram(webGLProgram);
 			throw new RuntimeException("Could not initialize shaders");
 		}
-
 		GLES20.glUseProgram(webGLProgram);
 
 		for (String s : attributesInit) {
@@ -265,15 +272,13 @@ public class Program {
 			GLES20.glUniform1i(uniforms.get("map"), 0);
 			map = 0;
 		}
-		if (useEnvMap) {
-			if (envMap != 1) {
-				GLES20.glUniform1i(uniforms.get("envMap"), 1);
-				envMap = 1;
-			}
-			if (!cameraPosition.equals(scene.camera.position)) {
-				GLES20.glUniform3f(uniforms.get("cameraPosition"), scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
-				cameraPosition.setAllFrom(scene.camera.position);
-			}
+		if (useEnvMap && envMap != 1) {
+			GLES20.glUniform1i(uniforms.get("envMap"), 1);
+			envMap = 1;
+		}
+		if (useCameraPosition && !cameraPosition.equals(scene.camera.position)) {
+			GLES20.glUniform3f(uniforms.get("cameraPosition"), scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
+			cameraPosition.setAllFrom(scene.camera.position);
 		}
 		if (useNormalMap && normalMap != 2) {
 			GLES20.glUniform1i(uniforms.get("normalMap"), 2);
@@ -387,7 +392,10 @@ public class Program {
 		if (useMap) {
 			Integer mapTextureId = gpuUploader.textures.get(o3d.material.map);
 			if (renderer3d.mapTextureId != mapTextureId) {
-				GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+				if (renderer3d.activeTexture != GLES20.GL_TEXTURE0) {
+					GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+					renderer3d.activeTexture = GLES20.GL_TEXTURE0;
+				}
 				GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.map));
 				renderer3d.mapTextureId = mapTextureId;
 			}
@@ -399,7 +407,10 @@ public class Program {
 			}
 			Integer envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
 			if (renderer3d.envMapTextureId != envMapTextureId) {
-				GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+				if (renderer3d.activeTexture != GLES20.GL_TEXTURE1) {
+					GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+					renderer3d.activeTexture = GLES20.GL_TEXTURE1;
+				}
 				GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, envMapTextureId);
 				renderer3d.envMapTextureId = envMapTextureId;
 			}
@@ -407,7 +418,10 @@ public class Program {
 		if (useNormalMap) {
 			Integer normalMapTextureId = gpuUploader.textures.get(o3d.material.normalMap);
 			if (renderer3d.normalMapTextureId != normalMapTextureId) {
-				GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+				if (renderer3d.activeTexture != GLES20.GL_TEXTURE2) {
+					GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+					renderer3d.activeTexture = GLES20.GL_TEXTURE2;
+				}
 				GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, gpuUploader.textures.get(o3d.material.normalMap));
 				renderer3d.normalMapTextureId = normalMapTextureId;
 			}
@@ -425,12 +439,11 @@ public class Program {
 //		int[] linkStatus = new int[1];
 //		GLES20.glGetProgramiv(webGLProgram, GLES20.GL_COMPILE_STATUS, linkStatus, 0);
 //		if (linkStatus[0] != GLES20.GL_TRUE) {
-//			Log.e(TAG, "Could not compile shaders: ");
+//			Log.e(TAG, "Could not compile shader: ");
 //			Log.e(TAG, source);
 //			GLES20.glDeleteProgram(webGLProgram);
 //			throw new RuntimeException(GLES20.glGetShaderInfoLog(shader));
 //		}
-
 		return shader;
 	}
 }

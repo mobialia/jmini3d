@@ -23,11 +23,12 @@ public class Renderer3d {
 
 	public float[] ortho = new float[16];
 
-	Blending blending;
+	Blending blending = null;
 	Program currentProgram = null;
 	Integer mapTextureId = -1;
 	Integer envMapTextureId = -1;
 	Integer normalMapTextureId = -1;
+	int activeTexture = -1;
 
 	int width = -1;
 	int height = -1;
@@ -52,8 +53,7 @@ public class Renderer3d {
 		GLES20.glDisable(GLES20.GL_DITHER);
 
 		// For transparency
-		GLES20.glDisable(GLES20.GL_BLEND);
-		blending = Blending.NoBlending;
+		setBlending(Blending.NoBlending);
 
 		// CCW frontfaces only, by default
 		GLES20.glFrontFace(GLES20.GL_CCW);
@@ -126,28 +126,30 @@ public class Renderer3d {
 	}
 
 	private void setBlending(Blending blending) {
-		this.blending = blending;
+		if (this.blending == null || !this.blending.equals(blending)) {
+			this.blending = blending;
 
-		switch (blending) {
-			case NoBlending:
-				GLES20.glDisable(GLES20.GL_BLEND);
-				break;
-			case NormalBlending:
-				GLES20.glEnable(GLES20.GL_BLEND);
-				GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-				break;
-			case AdditiveBlending:
-				GLES20.glEnable(GLES20.GL_BLEND);
-				GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE);
-				break;
-			case SubtractiveBlending:
-				GLES20.glEnable(GLES20.GL_BLEND);
-				GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_ONE_MINUS_SRC_COLOR);
-				break;
-			case MultiplyBlending:
-				GLES20.glEnable(GLES20.GL_BLEND);
-				GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_SRC_COLOR);
-				break;
+			switch (blending) {
+				case NoBlending:
+					GLES20.glDisable(GLES20.GL_BLEND);
+					break;
+				case NormalBlending:
+					GLES20.glEnable(GLES20.GL_BLEND);
+					GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+					break;
+				case AdditiveBlending:
+					GLES20.glEnable(GLES20.GL_BLEND);
+					GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE);
+					break;
+				case SubtractiveBlending:
+					GLES20.glEnable(GLES20.GL_BLEND);
+					GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_ONE_MINUS_SRC_COLOR);
+					break;
+				case MultiplyBlending:
+					GLES20.glEnable(GLES20.GL_BLEND);
+					GLES20.glBlendFunc(GLES20.GL_ZERO, GLES20.GL_SRC_COLOR);
+					break;
+			}
 		}
 	}
 
