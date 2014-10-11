@@ -24,15 +24,15 @@ void main(void) {
     vPosition = modelViewMatrix * vec4(vertexPosition, 1.0);
     gl_Position = perspectiveMatrix * vPosition;
 
-#ifdef USE_NORMALS
-    vNormal = normalize(normalMatrix * vertexNormal);
-#endif
+    #ifdef USE_NORMALS
+        vNormal = normalize(normalMatrix * vertexNormal);
+    #endif
 
-#ifdef USE_MAP
-    vTextureCoord = textureCoord;
-#endif
+    #ifdef USE_MAP
+        vTextureCoord = textureCoord;
+    #endif
 
-#ifdef USE_ENVMAP_AS_MAP
-    vPositionEnvMap = vec4(vertexPosition, 1.0);
-#endif
+    #ifdef USE_ENVMAP_AS_MAP
+        vPositionEnvMap = vec4(vertexPosition, 1.0);
+    #endif
 }
