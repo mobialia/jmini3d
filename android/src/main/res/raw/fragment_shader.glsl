@@ -19,7 +19,6 @@ varying vec4 vPosition;
 #endif
 
 #ifdef USE_ENVMAP
-    uniform vec3 cameraPosition;
     uniform float reflectivity;
     uniform samplerCube envMap;
 #endif
@@ -28,10 +27,18 @@ varying vec4 vPosition;
     varying vec4 vPositionEnvMap;
 #endif
 
-#ifdef USE_LIGHTING
+#ifdef USE_CAMERA_POSITION
+    uniform vec3 cameraPosition;
+#endif
+
+#ifdef USE_PHONG_LIGHTING
+    uniform vec4 ambientColor;
+    uniform vec4 diffuseColor;
+    uniform vec4 specularColor;
+    uniform float shininess;
 
     #ifdef USE_AMBIENT_LIGHT
-        uniform vec4 ambientColor;
+        uniform vec4 ambientLightColor;
     #endif
 
     #if MAX_POINT_LIGHTS > 0
@@ -46,7 +53,6 @@ varying vec4 vPosition;
 #endif
 
 void main(void) {
-
     #ifdef USE_ENVMAP_AS_MAP
         vec4 fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
         fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
@@ -75,11 +81,12 @@ void main(void) {
         }
     #endif
 
-    #ifdef USE_LIGHTING
-        vec3 lighting = vec3(0,0,0);
+    #ifdef USE_PHONG_LIGHTING
+        vec3 diffuse = vec3(0,0,0);
+        vec3 specular = vec3(0,0,0);
 
         #ifdef USE_AMBIENT_LIGHT
-            lighting = lighting + ambientColor.rgb * ambientColor.a;
+            diffuse = diffuse + ambientColor.rgb * ambientColor.a * ambientLightColor.rgb * ambientLightColor.a;
         #endif
 
         #ifdef USE_NORMAL_MAP
@@ -90,20 +97,32 @@ void main(void) {
 
         #if MAX_POINT_LIGHTS > 0
             for (int i = 0 ; i < MAX_POINT_LIGHTS ; i++) {
-                vec3 vertexToLight = normalize(pointLightPosition[i] - vPosition.xyz);
-                float weight = pointLightColor[i].a * max(dot(normalize(normal.xyz), vertexToLight), 0.0);
-                lighting = lighting + pointLightColor[i].rgb * weight;
+                vec3 positionToLight = pointLightPosition[i] - vPosition.xyz;
+                vec3 positionToCamera = cameraPosition - vPosition.xyz;
+                float diffuseWeight = diffuseColor.a * pointLightColor[i].a * max(dot(normalize(normal.xyz), normalize(positionToLight)), 0.0);
+                diffuse = diffuse + diffuseColor.rgb * pointLightColor[i].rgb * diffuseWeight;
+
+                if (dot(normalize(positionToLight), normal.xyz) > 0.0) {
+                    float specularWeight = specularColor.a * pointLightColor[i].a * max(dot(normalize(positionToCamera), reflect(-normalize(positionToLight), normal.xyz)), 0.0);
+                    specular = specular + specularColor.rgb * pointLightColor[i].rgb * pow(specularWeight, shininess);
+                }
             }
         #endif
 
         #if MAX_DIR_LIGHTS > 0
             for (int i = 0 ; i < MAX_DIR_LIGHTS ; i++) {
-                float weight =  dirLightColor[i].a * max(dot(normalize(normal.xyz), -normalize(dirLightDirection[i])), 0.0);
-                lighting = lighting + dirLightColor[i].rgb * weight;
+                vec3 positionToCamera = cameraPosition - vPosition.xyz;
+                float diffuseWeight = diffuseColor.a * dirLightColor[i].a * max(dot(normalize(normal.xyz), -normalize(dirLightDirection[i])), 0.0);
+                diffuse = diffuse + diffuseColor.rgb * dirLightColor[i].rgb * diffuseWeight;
+
+                if (dot(normalize(-dirLightDirection[i]), normal.xyz) > 0.0) {
+                    float specularWeight = specularColor.a * dirLightColor[i].a * max(dot(normalize(positionToCamera), reflect(normalize(dirLightDirection[i]), normal.xyz)), 0.0);
+                    specular = specular + specularColor.rgb * dirLightColor[i].rgb * pow(specularWeight, shininess);
+                }
             }
         #endif
 
-        fragmentColor.rgb = fragmentColor.rgb * lighting;
+        fragmentColor.rgb = fragmentColor.rgb * diffuse + specular;
     #endif
 
     gl_FragColor = fragmentColor;

@@ -17,6 +17,7 @@ import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
 import jmini3d.light.PointLight;
 import jmini3d.material.Material;
+import jmini3d.material.PhongMaterial;
 
 public class Program {
 	public static final String TAG = "Program";
@@ -51,6 +52,10 @@ public class Program {
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	Color4 objectColor = new Color4();
 	Color4 ambientColor = new Color4();
+	Color4 diffuseColor = new Color4();
+	Color4 specularColor = new Color4();
+	Color4 ambientLightColor = new Color4();
+	float shininess = 0;
 	Vector3 cameraPosition = new Vector3(0, 0, 0);
 	float reflectivity;
 	// *********************** END
@@ -91,7 +96,7 @@ public class Program {
 	}
 
 	public static int getMaterialKey(Material material) {
-		boolean useLight = material.lighting;
+		boolean useLight = material instanceof PhongMaterial;
 		boolean useMap = material.map != null;
 		boolean useEnvMap = material.envMap != null;
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
@@ -146,15 +151,19 @@ public class Program {
 		maxPointLights = 0;
 		maxDirLights = 0;
 
-		if (material.lighting && scene.lights.size() > 0) {
-			defines.add("USE_LIGHTING");
+		if (material instanceof PhongMaterial && scene.lights.size() > 0) {
+			defines.add("USE_PHONG_LIGHTING");
+			uniformsInit.add("ambientColor");
+			uniformsInit.add("diffuseColor");
+			uniformsInit.add("specularColor");
+			uniformsInit.add("shininess");
 			useLighting = true;
 
 			for (Light light : scene.lights) {
 
 				if (light instanceof AmbientLight) {
 					defines.add("USE_AMBIENT_LIGHT");
-					uniformsInit.add("ambientColor");
+					uniformsInit.add("ambientLightColor");
 				}
 
 				if (light instanceof PointLight) {
@@ -292,10 +301,7 @@ public class Program {
 			for (int i = 0; i < scene.lights.size(); i++) {
 				Light light = scene.lights.get(i);
 				if (light instanceof AmbientLight) {
-					if (!ambientColor.equals(light.color)) {
-						GLES20.glUniform4f(uniforms.get("ambientColor"), light.color.r, light.color.g, light.color.b, light.color.a);
-						ambientColor.setAllFrom(light.color);
-					}
+					setColorIfChanged("ambientLightColor", light.color, ambientLightColor);
 				}
 
 				if (light instanceof PointLight) {
@@ -426,8 +432,23 @@ public class Program {
 				renderer3d.normalMapTextureId = normalMapTextureId;
 			}
 		}
-
+		if (useLighting) {
+			setColorIfChanged("ambientColor", ((PhongMaterial) o3d.material).ambient, ambientColor);
+			setColorIfChanged("diffuseColor", ((PhongMaterial) o3d.material).diffuse, diffuseColor);
+			setColorIfChanged("specularColor", ((PhongMaterial) o3d.material).specular, specularColor);
+			if (shininess != ((PhongMaterial) o3d.material).shininess) {
+				shininess = ((PhongMaterial) o3d.material).shininess;
+				GLES20.glUniform1f(uniforms.get("shininess"), shininess);
+			}
+		}
 		GLES20.glDrawElements(GLES20.GL_TRIANGLES, o3d.geometry3d.facesLength, GLES20.GL_UNSIGNED_SHORT, 0);
+	}
+
+	private void setColorIfChanged(String uniform, Color4 newColor, Color4 lastColor) {
+		if (!newColor.equals(lastColor)) {
+			GLES20.glUniform4f(uniforms.get(uniform), newColor.r, newColor.g, newColor.b, newColor.a);
+			lastColor.setAllFrom(newColor);
+		}
 	}
 
 	private int getShader(int type, String source) {

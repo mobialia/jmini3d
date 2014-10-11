@@ -9,18 +9,15 @@ public class SpriteMaterial extends Material {
 	public SpriteMaterial() {
 		super();
 		setBlending(Blending.NormalBlending);
-		setLighting(false);
 	}
 
 	public SpriteMaterial(Color4 color) {
 		super(color);
 		setBlending(Blending.NormalBlending);
-		setLighting(false);
 	}
 
 	public SpriteMaterial(Texture texture) {
 		super(texture);
 		setBlending(Blending.NormalBlending);
-		setLighting(false);
 	}
 }

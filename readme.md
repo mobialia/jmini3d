@@ -15,7 +15,7 @@ Features
 ========
 * Optimized for speed and smooth rendering
 * Extremely fast model loading (converts OBJ models to Java classes)
-* Multiple lights (Ambient/Point/Directional), only diffuse lighting (no specular), no attenuation with the distance
+* Phong lighting model with multiple lights (Ambient/Point/Directional), no attenuation with the distance
 * Reflections with cube environment mapping
 * Normal maps
 * HUD and 2D sprites support

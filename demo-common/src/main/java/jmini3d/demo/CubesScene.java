@@ -9,7 +9,7 @@ import jmini3d.geometry.BoxGeometry;
 import jmini3d.geometry.Geometry;
 import jmini3d.light.AmbientLight;
 import jmini3d.light.PointLight;
-import jmini3d.material.Material;
+import jmini3d.material.PhongMaterial;
 
 public class CubesScene extends ParentScene {
 
@@ -18,12 +18,16 @@ public class CubesScene extends ParentScene {
 
 		Random r = new Random();
 
-		addLight(new AmbientLight(new Color4(255, 255, 255), 0.5f));
+		addLight(new AmbientLight(new Color4(255, 255, 255), 0f));
 		addLight(new PointLight(new Vector3(0, 0, 0), new Color4(255, 255, 255), 1.1f));
 
-		Material material1 = new Material(new Color4(255, 0, 0, 255));
-		Material material2 = new Material(new Color4(0, 255, 0, 255));
-		Material material3 = new Material(new Color4(0, 0, 255, 255));
+		Color4 ambient = new Color4(255, 255, 255, 255);
+		Color4 red = new Color4(255, 0, 0, 255);
+		Color4 green = new Color4(0, 255, 0, 255);
+		Color4 blue = new Color4(0, 0, 255, 255);
+		PhongMaterial material1 = new PhongMaterial(ambient, red, red);
+		PhongMaterial material2 = new PhongMaterial(ambient, green, green);
+		PhongMaterial material3 = new PhongMaterial(ambient, blue, blue);
 
 		for (int i = 0; i < 200; i++) {
 			float x = r.nextFloat() * 50 - 25;

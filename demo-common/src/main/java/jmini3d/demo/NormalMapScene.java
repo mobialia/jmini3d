@@ -7,7 +7,7 @@ import jmini3d.Vector3;
 import jmini3d.geometry.Geometry;
 import jmini3d.geometry.PlaneGeometry;
 import jmini3d.light.PointLight;
-import jmini3d.material.Material;
+import jmini3d.material.PhongMaterial;
 
 public class NormalMapScene extends ParentScene {
 
@@ -19,11 +19,11 @@ public class NormalMapScene extends ParentScene {
 		Texture map = new Texture("wall.png");
 		Texture normalMap = new Texture("wall_normal.png");
 
-		Material material = new Material();
-		material.setMap(map);
+		Color4 white = new Color4(255, 255, 255, 255);
+		Color4 transparent = new Color4(0, 0, 0, 0);
+		PhongMaterial material = new PhongMaterial(map, white, white, transparent);
 
-		Material materialMap = new Material();
-		materialMap.setMap(map);
+		PhongMaterial materialMap = new PhongMaterial(map, white, white, white);
 		materialMap.setNormalMap(normalMap);
 
 		Geometry planeGeometry = new PlaneGeometry(1);
@@ -36,7 +36,7 @@ public class NormalMapScene extends ParentScene {
 		plane2.setPosition(1, 0, 0);
 		addChild(plane2);
 
-		pointLight = new PointLight(new Vector3(0, 0, 0.5f), new Color4(128, 128, 128), 3);
+		pointLight = new PointLight(new Vector3(0, 0, 0.5f), new Color4(128, 128, 128), 2);
 		addLight(pointLight);
 	}
 
