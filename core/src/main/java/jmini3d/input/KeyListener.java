@@ -10,6 +10,7 @@ public interface KeyListener {
 	final static int KEY_CENTER = 5;
 	final static int KEY_ZOOM_IN = 6;
 	final static int KEY_ZOOM_OUT = 7;
+	final static int KEY_BACKSPACE = 8;
 	final static int KEY_ENTER = 13;
 
 	public void onKeyDown(int key);

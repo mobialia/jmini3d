@@ -178,19 +178,22 @@ public class InputController implements EventListener {
 			int key = 0;
 			switch (event.getKeyCode()) {
 				case KeyCodes.KEY_UP:
-					key = KeyListener.KEY_ENTER;
+					key = KeyListener.KEY_UP;
 					break;
 				case KeyCodes.KEY_DOWN:
-					key = KeyListener.KEY_ENTER;
+					key = KeyListener.KEY_DOWN;
 					break;
 				case KeyCodes.KEY_LEFT:
-					key = KeyListener.KEY_ENTER;
+					key = KeyListener.KEY_LEFT;
 					break;
 				case KeyCodes.KEY_RIGHT:
-					key = KeyListener.KEY_ENTER;
+					key = KeyListener.KEY_RIGHT;
 					break;
 				case KeyCodes.KEY_ENTER:
 					key = KeyListener.KEY_ENTER;
+					break;
+				case KeyCodes.KEY_BACKSPACE:
+					key = KeyListener.KEY_BACKSPACE;
 					break;
 			}
 			if (key != 0) {
