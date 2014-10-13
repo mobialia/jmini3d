@@ -26,6 +26,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 		this.renderContinuously = renderContinuously;
 
 		webGLCanvas = DOM.createElement("canvas");
+		webGLCanvas.setAttribute("tabindex", "0"); // Workaround to receive key events
 
 		gl = (WebGLRenderingContext) getContext(webGLCanvas, "webgl");
 		if (gl == null) {
@@ -40,7 +41,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 	}
 
 	public final native Context getContext(Element el, String contextId) /*-{
-    	return el.getContext(contextId);
+		return el.getContext(contextId);
  	}-*/;
 
 	public void setSize(int width, int heigth) {
