@@ -52,7 +52,7 @@ public class InputController implements EventListener {
 	public void setKeyListener(KeyListener keyListener) {
 		int mask = Event.ONKEYDOWN | Event.ONKEYUP | Event.ONMOUSEWHEEL;
 
-		if (touchListener != null) {
+		if (keyListener != null) {
 			eventBits |= mask;
 		} else {
 			eventBits &= ~mask;
