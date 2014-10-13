@@ -7,11 +7,16 @@ public class Color4 {
 	public float b;
 	public float a;
 
+	public static Color4 fromFloat(float r, float g, float b, float a) {
+		Color4 color4 = new Color4();
+		color4.r = r;
+		color4.g = g;
+		color4.b = b;
+		color4.a = a;
+		return color4;
+	}
+
 	public Color4() {
-		this.r = 0;
-		this.g = 0;
-		this.b = 0;
-		this.a = 0;
 	}
 
 	public Color4(int r, int g, int b) {
@@ -56,6 +61,6 @@ public class Color4 {
 		if (!(o instanceof Color4)) {
 			return false;
 		}
-		return r == ((Color4) o).r && g == ((Color4) o).g && b == ((Color4) o).b && a == ((Color4) o).a;
+		return (r == ((Color4) o).r) && (g == ((Color4) o).g) && (b == ((Color4) o).b) && (a == ((Color4) o).a);
 	}
 }

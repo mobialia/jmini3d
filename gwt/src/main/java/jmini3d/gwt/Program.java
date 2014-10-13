@@ -54,11 +54,11 @@ public class Program {
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-	Color4 objectColor = new Color4();
-	Color4 ambientColor = new Color4();
-	Color4 diffuseColor = new Color4();
-	Color4 specularColor = new Color4();
-	Color4 ambientLightColor = new Color4();
+	Color4 objectColor = Color4.fromFloat(-1, -1, -1, -1);
+	Color4 ambientColor = Color4.fromFloat(-1, -1, -1, -1);
+	Color4 diffuseColor = Color4.fromFloat(-1, -1, -1, -1);
+	Color4 specularColor = Color4.fromFloat(-1, -1, -1, -1);
+	Color4 ambientLightColor = Color4.fromFloat(-1, -1, -1, -1);
 	float shininess = 0;
 	Vector3 cameraPosition = new Vector3(0, 0, 0);
 	float reflectivity;
