@@ -158,7 +158,6 @@ public class Renderer3d {
 		}
 	}
 
-
 	public GpuUploader getGpuUploader() {
 		return gpuUploader;
 	}

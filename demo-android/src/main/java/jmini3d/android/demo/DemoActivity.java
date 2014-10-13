@@ -9,8 +9,6 @@ import jmini3d.demo.DemoSceneController;
 import jmini3d.input.TouchListener;
 
 public class DemoActivity extends Activity3d {
-	public static final String TAG = "DemoActivity";
-
 	InputController touchController;
 
 	@Override
