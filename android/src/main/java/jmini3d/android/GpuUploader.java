@@ -147,7 +147,10 @@ public class GpuUploader {
 				textures.put(texture, textureId);
 			}
 
-			GLES20.glActiveTexture(activeTexture);
+			if (renderer3d.activeTexture != activeTexture) {
+				GLES20.glActiveTexture(activeTexture);
+				renderer3d.activeTexture = activeTexture;
+			}
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
 			renderer3d.mapTextureId = textureId;
 
@@ -174,7 +177,10 @@ public class GpuUploader {
 			}
 			cubeMapTextures.put(cubeMapTexture, textureId);
 
-			GLES20.glActiveTexture(activeTexture);
+			if (renderer3d.activeTexture != activeTexture) {
+				GLES20.glActiveTexture(activeTexture);
+				renderer3d.activeTexture = activeTexture;
+			}
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureId);
 			renderer3d.envMapTextureId = textureId;
 

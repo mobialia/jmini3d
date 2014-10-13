@@ -175,7 +175,10 @@ public class GpuUploader {
 	public void textureLoaded(Renderer3d renderer3d, Texture texture, int activeTexture) {
 		WebGLTexture mapTextureId = textures.get(texture);
 
-		gl.activeTexture(activeTexture);
+		if (renderer3d.activeTexture != activeTexture) {
+			gl.activeTexture(activeTexture);
+			renderer3d.activeTexture = activeTexture;
+		}
 		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, mapTextureId);
 		renderer3d.mapTextureId = mapTextureId;
 
@@ -198,7 +201,10 @@ public class GpuUploader {
 		if (cubeMapTexture.loadCount == 6) {
 			WebGLTexture envMapTextureId = cubeMapTextures.get(cubeMapTexture);
 
-			gl.activeTexture(activeTexture);
+			if (renderer3d.activeTexture != activeTexture) {
+				gl.activeTexture(activeTexture);
+				renderer3d.activeTexture = activeTexture;
+			}
 			gl.bindTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP, envMapTextureId);
 			renderer3d.envMapTextureId = envMapTextureId;
 
