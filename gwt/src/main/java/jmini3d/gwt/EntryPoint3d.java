@@ -6,16 +6,13 @@ import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
 
-import jmini3d.Scene;
-import jmini3d.SceneController;
-
-public class EntryPoint3d implements EntryPoint, SceneController {
+public class EntryPoint3d implements EntryPoint {
 
 	public Canvas3d canvas3d;
 	public String resourceDir = "./";
 
 	public void onModuleLoad() {
-		canvas3d = new Canvas3d(resourceDir, this, true);
+		canvas3d = new Canvas3d(resourceDir, true);
 
 		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
 		Window.addResizeHandler(new ResizeHandler() {
@@ -36,8 +33,4 @@ public class EntryPoint3d implements EntryPoint, SceneController {
 	public static native void appendToBody(Element element) /*-{
 		$doc.body.appendChild(element);
 	}-*/;
-
-	public Scene getScene(int width, int height) {
-		return null;
-	}
 }

@@ -22,8 +22,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 	SceneController sceneController;
 	boolean renderContinuously;
 
-	public Canvas3d(String resourceLoaderDir, SceneController sceneController, boolean renderContinuously) {
-		this.sceneController = sceneController;
+	public Canvas3d(String resourceLoaderDir, boolean renderContinuously) {
 		this.renderContinuously = renderContinuously;
 
 		webGLCanvas = DOM.createElement("canvas");
@@ -33,7 +32,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 			gl = (WebGLRenderingContext) getContext(webGLCanvas, "experimental-webgl");
 		}
 		if (gl == null) {
-			Window.alert("Sorry, Your browser doesn't support WebGL. Please Install the last version of Firefox, Chrome or Internet Explorer (>=11).");
+			Window.alert("Sorry, Your browser doesn't support WebGL. Please install the last version of Firefox, Chrome, Safari, or Internet Explorer and check that WebGL is enabled.");
 			return;
 		}
 
@@ -78,7 +77,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 	}
 
 	public void requestRender() {
-		if (renderContinuously) {
+		if (renderContinuously || sceneController == null) {
 			return;
 		}
 		Scene scene = sceneController.getScene(width, height);

@@ -23,9 +23,8 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 	GL10 gl;
 
-	public GlSurfaceView3d(Context ctx, SceneController sceneController, boolean renderContinuously, boolean traslucent) {
+	public GlSurfaceView3d(Context ctx, boolean renderContinuously, boolean traslucent) {
 		super(ctx);
-		this.sceneController = sceneController;
 		this.renderContinuously = renderContinuously;
 
 		setEGLContextClientVersion(2);

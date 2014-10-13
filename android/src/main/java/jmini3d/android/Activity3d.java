@@ -3,12 +3,7 @@ package jmini3d.android;
 import android.app.Activity;
 import android.os.Bundle;
 
-import jmini3d.Scene;
-import jmini3d.SceneController;
-
-public class Activity3d extends Activity implements SceneController {
-	public static final String TAG = "RendererActivity";
-
+public class Activity3d extends Activity {
 	public GlSurfaceView3d glSurfaceView3d;
 	public boolean traslucent = false;
 
@@ -16,7 +11,7 @@ public class Activity3d extends Activity implements SceneController {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		glSurfaceView3d = new GlSurfaceView3d(this, this, true, traslucent);
+		glSurfaceView3d = new GlSurfaceView3d(this, true, traslucent);
 
 		onCreateSetContentView();
 	}
@@ -37,7 +32,4 @@ public class Activity3d extends Activity implements SceneController {
 		glSurfaceView3d.onPause();
 	}
 
-	public Scene getScene(int width, int height) {
-		return null;
-	}
 }
