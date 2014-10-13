@@ -45,18 +45,22 @@ public class Material {
 
 	public void setMap(Texture map) {
 		this.map = map;
+		shaderKey = -1;
 	}
 
 	public void setEnvMap(CubeMapTexture envMap) {
 		this.envMap = envMap;
+		shaderKey = -1;
 	}
 
 	public void setEnvMap(CubeMapTexture envMap, float reflectivity) {
 		this.envMap = envMap;
 		this.reflectivity = reflectivity;
+		shaderKey = -1;
 	}
 
 	public void setNormalMap(Texture normalMap) {
 		this.normalMap = normalMap;
+		shaderKey = -1;
 	}
 }
