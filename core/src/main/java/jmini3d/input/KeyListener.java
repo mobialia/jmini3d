@@ -13,8 +13,8 @@ public interface KeyListener {
 	final static int KEY_BACKSPACE = 8;
 	final static int KEY_ENTER = 13;
 
-	public void onKeyDown(int key);
+	public boolean onKeyDown(int key);
 
-	public void onKeyUp(int key);
+	public boolean onKeyUp(int key);
 
 }

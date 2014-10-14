@@ -197,25 +197,31 @@ public class InputController implements EventListener {
 					break;
 			}
 			if (key != 0) {
+				boolean managed = false;
 				if ((event.getTypeInt() & Event.ONKEYDOWN) != 0) {
-					keyListener.onKeyDown(key);
+					managed = keyListener.onKeyDown(key);
 				}
 				if ((event.getTypeInt() & Event.ONKEYUP) != 0) {
-					keyListener.onKeyUp(key);
+					managed = keyListener.onKeyUp(key);
 				}
-				event.preventDefault();
+				if (managed) {
+					event.preventDefault();
+				}
 			}
 		}
 		if ((event.getTypeInt() & Event.ONMOUSEWHEEL) != 0) {
+			boolean managed = false;
 			if (event.getMouseWheelVelocityY() > 0) {
-				keyListener.onKeyDown(KeyListener.KEY_ZOOM_OUT);
-				keyListener.onKeyUp(KeyListener.KEY_ZOOM_OUT);
+				managed |= keyListener.onKeyDown(KeyListener.KEY_ZOOM_OUT);
+				managed |= keyListener.onKeyUp(KeyListener.KEY_ZOOM_OUT);
 			} else {
-				keyListener.onKeyDown(KeyListener.KEY_ZOOM_IN);
-				keyListener.onKeyUp(KeyListener.KEY_ZOOM_IN);
+				managed |= keyListener.onKeyDown(KeyListener.KEY_ZOOM_IN);
+				managed |= keyListener.onKeyUp(KeyListener.KEY_ZOOM_IN);
+			}
+			if (managed) {
+				event.preventDefault();
 			}
 		}
-		event.preventDefault();
 	}
 
 	native void log(String message) /*-{

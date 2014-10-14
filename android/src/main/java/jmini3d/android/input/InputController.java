@@ -146,14 +146,15 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 				return false;
 		}
 
+		boolean managed = false;
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
-			keyListener.onKeyDown(key);
+			managed = keyListener.onKeyDown(key);
 		}
 
 		if (event.getAction() == KeyEvent.ACTION_UP) {
-			keyListener.onKeyUp(key);
+			managed = keyListener.onKeyUp(key);
 		}
-		return true;
+		return managed;
 	}
 
 }
