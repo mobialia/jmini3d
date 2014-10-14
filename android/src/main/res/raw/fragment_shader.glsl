@@ -103,8 +103,8 @@ void main(void) {
                 diffuse = diffuse + diffuseColor.rgb * pointLightColor[i].rgb * diffuseWeight;
 
                 if (dot(normalize(positionToLight), normal.xyz) > 0.0) {
-                    float specularWeight = specularColor.a * pointLightColor[i].a * max(dot(normalize(positionToCamera), reflect(-normalize(positionToLight), normal.xyz)), 0.0);
-                    specular = specular + specularColor.rgb * pointLightColor[i].rgb * pow(specularWeight, shininess);
+                    float specularWeight = specularColor.a * pointLightColor[i].a * pow(max(dot(normalize(positionToCamera), reflect(-normalize(positionToLight), normal.xyz)), 0.0), shininess);
+                    specular = specular + specularColor.rgb * pointLightColor[i].rgb * specularWeight;
                 }
             }
         #endif
@@ -116,8 +116,8 @@ void main(void) {
                 diffuse = diffuse + diffuseColor.rgb * dirLightColor[i].rgb * diffuseWeight;
 
                 if (dot(normalize(-dirLightDirection[i]), normal.xyz) > 0.0) {
-                    float specularWeight = specularColor.a * dirLightColor[i].a * max(dot(normalize(positionToCamera), reflect(normalize(dirLightDirection[i]), normal.xyz)), 0.0);
-                    specular = specular + specularColor.rgb * dirLightColor[i].rgb * pow(specularWeight, shininess);
+                    float specularWeight = specularColor.a * dirLightColor[i].a * pow(max(dot(normalize(positionToCamera), reflect(normalize(dirLightDirection[i]), normal.xyz)), 0.0), shininess);
+                    specular = specular + specularColor.rgb * dirLightColor[i].rgb * specularWeight;
                 }
             }
         #endif
