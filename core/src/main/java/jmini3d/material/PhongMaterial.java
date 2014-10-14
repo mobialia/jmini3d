@@ -27,4 +27,12 @@ public class PhongMaterial extends Material {
 		this.diffuse = diffuse;
 		this.specular = specular;
 	}
+
+	public PhongMaterial(Texture texture, Color4 ambient, Color4 diffuse, Color4 specular, float shininess) {
+		super(texture);
+		this.ambient = ambient;
+		this.diffuse = diffuse;
+		this.specular = specular;
+		this.shininess = shininess;
+	}
 }
