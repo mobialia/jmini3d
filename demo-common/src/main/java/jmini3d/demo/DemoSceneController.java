@@ -5,10 +5,11 @@ import java.util.HashMap;
 import jmini3d.Scene;
 import jmini3d.SceneController;
 import jmini3d.Vector3;
+import jmini3d.input.KeyListener;
 import jmini3d.input.TouchListener;
 import jmini3d.input.TouchPointer;
 
-public class DemoSceneController implements SceneController, TouchListener {
+public class DemoSceneController implements SceneController, TouchListener, KeyListener {
 	float cameraAngle;
 	long initialTime;
 
@@ -38,26 +39,52 @@ public class DemoSceneController implements SceneController, TouchListener {
 		return scenes[sceneIndex];
 	}
 
+	private void nextScene() {
+		if (sceneIndex >= scenes.length - 1) {
+			sceneIndex = 0;
+		} else {
+			sceneIndex++;
+		}
+	}
+
+	private void previousScene() {
+		if (sceneIndex <= 0) {
+			sceneIndex = scenes.length - 1;
+		} else {
+			sceneIndex--;
+		}
+	}
+
 	@Override
 	public boolean onTouch(HashMap<Integer, TouchPointer> pointers) {
 		for (Integer key : pointers.keySet()) {
 			TouchPointer pointer = pointers.get(key);
 			if (pointer.status == TouchPointer.TOUCH_DOWN) {
 				if (pointer.x > scenes[sceneIndex].getCamera().getWidth() / 2) {
-					if (sceneIndex >= scenes.length - 1) {
-						sceneIndex = 0;
-					} else {
-						sceneIndex++;
-					}
+					nextScene();
 				} else {
-					if (sceneIndex <= 0) {
-						sceneIndex = scenes.length - 1;
-					} else {
-						sceneIndex--;
-					}
+					previousScene();
 				}
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean onKeyDown(int key) {
+		switch (key) {
+			case KeyListener.KEY_RIGHT:
+				nextScene();
+				return true;
+			case KeyListener.KEY_LEFT:
+				previousScene();
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onKeyUp(int key) {
+		return false;
 	}
 }

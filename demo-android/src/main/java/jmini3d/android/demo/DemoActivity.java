@@ -18,6 +18,7 @@ public class DemoActivity extends Activity3d {
 		glSurfaceView3d.getRenderer3d().setLogFps(true);
 		inputController = new InputController(glSurfaceView3d);
 		inputController.setTouchListener(sceneController);
+		inputController.setKeyListener(sceneController);
 	}
 
 	public void onCreateSetContentView() {
