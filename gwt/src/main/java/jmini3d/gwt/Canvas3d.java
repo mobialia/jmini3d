@@ -17,10 +17,12 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 
 	boolean stopped = false;
 	int width, height;
+	float scale = 1;
 
 	public Renderer3d renderer3d;
 	SceneController sceneController;
 	boolean renderContinuously;
+	boolean forceRedraw = false;
 
 	public Canvas3d(String resourceLoaderDir, boolean renderContinuously) {
 		this.renderContinuously = renderContinuously;
@@ -44,12 +46,16 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 		return el.getContext(contextId);
  	}-*/;
 
-	public void setSize(int width, int heigth) {
-		this.width = width;
-		this.height = heigth;
-		webGLCanvas.setAttribute("width", width + "px");
-		webGLCanvas.setAttribute("height", heigth + "px");
+	public final native float getDevicePixelRatio() /*-{
+		 return window.devicePixelRatio || 1;
+ 	}-*/;
 
+	public void setSize(int width, int height) {
+		this.width = (int) (width * scale);
+		this.height = (int) (height * scale);
+		webGLCanvas.setAttribute("width", String.valueOf(this.width));
+		webGLCanvas.setAttribute("height", String.valueOf(this.height));
+		webGLCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px;");
 		requestRender();
 	}
 
@@ -69,19 +75,24 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 	@Override
 	public void execute(double timestamp) {
 		if (!stopped && renderContinuously && sceneController != null) {
-			Scene scene = sceneController.getScene(width, height);
-			if (scene != null) {
-				renderer3d.render(scene);
+			if (sceneController.updateScene(width, height) || forceRedraw) {
+				Scene scene = sceneController.getScene();
+				if (scene != null) {
+					forceRedraw = false;
+					renderer3d.render(scene);
+				}
 			}
 			AnimationScheduler.get().requestAnimationFrame(this);
 		}
 	}
 
 	public void requestRender() {
+		forceRedraw = true;
 		if (renderContinuously || sceneController == null) {
 			return;
 		}
-		Scene scene = sceneController.getScene(width, height);
+		sceneController.updateScene(width, height);
+		Scene scene = sceneController.getScene();
 		if (scene != null) {
 			renderer3d.render(scene);
 		}
@@ -107,6 +118,14 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 
 	public Element getElement() {
 		return webGLCanvas;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public float getScale() {
+		return scale;
 	}
 
 	@Override

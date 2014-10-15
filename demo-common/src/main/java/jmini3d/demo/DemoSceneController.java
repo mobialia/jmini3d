@@ -22,7 +22,12 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 	}
 
 	@Override
-	public Scene getScene(int width, int height) {
+	public Scene getScene() {
+		return scenes[sceneIndex];
+	}
+
+	@Override
+	public boolean updateScene(int width, int height) {
 		scenes[sceneIndex].setViewPort(width, height);
 
 		// Rotate camera...
@@ -36,7 +41,7 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 		);
 		((ParentScene) scenes[sceneIndex]).update();
 
-		return scenes[sceneIndex];
+		return true;
 	}
 
 	private void nextScene() {

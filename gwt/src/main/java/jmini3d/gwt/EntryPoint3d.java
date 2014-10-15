@@ -13,7 +13,7 @@ public class EntryPoint3d implements EntryPoint {
 
 	public void onModuleLoad() {
 		canvas3d = new Canvas3d(resourceDir, true);
-
+		canvas3d.setScale(canvas3d.getDevicePixelRatio());
 		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
 		Window.addResizeHandler(new ResizeHandler() {
 			public void onResize(ResizeEvent event) {

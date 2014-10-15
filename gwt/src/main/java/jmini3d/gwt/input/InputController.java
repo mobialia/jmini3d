@@ -27,12 +27,18 @@ public class InputController implements EventListener {
 	Element element;
 	int eventBits;
 
+	public float scale = 1;
+
 	public InputController(final Element element) {
 		this.element = element;
 		Event.setEventListener(element, this);
 
 		mousePointer = new TouchPointer();
 		eventBits = 0;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
 	}
 
 	public void setTouchListener(TouchListener touchListener) {
@@ -65,16 +71,16 @@ public class InputController implements EventListener {
 	@Override
 	public void onBrowserEvent(Event event) {
 		if ((event.getTypeInt() & Event.ONMOUSEDOWN) != 0) {
-			mousePointer.x = event.getClientX() - element.getAbsoluteLeft();
-			mousePointer.y = event.getClientY() - element.getAbsoluteTop();
+			mousePointer.x = (int) (scale * (event.getClientX() - element.getAbsoluteLeft()));
+			mousePointer.y = (int) (scale * (event.getClientY() - element.getAbsoluteTop()));
 			mousePointer.status = TouchPointer.TOUCH_DOWN;
 			pointers.put(MOUSE_POINTER_ID, mousePointer);
 			touchListener.onTouch(pointers);
 			event.preventDefault();
 		}
 		if ((event.getTypeInt() & Event.ONMOUSEDOWN) != 0) {
-			mousePointer.x = event.getClientX() - element.getAbsoluteLeft();
-			mousePointer.y = event.getClientY() - element.getAbsoluteTop();
+			mousePointer.x = (int) (scale * (event.getClientX() - element.getAbsoluteLeft()));
+			mousePointer.y = (int) (scale * (event.getClientY() - element.getAbsoluteTop()));
 			mousePointer.status = TouchPointer.TOUCH_MOVE;
 
 			if (pointers.containsKey(MOUSE_POINTER_ID)) {
@@ -83,8 +89,8 @@ public class InputController implements EventListener {
 			event.preventDefault();
 		}
 		if ((event.getTypeInt() & Event.ONMOUSEMOVE) != 0) {
-			mousePointer.x = event.getClientX() - element.getAbsoluteLeft();
-			mousePointer.y = event.getClientY() - element.getAbsoluteTop();
+			mousePointer.x = (int) (scale * (event.getClientX() - element.getAbsoluteLeft()));
+			mousePointer.y = (int) (scale * (event.getClientY() - element.getAbsoluteTop()));
 			mousePointer.status = TouchPointer.TOUCH_MOVE;
 
 			if (pointers.containsKey(MOUSE_POINTER_ID)) {
@@ -93,8 +99,8 @@ public class InputController implements EventListener {
 			event.preventDefault();
 		}
 		if ((event.getTypeInt() & Event.ONMOUSEUP) != 0) {
-			mousePointer.x = event.getClientX() - element.getAbsoluteLeft();
-			mousePointer.y = event.getClientY() - element.getAbsoluteTop();
+			mousePointer.x = (int) (scale * (event.getClientX() - element.getAbsoluteLeft()));
+			mousePointer.y = (int) (scale * (event.getClientY() - element.getAbsoluteTop()));
 			mousePointer.status = TouchPointer.TOUCH_UP;
 
 			if (pointers.containsKey(MOUSE_POINTER_ID)) {
@@ -104,8 +110,8 @@ public class InputController implements EventListener {
 			event.preventDefault();
 		}
 		if ((event.getTypeInt() & Event.ONMOUSEOUT) != 0) {
-			mousePointer.x = event.getClientX() - element.getAbsoluteLeft();
-			mousePointer.y = event.getClientY() - element.getAbsoluteTop();
+			mousePointer.x = (int) (scale * (event.getClientX() - element.getAbsoluteLeft()));
+			mousePointer.y = (int) (scale * (event.getClientY() - element.getAbsoluteTop()));
 			mousePointer.status = TouchPointer.TOUCH_UP;
 
 			if (pointers.containsKey(MOUSE_POINTER_ID)) {
@@ -121,8 +127,8 @@ public class InputController implements EventListener {
 				if (pointer == null) {
 					pointer = new TouchPointer();
 				}
-				pointer.x = touch.getRelativeX(element);
-				pointer.y = touch.getRelativeY(element);
+				pointer.x = (int) (scale * (touch.getClientX() - element.getAbsoluteLeft()));
+				pointer.y = (int) (scale * (touch.getClientY() - element.getAbsoluteTop()));
 				pointer.status = TouchPointer.TOUCH_DOWN;
 				pointers.put(touch.getIdentifier(), pointer);
 			}
@@ -137,8 +143,8 @@ public class InputController implements EventListener {
 			for (int i = 0; i < event.getChangedTouches().length(); i++) {
 				Touch touch = event.getChangedTouches().get(i);
 				TouchPointer pointer = pointers.get(touch.getIdentifier());
-				pointer.x = touch.getRelativeX(element);
-				pointer.y = touch.getRelativeY(element);
+				pointer.x = (int) (scale * (touch.getClientX() - element.getAbsoluteLeft()));
+				pointer.y = (int) (scale * (touch.getClientY() - element.getAbsoluteTop()));
 				pointer.status = TouchPointer.TOUCH_MOVE;
 			}
 			touchListener.onTouch(pointers);
@@ -192,6 +198,9 @@ public class InputController implements EventListener {
 				case KeyCodes.KEY_ENTER:
 					key = KeyListener.KEY_ENTER;
 					break;
+				case KeyCodes.KEY_ESCAPE:
+					key = KeyListener.KEY_BACK;
+					break;
 				case KeyCodes.KEY_BACKSPACE:
 					key = KeyListener.KEY_BACKSPACE;
 					break;
@@ -223,9 +232,5 @@ public class InputController implements EventListener {
 			}
 		}
 	}
-
-	native void log(String message) /*-{
-		console.log(message);
-    }-*/;
 
 }

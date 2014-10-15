@@ -142,6 +142,12 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 			case KeyEvent.KEYCODE_DPAD_CENTER:
 				key = KeyListener.KEY_CENTER;
 				break;
+			case KeyEvent.KEYCODE_BACK:
+				key = KeyListener.KEY_BACK;
+				break;
+			case KeyEvent.KEYCODE_ENTER:
+				key = KeyListener.KEY_ENTER;
+				break;
 			default:
 				return false;
 		}

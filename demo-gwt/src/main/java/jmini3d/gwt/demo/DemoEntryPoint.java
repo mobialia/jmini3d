@@ -18,6 +18,7 @@ public class DemoEntryPoint extends EntryPoint3d {
 		inputController = new InputController(canvas3d.getElement());
 		inputController.setTouchListener(sceneController);
 		inputController.setKeyListener(sceneController);
+		inputController.scale = canvas3d.getScale();
 		canvas3d.getElement().focus();
 	}
 
