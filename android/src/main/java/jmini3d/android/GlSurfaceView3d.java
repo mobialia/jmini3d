@@ -20,7 +20,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	Renderer3d renderer3d;
 	SceneController sceneController;
 	boolean renderContinuously;
-	boolean forceRedraw = false;
+	int forceRedraw = 0;
 
 	GL10 gl;
 
@@ -58,10 +58,15 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	@Override
 	public void onDrawFrame(GL10 unused) {
 		if (sceneController != null) {
-			if (sceneController.updateScene(width, height) || forceRedraw) {
+			if (sceneController.updateScene(width, height)) {
+				// due to buffer swapping we need to redraw two frames
+				forceRedraw = 2;
+			}
+
+			if (forceRedraw > 0) {
 				Scene scene = sceneController.getScene();
 				if (scene != null) {
-					forceRedraw = false;
+					forceRedraw--;
 					renderer3d.render(scene);
 				}
 			}
@@ -69,7 +74,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	}
 
 	public void requestRender() {
-		forceRedraw = true;
+		forceRedraw = 2;
 		if (renderContinuously) {
 			return;
 		}
