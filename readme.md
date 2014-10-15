@@ -66,10 +66,14 @@ The ResourceLoader is initialized with a reference to the Android context.
 
 GWT
 ===
-In GWT you must extend the EntryPoint3d or use the Canvas3d wrapper (that wraps a DOM canvas element).
+In GWT you must extend the EntryPoint3d or use the Canvas3d wrapper (wraps a DOM canvas element).
 
 The image resources must be in a folder or subfolder of the web project location (src/main/webapp/).
 The ResourceLoader is initialized with "./" if the resources are in that folder or with the subfolder name.
+
+In mobile devices when using <meta name="viewport" content="width=device-width"> canvas3d must be upscaled by the
+canvas3d.getDevicePixelRatio(). The scale must be set also in the InputController, you can see how
+it works in the demo.
 
 Generate Geometries from OBJ files
 ==================================
