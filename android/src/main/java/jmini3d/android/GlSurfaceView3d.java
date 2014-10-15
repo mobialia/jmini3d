@@ -35,6 +35,9 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 			}
 			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		} else {
+			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+			getHolder().setFormat(PixelFormat.RGBA_8888);
 		}
 
 		renderer3d = new Renderer3d(new ResourceLoader(ctx));
@@ -59,8 +62,8 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	public void onDrawFrame(GL10 unused) {
 		if (sceneController != null) {
 			if (sceneController.updateScene(width, height)) {
-				// due to buffer swapping we need to redraw two frames
-				forceRedraw = 2;
+				// due to buffer swapping we need to redraw three frames
+				forceRedraw = 3;
 			}
 
 			if (forceRedraw > 0) {
@@ -74,7 +77,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	}
 
 	public void requestRender() {
-		forceRedraw = 2;
+		forceRedraw = 3;
 		if (renderContinuously) {
 			return;
 		}
