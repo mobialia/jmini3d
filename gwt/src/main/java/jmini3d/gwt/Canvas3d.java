@@ -21,11 +21,9 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 
 	public Renderer3d renderer3d;
 	SceneController sceneController;
-	boolean renderContinuously;
 	boolean forceRedraw = false;
 
-	public Canvas3d(String resourceLoaderDir, boolean renderContinuously) {
-		this.renderContinuously = renderContinuously;
+	public Canvas3d(String resourceLoaderDir) {
 
 		webGLCanvas = DOM.createElement("canvas");
 		webGLCanvas.setAttribute("tabindex", "0"); // Workaround to receive key events
@@ -61,11 +59,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 
 	public void onResume() {
 		stopped = false;
-		if (renderContinuously) {
-			AnimationScheduler.get().requestAnimationFrame(this);
-		} else {
-			requestRender();
-		}
+		AnimationScheduler.get().requestAnimationFrame(this);
 	}
 
 	public void onPause() {
@@ -74,12 +68,14 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 
 	@Override
 	public void execute(double timestamp) {
-		if (!stopped && renderContinuously && sceneController != null) {
-			if (sceneController.updateScene(width, height) || forceRedraw) {
-				Scene scene = sceneController.getScene();
-				if (scene != null) {
-					forceRedraw = false;
-					renderer3d.render(scene);
+		if (!stopped) {
+			if (sceneController != null) {
+				if (sceneController.updateScene(width, height) || forceRedraw) {
+					Scene scene = sceneController.getScene();
+					if (scene != null) {
+						forceRedraw = false;
+						renderer3d.render(scene);
+					}
 				}
 			}
 			AnimationScheduler.get().requestAnimationFrame(this);
@@ -88,24 +84,6 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 
 	public void requestRender() {
 		forceRedraw = true;
-		if (renderContinuously || sceneController == null) {
-			return;
-		}
-		sceneController.updateScene(width, height);
-		Scene scene = sceneController.getScene();
-		if (scene != null) {
-			renderer3d.render(scene);
-		}
-	}
-
-	public void setRenderContinuously(boolean renderContinuously) {
-		if (this.renderContinuously != renderContinuously) {
-			this.renderContinuously = renderContinuously;
-
-			if (renderContinuously) {
-				AnimationScheduler.get().requestAnimationFrame(this);
-			}
-		}
 	}
 
 	public void setSceneController(SceneController sceneController) {

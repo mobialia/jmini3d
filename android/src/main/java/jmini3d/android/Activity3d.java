@@ -11,7 +11,7 @@ public class Activity3d extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		glSurfaceView3d = new GlSurfaceView3d(this, true, traslucent);
+		glSurfaceView3d = new GlSurfaceView3d(this, traslucent);
 
 		onCreateSetContentView();
 	}

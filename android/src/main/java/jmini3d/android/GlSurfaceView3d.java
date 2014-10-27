@@ -19,14 +19,12 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 	Renderer3d renderer3d;
 	SceneController sceneController;
-	boolean renderContinuously;
 	int forceRedraw = 0;
 
 	GL10 gl;
 
-	public GlSurfaceView3d(Context ctx, boolean renderContinuously, boolean traslucent) {
+	public GlSurfaceView3d(Context ctx, boolean traslucent) {
 		super(ctx);
-		this.renderContinuously = renderContinuously;
 
 		setEGLContextClientVersion(2);
 		if (traslucent) {
@@ -43,7 +41,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		renderer3d = new Renderer3d(new ResourceLoader(ctx));
 
 		setRenderer(this);
-		setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
 	}
 
 	@Override
@@ -78,17 +76,6 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 	public void requestRender() {
 		forceRedraw = 3;
-		if (renderContinuously) {
-			return;
-		}
-		super.requestRender();
-	}
-
-	public void setRenderContinuously(boolean renderContinuously) {
-		if (this.renderContinuously != renderContinuously) {
-			this.renderContinuously = renderContinuously;
-			setRenderMode(renderContinuously ? RENDERMODE_CONTINUOUSLY : RENDERMODE_WHEN_DIRTY);
-		}
 	}
 
 	public void setSceneController(SceneController sceneController) {
