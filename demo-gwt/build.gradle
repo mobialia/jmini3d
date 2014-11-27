@@ -3,8 +3,8 @@ apply plugin: 'java'
 archivesBaseName = 'jmini3d-gwt_demo'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.6.1'
-    compile 'com.google.gwt:gwt-dev:2.6.1'
+    compile 'com.google.gwt:gwt-user:2.7.0'
+    compile 'com.google.gwt:gwt-dev:2.7.0'
     compile project(':core')
     compile project(path: ':core', configuration: 'archives')
     compile project(':gwt')
@@ -14,7 +14,7 @@ dependencies {
     compile project(':demo-common')
     compile project(path: ':demo-common', configuration: 'archives')
 
-    runtime 'com.google.gwt:gwt-codeserver:2.6.1'
+    runtime 'com.google.gwt:gwt-codeserver:2.7.0'
 }
 
 task compileGwt(dependsOn: classes, type: JavaExec) {
