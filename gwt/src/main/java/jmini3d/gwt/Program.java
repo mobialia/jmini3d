@@ -118,13 +118,10 @@ public class Program {
 	}
 
 	public void init(Scene scene, Material material) {
-		ArrayList<String> attributesInit = new ArrayList<String>();
 		ArrayList<String> uniformsInit = new ArrayList<String>();
 
 		ArrayList<String> defines = new ArrayList<String>();
 		HashMap<String, String> definesValues = new HashMap<String, String>();
-
-		attributesInit.add("vertexPosition");
 
 		uniformsInit.add("perspectiveMatrix");
 		uniformsInit.add("modelViewMatrix");
@@ -134,7 +131,6 @@ public class Program {
 			defines.add("USE_MAP");
 			useMap = true;
 			uniformsInit.add("map");
-			attributesInit.add("textureCoord");
 		}
 
 		if (material.envMap != null) {
@@ -221,7 +217,6 @@ public class Program {
 				uniformsInit.add("normalMatrix");
 			} else {
 				defines.add("USE_NORMALS");
-				attributesInit.add("vertexNormal");
 				uniformsInit.add("normalMatrix");
 			}
 		}
@@ -262,19 +257,21 @@ public class Program {
 		}
 		GLES20.useProgram(webGLProgram);
 
-		for (String s : attributesInit) {
-			Integer attribLocation = GLES20.getAttribLocation(webGLProgram, s);
-//			log("attribute: " + s + " = " + attribLocation);
-			GLES20.enableVertexAttribArray(attribLocation);
-			attributes.put(s, attribLocation);
-		}
-
 		for (String s : uniformsInit) {
 			uniforms.put(s, GLES20.getUniformLocation(webGLProgram, s));
 //			log("uniform: " + s + " = " + GLES20.getUniformLocation(webGLProgram, s));
 		}
 		GLES20.deleteShader(vertexShader);
 		GLES20.deleteShader(fragmentShader);
+	}
+
+	Integer getAttribLocation(String attribName) {
+		Integer attribLocation = attributes.get(attribName);
+		if (attribLocation == null) {
+			attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
+			GLES20.enableVertexAttribArray(attribLocation);
+		}
+		return attribLocation;
 	}
 
 	public void setSceneUniforms(Scene scene) {
@@ -378,16 +375,16 @@ public class Program {
 		}
 
 		GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
-		GLES20.vertexAttribPointer(attributes.get("vertexPosition"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+		GLES20.vertexAttribPointer(getAttribLocation("vertexPosition"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
 
 		if (useNormals) {
 			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
-			GLES20.vertexAttribPointer(attributes.get("vertexNormal"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+			GLES20.vertexAttribPointer(getAttribLocation("vertexNormal"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
 		}
 
 		if (useMap) {
 			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
-			GLES20.vertexAttribPointer(attributes.get("textureCoord"), 2, WebGLRenderingContext.FLOAT, false, 0, 0);
+			GLES20.vertexAttribPointer(getAttribLocation("textureCoord"), 2, WebGLRenderingContext.FLOAT, false, 0, 0);
 		}
 
 		GLES20.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
