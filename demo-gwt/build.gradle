@@ -100,5 +100,5 @@ jettyRun.doFirst {
 
 jettyRun {
     scanIntervalSeconds = 5
-    contextPath = '/jmini3d'
+    contextPath = 'jmini3d'
 }
