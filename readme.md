@@ -115,6 +115,13 @@ Build
 =====
 This project is built with the Gradle build tool, you can download it from http://www.gradle.org
 
+Prerequisite: install gwtgl to your local Maven repo:
+```
+cd gwtgl
+gradle install
+cd ..
+```
+
 Buld Android demo and install it to the connected device or emulator:
 ```
 cd demo-android
@@ -123,8 +130,6 @@ gradle installDebug
 
 Build gwt demo in the demo-gwt/src/main/webapp/ directory, first you need to install the gwtgl artifact in your maven local repo:
 ```
-cd gwtgl
-gradle install
 cd ../demo-gwt
 gradle compileGwt
 ```
