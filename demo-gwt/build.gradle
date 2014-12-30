@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'jetty'
 
 archivesBaseName = 'jmini3d-gwt_demo'
 
@@ -92,3 +93,12 @@ copyResources {
 }
 
 compileGwt.dependsOn copyResources
+
+jettyRun.doFirst {
+    logger.quiet('Starting Jetty...')
+}
+
+jettyRun {
+    scanIntervalSeconds = 5
+    contextPath = '/jmini3d'
+}

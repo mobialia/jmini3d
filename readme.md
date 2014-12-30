@@ -119,7 +119,6 @@ Prerequisite: install gwtgl to your local Maven repo:
 ```
 cd gwtgl
 gradle install
-cd ..
 ```
 
 Buld Android demo and install it to the connected device or emulator:
@@ -128,12 +127,17 @@ cd demo-android
 gradle installDebug
 ```
 
-Build gwt demo in the demo-gwt/src/main/webapp/ directory, first you need to install the gwtgl artifact in your maven local repo:
+Build gwt demo in the demo-gwt/src/main/webapp/ directory:
 ```
-cd ../demo-gwt
+cd demo-gwt
 gradle compileGwt
 ```
-Then upload the content of demo-gwt/src/main/webapp/ to a web server (or access it with a local web server).
+Then you can start a local Jetty webserver:
+```
+cd demo-gwt
+gradle jettyRun
+```
+and access with your web browser to http://localhost:8080/jmini3d/
 
 To install this library's JARs and AARs to the local Maven repo:
 ```
