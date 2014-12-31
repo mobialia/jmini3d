@@ -139,9 +139,19 @@ gradle jettyRun
 ```
 and access with your web browser to http://localhost:8080/jmini3d/
 
-To install this library's JARs and AARs to the local Maven repo:
+Using Jmini3D in other projects
+===============================
+
+First install this library's JARs and AARs to your local Maven repo:
 ```
 gradle install
+```
+and then reference the jmini3d libraries from the other project's build.gradle file. For example, for an Android project:
+```
+dependencies {
+    compile 'com.mobialia:jmini3d-core:0.6'
+    compile 'com.mobialia:jmini3d-android:0.6@aar'
+}
 ```
 
 Licenses
