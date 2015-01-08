@@ -22,6 +22,16 @@ android {
 }
 
 apply plugin: 'maven'
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from 'src/main/java'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
