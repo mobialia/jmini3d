@@ -14,8 +14,8 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 	long initialTime;
 
 	int sceneIndex = 0;
-	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectScene()};
-	int cameraModes[] = {0, 0, 0, 0, 1, 0};
+	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectsScene()};
+	int cameraModes[] = {0, 0, 0, 0, 1, 2};
 
 	public DemoSceneController() {
 		initialTime = System.currentTimeMillis();
@@ -35,10 +35,21 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 
 		float d = 5;
 		Vector3 target = scenes[sceneIndex].getCamera().getTarget();
-		scenes[sceneIndex].getCamera().setPosition((float) (target.x - d * Math.cos(cameraAngle)), //
-				(float) (target.y - d * Math.sin(cameraAngle)), //
-				target.z + (cameraModes[sceneIndex] == 0 ? (float) (d * Math.sin(cameraAngle)) : d / 2)//
-		);
+
+		switch (cameraModes[sceneIndex]) {
+			case 0:
+				scenes[sceneIndex].getCamera().setPosition((float) (target.x - d * Math.cos(cameraAngle)), //
+						(float) (target.y - d * Math.sin(cameraAngle)), //
+						target.z + (float) (d * Math.sin(cameraAngle)));
+				break;
+			case 1:
+				scenes[sceneIndex].getCamera().setPosition((float) (target.x - d * Math.cos(cameraAngle)), //
+						(float) (target.y - d * Math.sin(cameraAngle)), d / 2);
+				break;
+			case 2:
+				scenes[sceneIndex].getCamera().setPosition(target.x - d, target.y, target.z + d / 4);
+				break;
+		}
 		((ParentScene) scenes[sceneIndex]).update();
 
 		return true;
