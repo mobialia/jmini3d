@@ -123,6 +123,9 @@ public class Renderer3d {
 		}
 
 		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix);
+		for (int i = 0; i < o3d.getChilds().size(); i++) {
+			program.drawObject(this, gpuUploader, o3d.getChilds().get(i), perspectiveMatrix);
+		}
 	}
 
 	private void setBlending(Blending blending) {

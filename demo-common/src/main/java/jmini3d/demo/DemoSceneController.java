@@ -14,8 +14,8 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 	long initialTime;
 
 	int sceneIndex = 0;
-	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene()};
-	int cameraModes[] = {0, 0, 0, 0, 1};
+	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectScene()};
+	int cameraModes[] = {0, 0, 0, 0, 1, 0};
 
 	public DemoSceneController() {
 		initialTime = System.currentTimeMillis();

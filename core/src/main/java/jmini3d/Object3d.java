@@ -1,5 +1,7 @@
 package jmini3d;
 
+import java.util.ArrayList;
+
 import jmini3d.geometry.Geometry;
 import jmini3d.material.Material;
 
@@ -20,6 +22,8 @@ public class Object3d {
 	private float scaleMatrix[];
 	private float[] translationMatrix = new float[16];
 
+	public ArrayList<Object3d> childs;
+
 	float scale = 1;
 
 	private boolean needsMatrixUpdate = true;
@@ -29,6 +33,7 @@ public class Object3d {
 		this.material = material;
 
 		position = new Vector3();
+		childs = new ArrayList<Object3d>();
 	}
 
 	public boolean isVisible() {
@@ -81,10 +86,14 @@ public class Object3d {
 	}
 
 	public void updateMatrices() {
-		if (needsMatrixUpdate) {
+		updateMatrices(MatrixUtils.IDENTITY4, false);
+	}
+
+	public void updateMatrices(float[] initialMatrix, boolean forceUpdate) {
+		if (needsMatrixUpdate || forceUpdate) {
 			needsMatrixUpdate = false;
 
-			MatrixUtils.copyMatrix(MatrixUtils.IDENTITY4, modelViewMatrix);
+			MatrixUtils.copyMatrix(initialMatrix, modelViewMatrix);
 
 			if (position != null) {
 				MatrixUtils.translate(translationMatrix, position);
@@ -103,6 +112,18 @@ public class Object3d {
 			if (normalMatrix != null) {
 				normalMatrix = MatrixUtils.transpose(normalMatrix, normalMatrix);
 			}
+
+			for (int i = 0; i < childs.size(); i++) {
+				childs.get(i).updateMatrices(modelViewMatrix, true);
+			}
 		}
+	}
+
+	public void addChild(Object3d object3d) {
+		childs.add(object3d);
+	}
+
+	public ArrayList<Object3d> getChilds() {
+		return childs;
 	}
 }
