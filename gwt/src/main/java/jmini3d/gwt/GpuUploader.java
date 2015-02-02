@@ -254,33 +254,33 @@ public class GpuUploader {
 		if (o instanceof Geometry) {
 			if (geometryBuffers.containsKey(o)) {
 				((Geometry) o).status = 0;
-				GeometryBuffers buffers = geometryBuffers.get(o);
-
-				if (buffers.vertexBufferId != null) {
-					gl.deleteBuffer(buffers.vertexBufferId);
-				}
-				if (buffers.normalsBufferId != null) {
-					gl.deleteBuffer(buffers.normalsBufferId);
-				}
-				if (buffers.uvsBufferId != null) {
-					gl.deleteBuffer(buffers.uvsBufferId);
-				}
-				if (buffers.facesBufferId != null) {
-					gl.deleteBuffer(buffers.facesBufferId);
-				}
-				geometryBuffers.remove(o);
+				GeometryBuffers buffers = geometryBuffers.remove(o);
+                if (buffers != null) {
+                    if (buffers.vertexBufferId != null) {
+                        gl.deleteBuffer(buffers.vertexBufferId);
+                    }
+                    if (buffers.normalsBufferId != null) {
+                        gl.deleteBuffer(buffers.normalsBufferId);
+                    }
+                    if (buffers.uvsBufferId != null) {
+                        gl.deleteBuffer(buffers.uvsBufferId);
+                    }
+                    if (buffers.facesBufferId != null) {
+                        gl.deleteBuffer(buffers.facesBufferId);
+                    }
+                }
 			}
 		} else if (o instanceof Texture) {
-			if (textures.containsKey(o)) {
+            WebGLTexture texture = textures.remove(o);
+			if (texture != null) {
 				((Texture) o).status = 0;
-				gl.deleteTexture(textures.get(o));
-				textures.remove(o);
+				gl.deleteTexture(texture);
 			}
 		} else if (o instanceof CubeMapTexture) {
-			if (cubeMapTextures.containsKey(o)) {
-				((Texture) o).status = 0;
-				gl.deleteTexture(cubeMapTextures.get(o));
-                cubeMapTextures.remove(o);
+            WebGLTexture texture = cubeMapTextures.remove(o);
+			if (texture != null) {
+				((CubeMapTexture) o).status = 0;
+				gl.deleteTexture(texture);
 			}
         } else if (o instanceof Object3d) {
             WebGLBuffer bufferId = objectBuffers.remove(o);

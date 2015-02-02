@@ -234,34 +234,33 @@ public class GpuUploader {
 		if (o instanceof Geometry) {
 			if (geometryBuffers.containsKey(o)) {
 				((Geometry) o).status = 0;
-				GeometryBuffers buffers = geometryBuffers.get(o);
-
-				if (buffers.vertexBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
-				}
-				if (buffers.normalsBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
-				}
-				if (buffers.uvsBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
-				}
-				if (buffers.facesBufferId != null) {
-					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
-				}
-
-				geometryBuffers.remove(o);
+				GeometryBuffers buffers = geometryBuffers.remove(o);
+                if (buffers != null) {
+                    if (buffers.vertexBufferId != null) {
+                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
+                    }
+                    if (buffers.normalsBufferId != null) {
+                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
+                    }
+                    if (buffers.uvsBufferId != null) {
+                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
+                    }
+                    if (buffers.facesBufferId != null) {
+                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
+                    }
+                }
 			}
 		} else if (o instanceof Texture) {
-			if (textures.containsKey(o)) {
+            Integer texture = textures.remove(o);
+			if (texture != null) {
 				((Texture) o).status = 0;
-				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{textures.get(o)}));
-				textures.remove(o);
+				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{texture}));
 			}
 		} else if (o instanceof CubeMapTexture) {
-			if (cubeMapTextures.containsKey(o)) {
-				((Texture) o).status = 0;
-				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{cubeMapTextures.get(o)}));
-                cubeMapTextures.remove(o);
+            Integer texture = cubeMapTextures.remove(o);
+			if (texture != null) {
+				((CubeMapTexture) o).status = 0;
+				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{texture}));
 			}
 		} else if (o instanceof Object3d) {
             Integer bufferId = objectBuffers.remove(o);
