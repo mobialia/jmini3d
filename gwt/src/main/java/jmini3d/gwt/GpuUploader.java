@@ -280,7 +280,7 @@ public class GpuUploader {
 			if (cubeMapTextures.containsKey(o)) {
 				((Texture) o).status = 0;
 				gl.deleteTexture(cubeMapTextures.get(o));
-				textures.remove(o);
+                cubeMapTextures.remove(o);
 			}
         } else if (o instanceof Object3d) {
             WebGLBuffer bufferId = objectBuffers.remove(o);

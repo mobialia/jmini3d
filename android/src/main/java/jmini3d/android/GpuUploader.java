@@ -261,7 +261,7 @@ public class GpuUploader {
 			if (cubeMapTextures.containsKey(o)) {
 				((Texture) o).status = 0;
 				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{cubeMapTextures.get(o)}));
-				textures.remove(o);
+                cubeMapTextures.remove(o);
 			}
 		} else if (o instanceof Object3d) {
             Integer bufferId = objectBuffers.remove(o);
