@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
 import jmini3d.GpuObjectStatus;
+import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Texture;
 import jmini3d.geometry.Geometry;
@@ -29,6 +30,7 @@ public class GpuUploader {
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
+    HashMap<Object3d, Integer> objectBuffers = new HashMap<Object3d, Integer>();
 	HashMap<Texture, Integer> textures = new HashMap<Texture, Integer>();
 	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<CubeMapTexture, Integer>();
 	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
@@ -126,10 +128,34 @@ public class GpuUploader {
 			}
 		}
 
-		return buffers;
+        return buffers;
 	}
 
-	public void upload(Renderer3d renderer3d, Texture texture, int activeTexture) {
+    public Integer uploadVertexColors(Object3d object) {
+
+        Integer bufferId = objectBuffers.get(object);
+
+        if ((object.getVertexColors() != null) && object.isVertexColorsDirty()) {
+            object.setVertexColorsDirty(false);
+            float[] colors = object.getVertexColors();
+            if (bufferId != null) {
+                unload(object);
+                bufferId = null;
+            }
+            if (bufferId == null) {
+                int[] vboId = new int[1];
+                GLES20.glGenBuffers(1, vboId, 0);
+                bufferId = vboId[0];
+                objectBuffers.put(object, bufferId);
+            }
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferId);
+            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, colors.length * 4, FloatBuffer.wrap(colors), GLES20.GL_STATIC_DRAW);
+        }
+
+        return bufferId;
+    }
+
+    public void upload(Renderer3d renderer3d, Texture texture, int activeTexture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 
@@ -237,7 +263,12 @@ public class GpuUploader {
 				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{cubeMapTextures.get(o)}));
 				textures.remove(o);
 			}
-		}
+		} else if (o instanceof Object3d) {
+            Integer bufferId = objectBuffers.remove(o);
+            if (bufferId != null) {
+                GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{bufferId}));
+            }
+        }
 	}
 
 	public void reset() {

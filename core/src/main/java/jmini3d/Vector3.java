@@ -19,7 +19,13 @@ public class Vector3 {
 		this.z = z;
 	}
 
-	public void setAll(float x, float y, float z) {
+    public Vector3(Vector3 n) {
+        x = n.x;
+        y = n.y;
+        z = n.z;
+    }
+
+    public void setAll(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

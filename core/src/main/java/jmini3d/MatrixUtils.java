@@ -7,7 +7,7 @@ public class MatrixUtils {
 	/**
 	 * this is the old gl.glFustrum
 	 */
-	public static void perspective(float destiny[], float fovy, float aspectRatio, float near, float far) {
+	public static void perspective(float destination[], float fovy, float aspectRatio, float near, float far) {
 		float top = near * (float) Math.tan(fovy * Math.PI / 360.0);
 		float bottom = -top;
 		float right = top * aspectRatio;
@@ -20,31 +20,31 @@ public class MatrixUtils {
 		float x = 2 * near / (right - left);
 		float y = 2 * near / (top - bottom);
 
-		destiny[0] = x;
-		destiny[1] = 0;
-		destiny[2] = a;
-		destiny[3] = 0;
+		destination[0] = x;
+		destination[1] = 0;
+		destination[2] = a;
+		destination[3] = 0;
 
-		destiny[4] = 0;
-		destiny[5] = y;
-		destiny[6] = b;
-		destiny[7] = 0;
+		destination[4] = 0;
+		destination[5] = y;
+		destination[6] = b;
+		destination[7] = 0;
 
-		destiny[8] = 0;
-		destiny[9] = 0;
-		destiny[10] = c;
-		destiny[11] = -1;
+		destination[8] = 0;
+		destination[9] = 0;
+		destination[10] = c;
+		destination[11] = -1;
 
-		destiny[12] = 0;
-		destiny[13] = 0;
-		destiny[14] = d;
-		destiny[15] = 0;
+		destination[12] = 0;
+		destination[13] = 0;
+		destination[14] = d;
+		destination[15] = 0;
 	}
 
 	/**
 	 * GLU.glLookAt vx, vy, vz are auxilizrs to avoid allocations
 	 */
-	public static void lookAt(float destiny[], Vector3 eye, Vector3 target, Vector3 up, Vector3 vx, Vector3 vy, Vector3 vz) {
+	public static void lookAt(float destination[], Vector3 eye, Vector3 target, Vector3 up, Vector3 vx, Vector3 vy, Vector3 vz) {
 		vz.setAllFrom(eye);
 		vz.subtract(target);
 		vz.normalize();
@@ -53,25 +53,25 @@ public class MatrixUtils {
 		vx.normalize();
 		Vector3.cross(vy, vx, vz);
 
-		destiny[0] = vx.x;
-		destiny[1] = vy.x;
-		destiny[2] = vz.x;
-		destiny[3] = 0;
+		destination[0] = vx.x;
+		destination[1] = vy.x;
+		destination[2] = vz.x;
+		destination[3] = 0;
 
-		destiny[4] = vx.y;
-		destiny[5] = vy.y;
-		destiny[6] = vz.y;
-		destiny[7] = 0;
+		destination[4] = vx.y;
+		destination[5] = vy.y;
+		destination[6] = vz.y;
+		destination[7] = 0;
 
-		destiny[8] = vx.z;
-		destiny[9] = vy.z;
-		destiny[10] = vz.z;
-		destiny[11] = 0;
+		destination[8] = vx.z;
+		destination[9] = vy.z;
+		destination[10] = vz.z;
+		destination[11] = 0;
 
-		destiny[12] = -Vector3.dot(vx, eye);
-		destiny[13] = -Vector3.dot(vy, eye);
-		destiny[14] = -Vector3.dot(vz, eye);
-		destiny[15] = 1;
+		destination[12] = -Vector3.dot(vx, eye);
+		destination[13] = -Vector3.dot(vy, eye);
+		destination[14] = -Vector3.dot(vz, eye);
+		destination[15] = 1;
 	}
 
 	public static void ortho(float matrix[], float left, float right, float bottom, float top, float near, float far) {
@@ -103,48 +103,60 @@ public class MatrixUtils {
 		matrix[15] = 1.0f;
 	}
 
-	public static void translate(float[] destiny, Vector3 pos) {
-		destiny[0] = 1;
-		destiny[1] = 0;
-		destiny[2] = 0;
-		destiny[3] = 0;
+	public static void translate(float[] destination, Vector3 pos) {
+		destination[0] = 1;
+		destination[1] = 0;
+		destination[2] = 0;
+		destination[3] = 0;
 
-		destiny[4] = 0;
-		destiny[5] = 1;
-		destiny[6] = 0;
-		destiny[7] = 0;
+		destination[4] = 0;
+		destination[5] = 1;
+		destination[6] = 0;
+		destination[7] = 0;
 
-		destiny[8] = 0;
-		destiny[9] = 0;
-		destiny[10] = 1;
-		destiny[11] = 0;
+		destination[8] = 0;
+		destination[9] = 0;
+		destination[10] = 1;
+		destination[11] = 0;
 
-		destiny[12] = pos.x;
-		destiny[13] = pos.y;
-		destiny[14] = pos.z;
-		destiny[15] = 1;
+		destination[12] = pos.x;
+		destination[13] = pos.y;
+		destination[14] = pos.z;
+		destination[15] = 1;
 	}
 
-	public static void rotate(float[] destiny, Vector3 direction, Vector3 up, Vector3 side) {
-		destiny[0] = side.x;
-		destiny[1] = side.y;
-		destiny[2] = side.z;
-		destiny[3] = 0;
-		destiny[4] = direction.x;
-		destiny[5] = direction.y;
-		destiny[6] = direction.z;
-		destiny[7] = 0;
-		destiny[8] = up.x;
-		destiny[9] = up.y;
-		destiny[10] = up.z;
-		destiny[11] = 0;
-		destiny[12] = 0;
-		destiny[13] = 0;
-		destiny[14] = 0;
-		destiny[15] = 1;
+	public static void rotate(float[] destination, Vector3 direction, Vector3 up, Vector3 side) {
+		destination[0] = side.x;
+		destination[1] = side.y;
+		destination[2] = side.z;
+		destination[3] = 0;
+		destination[4] = direction.x;
+		destination[5] = direction.y;
+		destination[6] = direction.z;
+		destination[7] = 0;
+		destination[8] = up.x;
+		destination[9] = up.y;
+		destination[10] = up.z;
+		destination[11] = 0;
+		destination[12] = 0;
+		destination[13] = 0;
+		destination[14] = 0;
+		destination[15] = 1;
 	}
 
-	public static float[] cloneMatrix(float[] in) {
+    public static void getRotation(float[] source, Vector3 direction, Vector3 up, Vector3 side) {
+        side.x = source[0];
+        side.y = source[1];
+        side.z = source[2];
+        direction.x = source[4];
+        direction.y = source[5];
+        direction.z = source[6];
+        up.x = source[8];
+        up.y = source[9];
+        up.z = source[10];
+    }
+
+    public static float[] cloneMatrix(float[] in) {
 		return new float[]{ //
 				in[0], in[1], in[2], in[3], //
 				in[4], in[5], in[6], in[7], //
@@ -152,23 +164,8 @@ public class MatrixUtils {
 				in[12], in[13], in[14], in[15]};
 	}
 
-	public static void copyMatrix(float[] origin, float destiny[]) {
-		destiny[0] = origin[0];
-		destiny[1] = origin[1];
-		destiny[2] = origin[2];
-		destiny[3] = origin[3];
-		destiny[4] = origin[4];
-		destiny[5] = origin[5];
-		destiny[6] = origin[6];
-		destiny[7] = origin[7];
-		destiny[8] = origin[8];
-		destiny[9] = origin[9];
-		destiny[10] = origin[10];
-		destiny[11] = origin[11];
-		destiny[12] = origin[12];
-		destiny[13] = origin[13];
-		destiny[14] = origin[14];
-		destiny[15] = origin[15];
+	public static void copyMatrix(float[] origin, float destination[]) {
+        System.arraycopy(origin, 0, destination, 0, origin.length);
 	}
 
 	public static float[] toInverseMat3(float[] mat, float[] dest) {

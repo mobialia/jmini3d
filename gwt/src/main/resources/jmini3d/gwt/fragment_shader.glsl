@@ -18,6 +18,10 @@ varying vec4 vPosition;
     uniform sampler2D map;
 #endif
 
+#ifdef USE_VERTEX_COLORS
+    varying vec4 vVertexColor;
+#endif
+
 #ifdef USE_ENVMAP
     uniform float reflectivity;
     uniform samplerCube envMap;
@@ -54,11 +58,19 @@ varying vec4 vPosition;
 
 void main(void) {
     #ifdef USE_ENVMAP_AS_MAP
-        vec4 fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+        #ifdef USE_VERTEX_COLORS
+            vec4 fragmentColor = vVertexColor * textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+        #else
+            vec4 fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+        #endif
         fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
     #else
         #ifdef USE_MAP
-            vec4 fragmentColor = texture2D(map, vTextureCoord);
+            #ifdef USE_VERTEX_COLORS
+                vec4 fragmentColor = vVertexColor * texture2D(map, vTextureCoord);
+            #else
+                vec4 fragmentColor = texture2D(map, vTextureCoord);
+            #endif
             #ifdef APPLY_COLOR_TO_ALPHA
                 if (fragmentColor.a < 1.0) {
                      fragmentColor = vec4(fragmentColor.r * objectColor.r, fragmentColor.g * objectColor.g, fragmentColor.b * objectColor.b, 1);
@@ -67,7 +79,11 @@ void main(void) {
                 fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
             #endif
         #else
-            vec4 fragmentColor = objectColor;
+            #ifdef USE_VERTEX_COLORS
+                vec4 fragmentColor = vVertexColor * objectColor;
+            #else
+                vec4 fragmentColor = objectColor;
+            #endif
         #endif
     #endif
 

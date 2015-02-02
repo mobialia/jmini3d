@@ -38,6 +38,7 @@ public class Program {
 	boolean useMap = false;
 	boolean useEnvMap = false;
 	boolean useNormalMap = false;
+    boolean useVertexColors = false;
 	boolean useCameraPosition = false;
 
 	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
@@ -102,13 +103,15 @@ public class Program {
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
 		boolean useNormalMap = material.normalMap != null;
 		boolean useApplyColorToAlpha = material.applyColorToAlpha;
+        boolean useVertexColors = material.useVertexColors;
 
 		return (useLight ? 0xffff0000 : 0) + //
 				(useMap ? 0x01 : 0) + //
 				(useEnvMap ? 0x02 : 0) + //
 				(useEnvMapAsMap ? 0x04 : 0) + //
 				(useNormalMap ? 0x08 : 0) + //
-				(useApplyColorToAlpha ? 0x10 : 0);
+				(useApplyColorToAlpha ? 0x10 : 0) + //
+                (useVertexColors ? 0x20 : 0);
 	}
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
@@ -144,7 +147,12 @@ public class Program {
 			defines.add("APPLY_COLOR_TO_ALPHA");
 		}
 
-		maxPointLights = 0;
+        if (material.useVertexColors) {
+            useVertexColors = true;
+            defines.add("USE_VERTEX_COLORS");
+        }
+
+        maxPointLights = 0;
 		maxDirLights = 0;
 
 		if (material instanceof PhongMaterial && scene.lights.size() > 0) {
@@ -353,6 +361,7 @@ public class Program {
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
+        Integer vertexColorsBufferId = gpuUploader.uploadVertexColors(o3d);
 
 		if (useMap) {
 			gpuUploader.upload(renderer3d, o3d.material.map, GLES20.GL_TEXTURE0);
@@ -386,7 +395,12 @@ public class Program {
 			GLES20.glVertexAttribPointer(getAttribLocation("textureCoord"), 2, GLES20.GL_FLOAT, false, 0, 0);
 		}
 
-		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
+        if (useVertexColors && (vertexColorsBufferId != null)) {
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexColorsBufferId);
+            GLES20.glVertexAttribPointer(getAttribLocation("vertexColor"), 4, GLES20.GL_FLOAT, false, 0, 0);
+        }
+
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
 
 		if (!objectColor.equals(o3d.material.color)) {
 			GLES20.glUniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);

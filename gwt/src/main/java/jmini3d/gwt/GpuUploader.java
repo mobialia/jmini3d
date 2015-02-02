@@ -5,6 +5,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.googlecode.gwtgl.array.Float32Array;
+import com.googlecode.gwtgl.binding.WebGLBuffer;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLTexture;
 
@@ -13,6 +14,7 @@ import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
 import jmini3d.GpuObjectStatus;
+import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Texture;
 import jmini3d.geometry.Geometry;
@@ -28,7 +30,8 @@ public class GpuUploader {
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
-	HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
+    HashMap<Object3d, WebGLBuffer> objectBuffers = new HashMap<Object3d, WebGLBuffer>();
+    HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
 	HashMap<Texture, ImageElement> textureImages = new HashMap<Texture, ImageElement>();
 	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<CubeMapTexture, WebGLTexture>();
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
@@ -124,7 +127,28 @@ public class GpuUploader {
 		return buffers;
 	}
 
-	public void upload(final Renderer3d renderer3d, final Texture texture, final int activeTexture) {
+    public WebGLBuffer uploadVertexColors(Object3d object) {
+        WebGLBuffer bufferId = objectBuffers.get(object);
+        if (object.isVertexColorsDirty()) {
+            object.setVertexColorsDirty(false);
+
+            float[] colors = object.getVertexColors();
+
+            if (colors != null) {
+                if (bufferId == null) {
+                    bufferId = gl.createBuffer();
+                    objectBuffers.put(object, bufferId);
+                }
+                gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, bufferId);
+                gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(colors), WebGLRenderingContext.STATIC_DRAW);
+            }
+        }
+
+        return bufferId;
+    }
+
+
+    public void upload(final Renderer3d renderer3d, final Texture texture, final int activeTexture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
@@ -258,6 +282,11 @@ public class GpuUploader {
 				gl.deleteTexture(cubeMapTextures.get(o));
 				textures.remove(o);
 			}
+        } else if (o instanceof Object3d) {
+            WebGLBuffer bufferId = objectBuffers.remove(o);
+            if (bufferId != null) {
+                gl.deleteBuffer(bufferId);
+            }
 		}
 	}
 
