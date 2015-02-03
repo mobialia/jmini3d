@@ -3,6 +3,7 @@ package jmini3d;
 import java.util.ArrayList;
 
 import jmini3d.geometry.Geometry;
+import jmini3d.geometry.VariableGeometry;
 import jmini3d.material.Material;
 
 public class Object3d {
@@ -18,22 +19,34 @@ public class Object3d {
 	public float[] modelViewMatrix = new float[16];
 	public float[] normalMatrix = new float[9];
 
-	private float rotationMatrix[];
+	public float rotationMatrix[];
 	private float scaleMatrix[];
 	private float[] translationMatrix = new float[16];
 
-	public ArrayList<Object3d> childs;
+    protected float[] vertexColors;
+
+    protected boolean vertexColorsDirty = false;
+
+	public ArrayList<Object3d> children;
 
 	float scale = 1;
 
-	private boolean needsMatrixUpdate = true;
+    protected boolean needsMatrixUpdate = true;
 
-	public Object3d(Geometry geometry3d, Material material) {
+    public Object3d() {
+        this.geometry3d = new VariableGeometry(0, 0);
+        this.material = new Material();
+
+        position = new Vector3();
+        children = new ArrayList<Object3d>();
+    }
+
+    public Object3d(Geometry geometry3d, Material material) {
 		this.geometry3d = geometry3d;
 		this.material = material;
 
 		position = new Vector3();
-		childs = new ArrayList<Object3d>();
+		children = new ArrayList<Object3d>();
 	}
 
 	public boolean isVisible() {
@@ -67,11 +80,20 @@ public class Object3d {
 			rotationMatrix = new float[16];
 		}
 		MatrixUtils.rotate(rotationMatrix, direction, up, side);
-
 		needsMatrixUpdate = true;
 	}
 
-	public void setScale(float scale) {
+    public void getRotationMatrix(Vector3 direction, Vector3 up, Vector3 side) {
+        if (rotationMatrix == null) {
+            side.setAll(1, 0, 0);
+            direction.setAll(0, 1, 0);
+            up.setAll(0, 0, 1);
+        } else {
+            MatrixUtils.getRotation(rotationMatrix, direction, up, side);
+        }
+    }
+
+    public void setScale(float scale) {
 		if (this.scale != scale) {
 			this.scale = scale;
 			if (scaleMatrix == null) {
@@ -89,8 +111,21 @@ public class Object3d {
 		updateMatrices(MatrixUtils.IDENTITY4, false);
 	}
 
+    private boolean doesMatrixNeedUpdate() {
+        boolean result = needsMatrixUpdate;
+        if (!result) {
+            for (Object3d o : children) {
+                if (o.doesMatrixNeedUpdate()) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
 	public void updateMatrices(float[] initialMatrix, boolean forceUpdate) {
-		if (needsMatrixUpdate || forceUpdate) {
+		if (doesMatrixNeedUpdate() || forceUpdate) {
 			needsMatrixUpdate = false;
 
 			MatrixUtils.copyMatrix(initialMatrix, modelViewMatrix);
@@ -113,17 +148,39 @@ public class Object3d {
 				normalMatrix = MatrixUtils.transpose(normalMatrix, normalMatrix);
 			}
 
-			for (int i = 0; i < childs.size(); i++) {
-				childs.get(i).updateMatrices(modelViewMatrix, true);
+			for (int i = 0; i < children.size(); i++) {
+				children.get(i).updateMatrices(modelViewMatrix, true);
 			}
 		}
 	}
 
 	public void addChild(Object3d object3d) {
-		childs.add(object3d);
+		children.add(object3d);
 	}
 
-	public ArrayList<Object3d> getChilds() {
-		return childs;
+    public void removeChild(Object3d object3d) {
+        children.remove(object3d);
+    }
+
+    public ArrayList<Object3d> getChildren() {
+		return children;
 	}
+
+    public float[] getVertexColors() {
+        return vertexColors;
+    }
+
+    public void setVertexColors(float[] vertexColors) {
+        this.vertexColors = vertexColors;
+        this.vertexColorsDirty = true;
+    }
+
+    public boolean isVertexColorsDirty() {
+        return vertexColorsDirty;
+    }
+
+    public void setVertexColorsDirty(boolean vertexColorsDirty) {
+        this.vertexColorsDirty = vertexColorsDirty;
+    }
+
 }

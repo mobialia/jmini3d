@@ -20,6 +20,11 @@ varying vec4 vPosition;
     varying vec4 vPositionEnvMap;
 #endif
 
+#ifdef USE_VERTEX_COLORS
+    attribute vec4 vertexColor;
+    varying vec4 vVertexColor;
+#endif
+
 void main(void) {
     vPosition = modelViewMatrix * vec4(vertexPosition, 1.0);
     gl_Position = perspectiveMatrix * vPosition;
@@ -34,5 +39,9 @@ void main(void) {
 
     #ifdef USE_ENVMAP_AS_MAP
         vPositionEnvMap = vec4(vertexPosition, 1.0);
+    #endif
+
+    #ifdef USE_VERTEX_COLORS
+        vVertexColor = vertexColor;
     #endif
 }

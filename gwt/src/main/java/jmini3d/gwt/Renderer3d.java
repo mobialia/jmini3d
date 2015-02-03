@@ -127,11 +127,11 @@ public class Renderer3d {
 			setBlending(o3d.material.blending);
 		}
 
-		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix);
-		for (int i = 0; i < o3d.getChilds().size(); i++) {
-			program.drawObject(this, gpuUploader, o3d.getChilds().get(i), perspectiveMatrix);
-		}
-	}
+        program.drawObject(this, gpuUploader, o3d, perspectiveMatrix);
+        for (Object3d child : o3d.getChildren()) {
+            drawObject(scene, child, perspectiveMatrix);
+        }
+    }
 
 	private void setBlending(Blending blending) {
 		if (this.blending == null || !this.blending.equals(blending)) {
@@ -204,7 +204,7 @@ public class Renderer3d {
 		return resourceLoader;
 	}
 
-	native void log(String message) /*-{
+    public static native void log(String message) /*-{
 		console.log(message);
     }-*/;
 }
