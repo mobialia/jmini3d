@@ -301,9 +301,13 @@ public class GpuUploader {
 		for (CubeMapTexture texture : cubeMapTextures.keySet()) {
 			texture.status = 0;
 		}
+        for (Object3d o : objectBuffers.keySet()) {
+            o.setVertexColorsDirty(true);
+        }
 		geometryBuffers.clear();
 		textures.clear();
 		cubeMapTextures.clear();
 		shaderPrograms.clear();
+        objectBuffers.clear();
 	}
 }
