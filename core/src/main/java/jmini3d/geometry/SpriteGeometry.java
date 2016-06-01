@@ -2,6 +2,9 @@ package jmini3d.geometry;
 
 import jmini3d.GpuObjectStatus;
 
+/**
+ * Geometry for 2D HUDs
+ */
 public class SpriteGeometry extends Geometry {
 	float[] vertex;
 	float[] uvs;
@@ -62,6 +65,20 @@ public class SpriteGeometry extends Geometry {
 
 		status &= ~GpuObjectStatus.VERTICES_UPLOADED;
 	}
+
+	public void setSpritePositionSize(int index, float x, float y, float xSize, float ySize) {
+		vertex[index * 12] = x;
+		vertex[(index * 12) + 1] = y;
+		vertex[(index * 12) + 3] = x + xSize;
+		vertex[(index * 12) + 4] = y;
+		vertex[(index * 12) + 6] = x;
+		vertex[(index * 12) + 7] = y + ySize;
+		vertex[(index * 12) + 9] = x + xSize;
+		vertex[(index * 12) + 10] = y + ySize;
+
+		status &= ~GpuObjectStatus.VERTICES_UPLOADED;
+	}
+
 
 	public void setUv(int index, float u, float v) {
 		uvs[index << 1] = u;
