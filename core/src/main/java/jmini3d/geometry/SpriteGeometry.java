@@ -79,6 +79,16 @@ public class SpriteGeometry extends Geometry {
 		status &= ~GpuObjectStatus.VERTICES_UPLOADED;
 	}
 
+	public void hideSprite(int index) {
+		vertex[index * 12] = 0;
+		vertex[(index * 12) + 1] = 0;
+		vertex[(index * 12) + 3] = 0;
+		vertex[(index * 12) + 4] = 0;
+		vertex[(index * 12) + 6] = 0;
+		vertex[(index * 12) + 7] = 0;
+		vertex[(index * 12) + 9] = 0;
+		vertex[(index * 12) + 10] = 0;
+	}
 
 	public void setUv(int index, float u, float v) {
 		uvs[index << 1] = u;
