@@ -10,10 +10,12 @@ public class SpriteGeometry extends Geometry {
 	float[] uvs;
 	short[] faces;
 
+	public int spriteCount;
 	int vertexPointer = 0;
 	int facePointer = 0;
 
 	public SpriteGeometry(int spriteCount) {
+		this.spriteCount = spriteCount;
 		vertex = new float[3 * 4 * spriteCount];
 		uvs = new float[2 * 4 * spriteCount];
 		faces = new short[3 * 2 * spriteCount];
@@ -53,6 +55,29 @@ public class SpriteGeometry extends Geometry {
 		addFace(_rightBack, _leftFront, _rightFront);
 	}
 
+	public void setSprite(int index, float x1, float y1, float x2, float y2, float uvx1, float uvy1, float uvx2, float uvy2) {
+		vertex[index * 12] = x1;
+		vertex[(index * 12) + 1] = y1;
+		vertex[(index * 12) + 3] = x2;
+		vertex[(index * 12) + 4] = y1;
+		vertex[(index * 12) + 6] = x1;
+		vertex[(index * 12) + 7] = y2;
+		vertex[(index * 12) + 9] = x2;
+		vertex[(index * 12) + 10] = y2;
+
+		uvs[index << 3] = uvx1;
+		uvs[(index << 3) + 1] = uvy1;
+		uvs[(index << 3) + 2] = uvx2;
+		uvs[(index << 3) + 3] = uvy1;
+		uvs[(index << 3) + 4] = uvx1;
+		uvs[(index << 3) + 5] = uvy2;
+		uvs[(index << 3) + 6] = uvx2;
+		uvs[(index << 3) + 7] = uvy2;
+
+		status &= ~GpuObjectStatus.VERTICES_UPLOADED;
+		status &= ~GpuObjectStatus.UVS_UPLOADED;
+	}
+
 	public void setSpritePosition(int index, float x1, float y1, float x2, float y2) {
 		vertex[index * 12] = x1;
 		vertex[(index * 12) + 1] = y1;
@@ -88,6 +113,8 @@ public class SpriteGeometry extends Geometry {
 		vertex[(index * 12) + 7] = 0;
 		vertex[(index * 12) + 9] = 0;
 		vertex[(index * 12) + 10] = 0;
+
+		status &= ~GpuObjectStatus.VERTICES_UPLOADED;
 	}
 
 	public void setUv(int index, float u, float v) {
