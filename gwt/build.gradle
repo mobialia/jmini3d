@@ -1,5 +1,16 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+    }
+}
+
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 archivesBaseName = 'jmini3d-gwt'
 
@@ -16,6 +27,32 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives sourcesJar
+publishing {
+    publications {
+        jmini3dGwt(MavenPublication) {
+            from components.java
+            artifactId = 'jmini3d-gwt'
+            artifact sourcesJar
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['jmini3dGwt']
+    pkg {
+        repo = 'maven'
+        name = 'com.mobialia.jmini3d-gwt'
+        desc = 'Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT'
+        userOrg = 'mobialia'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/albertoruibal/jmini3d.git'
+        githubRepo = 'albertoruibal/jmini3d'
+
+        version {
+            name = '0.6'
+            vcsTag = '0.6'
+        }
+    }
 }

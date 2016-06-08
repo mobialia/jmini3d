@@ -115,12 +115,6 @@ Build
 =====
 This project is built with the Gradle build tool, you can download it from http://www.gradle.org
 
-Prerequisite: install gwtgl to your local Maven repo:
-```
-cd gwtgl
-gradle install
-```
-
 Buld Android demo and install it to the connected device or emulator:
 ```
 cd demo-android
@@ -142,11 +136,14 @@ and access with your web browser to http://localhost:8080/jmini3d/
 Using Jmini3D in other projects
 ===============================
 
-First install this library's JARs and AARs to your local Maven repo:
+This library's JARs and AARs are distributed via Mobialia's bintray repo (https://bintray.com/mobialia/maven).
+To use them, first include this repository in your gradle file:
 ```
-gradle install
+repositories {
+    maven { url 'https://dl.bintray.com/mobialia/maven' }
+}
 ```
-and then reference the jmini3d libraries from the other project's build.gradle file. For example, for an Android project:
+and then reference the jmini3d libraries, for an Android project:
 ```
 dependencies {
     compile 'com.mobialia:jmini3d-core:0.6'

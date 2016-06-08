@@ -1,24 +1,43 @@
-apply plugin: 'maven'
-
-group = 'com.googlecode.gwtgl'
-version = '0.9.1'
-
-artifacts {
-    archives(file('gwtgl-0.9.1.jar')) {
-        name 'gwtgl'
+buildscript {
+    repositories {
+        jcenter()
     }
-    archives(file('gwtgl-0.9.1-sources.jar')) {
-        name 'gwtgl'
-        classifier 'sources'
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'com.googlecode'
+version = '0.9.1'
+
+publishing {
+    publications {
+        gwtgl(MavenPublication) {
+            artifactId = 'gwtgl'
+            groupId = 'com.googlecode'
+            artifact('gwtgl-0.9.1.jar')
+            artifact('gwtgl-0.9.1-sources.jar') {
+                classifier = 'sources'
+            }
         }
     }
 }
 
-task install(dependsOn: uploadArchives)
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['gwtgl']
+    pkg {
+        repo = 'maven'
+        name = 'com.googlecode.gwtgl'
+        desc = 'GwtGL - WebGL binding for GWT (Google Web Toolkit)'
+        websiteUrl = 'https://code.google.com/archive/p/gwtgl/'
+        userOrg = 'mobialia'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://code.google.com/archive/p/gwtgl/'
+    }
+}
