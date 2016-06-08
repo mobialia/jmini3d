@@ -55,7 +55,7 @@ y |
   |
 height
 ```
-When the screen size changes, the Scene must be notified with setViewPort(int width, int height) and it must readjust the HUD elements.
+When the screen size changes, the Scene is notified with setViewPort(int width, int height) and it must readjust the HUD elements.
 
 Android
 =======
