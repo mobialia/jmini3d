@@ -1,6 +1,6 @@
 allprojects {
     project.group = 'com.mobialia'
-    project.version = '0.6'
+    project.version = '0.6.1'
 
     repositories {
         mavenLocal()

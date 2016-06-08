@@ -54,10 +54,6 @@ bintray {
         licenses = ['MIT']
         vcsUrl = 'https://github.com/albertoruibal/jmini3d.git'
         githubRepo = 'albertoruibal/jmini3d'
-
-        version {
-            name = '0.6'
-            vcsTag = '0.6'
-        }
+        publish = true
     }
 }

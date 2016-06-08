@@ -10,8 +10,6 @@ dependencies {
     compile project(path: ':core', configuration: 'archives')
     compile project(':gwt')
     compile project(path: ':gwt', configuration: 'archives')
-    compile project(':gwt-cocoonjs')
-    compile project(path: ':gwt-cocoonjs', configuration: 'archives')
     compile project(':demo-common')
     compile project(path: ':demo-common', configuration: 'archives')
 }
