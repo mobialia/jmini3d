@@ -25,8 +25,7 @@ Subprojects
 ===========
 * *core:* includes the common classes between Android and GWT projects
 * *android:* the Android library project implementing the OpenGLES 2.0 Renderer, Activity3d, GlSurfaceView3d, etc.
-* *gwt:* the GWT library project implementing the WebGL Renderer, EntryPoint3d, Canvas3d, etc.
-* *gwt-cocoonjs:* GWT Linker to make JMini3D work with the CocoonJS framework (it can package WebGL apps for iOS)
+* *gwt:* the GWT library project implementing the WebGL Renderer, EntryPoint3d, Canvas3d, etc. Includes a linker to make JMini3D work with the CocoonJS framework (it can package WebGL apps for iOS)
 * *gwtgl:* a dependency for the gwt project
 * *utils:* includes utilities to generate Geometry classes from OBJ models and Font classes from FNT files
 * *demo-common:* The common files for the demo project with a SceneController and multiple Scenes
