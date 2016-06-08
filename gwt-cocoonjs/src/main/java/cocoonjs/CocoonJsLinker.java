@@ -29,7 +29,7 @@ public class CocoonJsLinker extends SelectionScriptLinker {
 	}
 
 	@Override
-	protected String getModuleSuffix(TreeLogger logger, LinkerContext context) throws UnableToCompleteException {
+	protected String getModuleSuffix2(TreeLogger logger, LinkerContext context, String strongName) throws UnableToCompleteException {
 		return "";
 	}
 

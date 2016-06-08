@@ -15,8 +15,8 @@ apply plugin: 'com.jfrog.bintray'
 archivesBaseName = 'jmini3d-gwt'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.7.0'
-    compile 'com.google.gwt:gwt-dev:2.7.0'
+    compile 'com.google.gwt:gwt-user:2.8.0-beta1'
+    compile 'com.google.gwt:gwt-dev:2.8.0-beta1'
     compile 'com.googlecode.gwtgl:gwtgl:0.9.1'
     compile 'com.googlecode.gwtgl:gwtgl:0.9.1:sources'
     compile project(':core')
@@ -25,6 +25,10 @@ dependencies {
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 publishing {

@@ -20,6 +20,10 @@ task sourcesJar(type: Jar, dependsOn:classes) {
     from sourceSets.main.allSource
 }
 
+artifacts {
+    archives sourcesJar
+}
+
 publishing {
     publications {
         jmini3dCore(MavenPublication) {

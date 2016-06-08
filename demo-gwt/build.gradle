@@ -4,8 +4,8 @@ apply plugin: 'jetty'
 archivesBaseName = 'jmini3d-gwt_demo'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.7.0'
-    compile 'com.google.gwt:gwt-dev:2.7.0'
+    compile 'com.google.gwt:gwt-user:2.8.0-beta1'
+    compile 'com.google.gwt:gwt-dev:2.8.0-beta1'
     compile project(':core')
     compile project(path: ':core', configuration: 'archives')
     compile project(':gwt')
@@ -14,8 +14,6 @@ dependencies {
     compile project(path: ':gwt-cocoonjs', configuration: 'archives')
     compile project(':demo-common')
     compile project(path: ':demo-common', configuration: 'archives')
-
-    runtime 'com.google.gwt:gwt-codeserver:2.7.0'
 }
 
 task compileGwt(dependsOn: classes, type: JavaExec) {
@@ -59,7 +57,7 @@ task compileGwt(dependsOn: classes, type: JavaExec) {
                     //'-XcompilerMetrics',
             ]
 
-    maxHeapSize = '256M'
+    maxHeapSize = '512M'
 }
 
 jar.dependsOn compileGwt
