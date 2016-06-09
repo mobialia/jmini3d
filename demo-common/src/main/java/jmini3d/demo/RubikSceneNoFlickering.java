@@ -38,7 +38,8 @@ public class RubikSceneNoFlickering extends ParentScene {
     Vector3 positions[] = new Vector3[9];
 
     public RubikSceneNoFlickering() {
-        super("Rubik demo, no flickering");
+        super("Rubik demo, no flickering, barrel distortion");
+        barrelDistortion = 0.8f;
 
         CubeMapTexture envMap = new CubeMapTexture(new String[]{"posx.png", "negx.png", "posy.png", "negy.png", "posz.png", "negz.png"});
 

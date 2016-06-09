@@ -12,6 +12,11 @@ public class Scene {
 	public ArrayList<Light> lights = new ArrayList<Light>();
 	public ArrayList<Object> unload = new ArrayList<Object>();
 
+	// A lens barrel distortion effect at the vertex level https://www.youtube.com/watch?v=yJVkdsZc9YA
+	// The value is the power of the distortion effect, <1 for VR corrections
+	// It is disabled if == 1
+	public float barrelDistortion = 1f;
+
 	public Color4 backgroundColor = new Color4(0, 0, 0, 255);
 
 	int width = -1, height = -1;

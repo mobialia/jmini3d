@@ -25,9 +25,35 @@ varying vec4 vPosition;
     varying vec4 vVertexColor;
 #endif
 
+#ifdef USE_BARREL_DISTORTION
+uniform float barrelDistortion;
+
+vec4 barrelDistortVertex(vec4 p)
+{
+   vec2 v = p.xy / p.w;
+    // Convert to polar coords:
+   float radius = length(v);
+   if (radius > 0.0) {
+      float theta = atan(v.y, v.x);
+      // Distort:
+      radius = pow(radius, barrelDistortion);
+
+      // Convert back to Cartesian:
+      v.x = radius * cos(theta);
+      v.y = radius * sin(theta);
+      p.xy = v.xy * p.w;
+    }
+    return p;
+}
+#endif
+
 void main(void) {
     vPosition = modelViewMatrix * vec4(vertexPosition, 1.0);
-    gl_Position = perspectiveMatrix * vPosition;
+    #ifdef USE_BARREL_DISTORTION
+        gl_Position = barrelDistortVertex(perspectiveMatrix * vPosition);
+    #else
+        gl_Position = perspectiveMatrix * vPosition;
+    #endif
 
     #ifdef USE_NORMALS
         vNormal = normalize(normalMatrix * vertexNormal);

@@ -13,7 +13,7 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 	float cameraAngle;
 	long initialTime;
 
-	int sceneIndex = 6;
+	int sceneIndex = 0;
 	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectsScene(), new RubikSceneFlickering(), new RubikSceneNoFlickering()};
 	int cameraModes[] = {0, 0, 0, 0, 1, 2, 2, 2};
 

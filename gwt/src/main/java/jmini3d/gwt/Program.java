@@ -43,8 +43,9 @@ public class Program {
 	boolean useMap = false;
 	boolean useEnvMap = false;
 	boolean useNormalMap = false;
-    boolean useVertexColors = false;
+	boolean useVertexColors = false;
 	boolean useCameraPosition = false;
+	boolean useBarrelDistortion = false;
 
 	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
 	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<String, WebGLUniformLocation>();
@@ -97,9 +98,10 @@ public class Program {
 				maxDirLights++;
 			}
 		}
-		return 0xffff + //
-				(useAmbientlight ? 0x10000 : 0) + //
-				(maxPointLights * 0x0100000) + //
+		return 0xffff +
+				(useAmbientlight ? 0x10000 : 0) +
+				(scene.barrelDistortion != 1.0f ? 0x20000 : 0) +
+				(maxPointLights * 0x0100000) +
 				(maxDirLights * 0x1000000);
 	}
 
@@ -110,7 +112,7 @@ public class Program {
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
 		boolean useNormalMap = material.normalMap != null;
 		boolean useApplyColorToAlpha = material.applyColorToAlpha;
-        boolean useVertexColors = material.useVertexColors;
+		boolean useVertexColors = material.useVertexColors;
 
 		return (useLight ? 0xffff0000 : 0) + //
 				(useMap ? 0x01 : 0) + //
@@ -118,7 +120,7 @@ public class Program {
 				(useEnvMapAsMap ? 0x04 : 0) + //
 				(useNormalMap ? 0x08 : 0) + //
 				(useApplyColorToAlpha ? 0x10 : 0) + //
-                (useVertexColors ? 0x20 : 0);
+				(useVertexColors ? 0x20 : 0);
 	}
 
 	public void init(Scene scene, Material material) {
@@ -154,12 +156,12 @@ public class Program {
 			defines.add("APPLY_COLOR_TO_ALPHA");
 		}
 
-        if (material.useVertexColors) {
-            useVertexColors = true;
-            defines.add("USE_VERTEX_COLORS");
-        }
+		if (material.useVertexColors) {
+			useVertexColors = true;
+			defines.add("USE_VERTEX_COLORS");
+		}
 
-        maxPointLights = 0;
+		maxPointLights = 0;
 		maxDirLights = 0;
 
 		if (material instanceof PhongMaterial && scene.lights.size() > 0) {
@@ -228,6 +230,12 @@ public class Program {
 				defines.add("USE_NORMALS");
 				uniformsInit.add("normalMatrix");
 			}
+		}
+
+		if (scene.barrelDistortion != 1.0f) {
+			defines.add("USE_BARREL_DISTORTION");
+			uniformsInit.add("barrelDistortion");
+			useBarrelDistortion = true;
 		}
 
 		StringBuffer vertexShaderStringBuffer = new StringBuffer();
@@ -346,13 +354,17 @@ public class Program {
 				GLES20.uniform4fv(uniforms.get("dirLightColor"), dirLightColors);
 			}
 		}
+
+		if (useBarrelDistortion) {
+			GLES20.uniform1f(uniforms.get("barrelDistortion"), scene.barrelDistortion);
+		}
 	}
 
-    public static void console(String text) {
-        Renderer3d.log(text);
-    }
+	public static void console(String text) {
+		Renderer3d.log(text);
+	}
 
-    public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
 			GLES20.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
@@ -368,10 +380,10 @@ public class Program {
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
 
-        WebGLBuffer vertexColorsBufferId = null;
-        if (useVertexColors) {
-            vertexColorsBufferId = gpuUploader.uploadVertexColors(o3d);
-        }
+		WebGLBuffer vertexColorsBufferId = null;
+		if (useVertexColors) {
+			vertexColorsBufferId = gpuUploader.uploadVertexColors(o3d);
+		}
 
 		if (useMap) {
 			gpuUploader.upload(renderer3d, o3d.material.map, WebGLRenderingContext.TEXTURE0);
@@ -405,12 +417,12 @@ public class Program {
 			GLES20.vertexAttribPointer(getAttribLocation("textureCoord"), 2, WebGLRenderingContext.FLOAT, false, 0, 0);
 		}
 
-        if (useVertexColors && (vertexColorsBufferId != null)) {
-            GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, vertexColorsBufferId);
-            GLES20.vertexAttribPointer(getAttribLocation("vertexColor"), 4, WebGLRenderingContext.FLOAT, false, 0, 0);
-        }
+		if (useVertexColors && (vertexColorsBufferId != null)) {
+			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, vertexColorsBufferId);
+			GLES20.vertexAttribPointer(getAttribLocation("vertexColor"), 4, WebGLRenderingContext.FLOAT, false, 0, 0);
+		}
 
-        GLES20.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
+		GLES20.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
 
 		if (!objectColor.equals(o3d.material.color)) {
 			GLES20.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);

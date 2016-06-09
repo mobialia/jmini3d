@@ -16,7 +16,7 @@ public class Camera {
 	private float far = 1000;
 
 	public float[] perspectiveMatrix = new float[16];
-	private float[] modelViewMatrix = new float[16];
+	public float[] modelViewMatrix = new float[16];
 
 	private boolean needsMatrixUpdate = true;
 
