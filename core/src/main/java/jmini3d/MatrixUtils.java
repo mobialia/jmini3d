@@ -42,7 +42,7 @@ public class MatrixUtils {
 	}
 
 	/**
-	 * GLU.glLookAt vx, vy, vz are auxilizrs to avoid allocations
+	 * GLU.glLookAt vx, vy, vz are auxiliars to avoid allocations
 	 */
 	public static void lookAt(float destination[], Vector3 eye, Vector3 target, Vector3 up, Vector3 vx, Vector3 vy, Vector3 vz) {
 		vz.setAllFrom(eye);
