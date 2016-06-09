@@ -34,7 +34,7 @@ Subprojects
 
 Axis
 ====
-This library uses the same axis system than Blender, z is up, y is front.
+This library uses the same axis system than Blender, z is up, y is front. It is right handed.
 
 ```
  z   y
