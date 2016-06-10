@@ -17,7 +17,7 @@ public class ChildObjectsScene extends ParentScene {
 	Vector3 direction = new Vector3(1, 0, 0);
 	Vector3 up = new Vector3(0, 0, 1);
 	Vector3 side = new Vector3(0, 1, 0);
-    VertexColors vertexColors = new VertexColors(6 * 4);
+	VertexColors vertexColors = new VertexColors(6 * 4);
 
 	Object3d o3d, o3dChild1, o3dChild2;
 
@@ -34,28 +34,28 @@ public class ChildObjectsScene extends ParentScene {
 		Object3d skybox = new Object3d(skyboxGeometry, skyboxMaterial);
 		addChild(skybox);
 
-        Color4 faceColors[] = {
-            new Color4(200, 0, 0, 255),
-            new Color4(200, 200, 0, 255),
-            new Color4(200, 200, 200, 255),
-            new Color4(0, 175, 0, 255),
-            new Color4(0, 0, 175, 255),
-            new Color4(200, 100, 0, 255),
-        };
-        int j = 0;
-        for (int i = 0; i < faceColors.length; ++i) {
-            Color4 faceColor = faceColors[i];
-            for (int k = 0; k < 4; ++k) {
-                vertexColors.setColor(j++, faceColor);
-            }
-        }
+		Color4 faceColors[] = {
+				new Color4(200, 0, 0, 255),
+				new Color4(200, 200, 0, 255),
+				new Color4(200, 200, 200, 255),
+				new Color4(0, 175, 0, 255),
+				new Color4(0, 0, 175, 255),
+				new Color4(200, 100, 0, 255),
+		};
+		int j = 0;
+		for (int i = 0; i < faceColors.length; ++i) {
+			Color4 faceColor = faceColors[i];
+			for (int k = 0; k < 4; ++k) {
+				vertexColors.setColor(j++, faceColor);
+			}
+		}
 
-        Color4 white = new Color4(255, 255, 255, 255);
+		Color4 white = new Color4(255, 255, 255, 255);
 		Material material1 = new Material(white);
-        material1.setUseVertexColors(true);
+		material1.setUseVertexColors(true);
 		Geometry geometry = new BoxGeometry(1);
 		o3d = new Object3d(geometry, material1, vertexColors);
-		o3dChild1 = new Object3d(geometry, material1 ,vertexColors);
+		o3dChild1 = new Object3d(geometry, material1, vertexColors);
 		o3dChild2 = new Object3d(geometry, material1, vertexColors);
 
 		addChild(o3d);

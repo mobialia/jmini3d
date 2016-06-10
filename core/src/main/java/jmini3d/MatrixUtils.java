@@ -144,19 +144,19 @@ public class MatrixUtils {
 		destination[15] = 1;
 	}
 
-    public static void getRotation(float[] source, Vector3 direction, Vector3 up, Vector3 side) {
-        side.x = source[0];
-        side.y = source[1];
-        side.z = source[2];
-        direction.x = source[4];
-        direction.y = source[5];
-        direction.z = source[6];
-        up.x = source[8];
-        up.y = source[9];
-        up.z = source[10];
-    }
+	public static void getRotation(float[] source, Vector3 direction, Vector3 up, Vector3 side) {
+		side.x = source[0];
+		side.y = source[1];
+		side.z = source[2];
+		direction.x = source[4];
+		direction.y = source[5];
+		direction.z = source[6];
+		up.x = source[8];
+		up.y = source[9];
+		up.z = source[10];
+	}
 
-    public static float[] cloneMatrix(float[] in) {
+	public static float[] cloneMatrix(float[] in) {
 		return new float[]{ //
 				in[0], in[1], in[2], in[3], //
 				in[4], in[5], in[6], in[7], //
@@ -165,7 +165,7 @@ public class MatrixUtils {
 	}
 
 	public static void copyMatrix(float[] origin, float destination[]) {
-        System.arraycopy(origin, 0, destination, 0, origin.length);
+		System.arraycopy(origin, 0, destination, 0, origin.length);
 	}
 
 	public static float[] toInverseMat3(float[] mat, float[] dest) {

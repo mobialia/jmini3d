@@ -30,7 +30,7 @@ public class GpuUploader {
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
-    HashMap<VertexColors, Integer> vertexColorsBuffers = new HashMap<VertexColors, Integer>();
+	HashMap<VertexColors, Integer> vertexColorsBuffers = new HashMap<VertexColors, Integer>();
 	HashMap<Texture, Integer> textures = new HashMap<Texture, Integer>();
 	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<CubeMapTexture, Integer>();
 	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
@@ -128,35 +128,35 @@ public class GpuUploader {
 			}
 		}
 
-        return buffers;
+		return buffers;
 	}
 
-    public Integer upload(VertexColors vertexColors) {
-	    if (vertexColors == null) {
-		    return null;
-	    }
+	public Integer upload(VertexColors vertexColors) {
+		if (vertexColors == null) {
+			return null;
+		}
 
-	    Integer bufferId = vertexColorsBuffers.get(vertexColors);
-	    if ((vertexColors.status & GpuObjectStatus.VERTEX_COLORS_UPLOADED) == 0) {
-		    vertexColors.status |= GpuObjectStatus.VERTEX_COLORS_UPLOADED;
+		Integer bufferId = vertexColorsBuffers.get(vertexColors);
+		if ((vertexColors.status & GpuObjectStatus.VERTEX_COLORS_UPLOADED) == 0) {
+			vertexColors.status |= GpuObjectStatus.VERTEX_COLORS_UPLOADED;
 
-		    float[] colors = vertexColors.getVertexColors();
-		    if (colors != null) {
-			    if (bufferId == null) {
-				    int[] vboId = new int[1];
-				    GLES20.glGenBuffers(1, vboId, 0);
-				    bufferId = vboId[0];
-				    vertexColorsBuffers.put(vertexColors, bufferId);
-			    }
-			    GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferId);
-			    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, colors.length * 4, FloatBuffer.wrap(colors), GLES20.GL_STATIC_DRAW);
-		    }
-	    }
+			float[] colors = vertexColors.getVertexColors();
+			if (colors != null) {
+				if (bufferId == null) {
+					int[] vboId = new int[1];
+					GLES20.glGenBuffers(1, vboId, 0);
+					bufferId = vboId[0];
+					vertexColorsBuffers.put(vertexColors, bufferId);
+				}
+				GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferId);
+				GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, colors.length * 4, FloatBuffer.wrap(colors), GLES20.GL_STATIC_DRAW);
+			}
+		}
 
-        return bufferId;
-    }
+		return bufferId;
+	}
 
-    public void upload(Renderer3d renderer3d, Texture texture, int activeTexture) {
+	public void upload(Renderer3d renderer3d, Texture texture, int activeTexture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 
@@ -236,39 +236,39 @@ public class GpuUploader {
 			if (geometryBuffers.containsKey(o)) {
 				((Geometry) o).status = 0;
 				GeometryBuffers buffers = geometryBuffers.remove(o);
-                if (buffers != null) {
-                    if (buffers.vertexBufferId != null) {
-                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
-                    }
-                    if (buffers.normalsBufferId != null) {
-                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
-                    }
-                    if (buffers.uvsBufferId != null) {
-                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
-                    }
-                    if (buffers.facesBufferId != null) {
-                        GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
-                    }
-                }
+				if (buffers != null) {
+					if (buffers.vertexBufferId != null) {
+						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
+					}
+					if (buffers.normalsBufferId != null) {
+						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
+					}
+					if (buffers.uvsBufferId != null) {
+						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
+					}
+					if (buffers.facesBufferId != null) {
+						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
+					}
+				}
 			}
 		} else if (o instanceof Texture) {
-            Integer texture = textures.remove(o);
+			Integer texture = textures.remove(o);
 			if (texture != null) {
 				((Texture) o).status = 0;
 				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{texture}));
 			}
 		} else if (o instanceof CubeMapTexture) {
-            Integer texture = cubeMapTextures.remove(o);
+			Integer texture = cubeMapTextures.remove(o);
 			if (texture != null) {
 				((CubeMapTexture) o).status = 0;
 				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{texture}));
 			}
 		} else if (o instanceof VertexColors) {
-            Integer bufferId = vertexColorsBuffers.remove(o);
-            if (bufferId != null) {
-                GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{bufferId}));
-            }
-        }
+			Integer bufferId = vertexColorsBuffers.remove(o);
+			if (bufferId != null) {
+				GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{bufferId}));
+			}
+		}
 	}
 
 	public void reset() {
@@ -282,9 +282,9 @@ public class GpuUploader {
 		for (CubeMapTexture texture : cubeMapTextures.keySet()) {
 			texture.status = 0;
 		}
-        for (VertexColors vertexColors : vertexColorsBuffers.keySet()) {
-            vertexColors.status = 0;
-        }
+		for (VertexColors vertexColors : vertexColorsBuffers.keySet()) {
+			vertexColors.status = 0;
+		}
 		geometryBuffers.clear();
 		vertexColorsBuffers.clear();
 		textures.clear();

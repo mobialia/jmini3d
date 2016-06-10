@@ -15,7 +15,7 @@ public class Utils {
 	}
 
 	public static boolean gluUnProject(float winx, float winy, float winz, final float[] perspectiveMatrix,
-									   final int[] viewport, Vector3 outCoord) {
+			final int[] viewport, Vector3 outCoord) {
 		float[] finalMatrix = new float[16];
 		float[] in = new float[4];
 		float[] out = new float[4];

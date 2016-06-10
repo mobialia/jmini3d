@@ -14,7 +14,7 @@ public class Material {
 	public Texture normalMap;
 	public boolean useEnvMapAsMap = false;
 	public boolean applyColorToAlpha = false;
-    public boolean useVertexColors = false;
+	public boolean useVertexColors = false;
 	public float reflectivity = 0f;
 
 	public Material() {
@@ -44,12 +44,12 @@ public class Material {
 		shaderKey = -1;
 	}
 
-    public void setUseVertexColors(boolean useVertexColors) {
-        this.useVertexColors = useVertexColors;
-        shaderKey = -1;
-    }
+	public void setUseVertexColors(boolean useVertexColors) {
+		this.useVertexColors = useVertexColors;
+		shaderKey = -1;
+	}
 
-    public void setMap(Texture map) {
+	public void setMap(Texture map) {
 		this.map = map;
 		shaderKey = -1;
 	}

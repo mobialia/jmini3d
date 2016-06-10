@@ -8,17 +8,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Obj2Class {
-	
+
 	ArrayList<String> vertexList = new ArrayList<String>();
 	ArrayList<String> normalsList = new ArrayList<String>();
 	ArrayList<String> uvsList = new ArrayList<String>();
 	ArrayList<String> facesList = new ArrayList<String>();
-	
+
 	StringBuffer vertexSB = new StringBuffer();
 	StringBuffer normalsSB = new StringBuffer();
 	StringBuffer uvsSB = new StringBuffer();
 	StringBuffer facesSB = new StringBuffer();
-	
+
 
 	public static void main(String args[]) {
 		if (args.length < 3) {
@@ -27,26 +27,26 @@ public class Obj2Class {
 			return;
 		}
 		Obj2Class obj2Class = new Obj2Class();
-		
+
 		obj2Class.process(args[0], args[1], args[2]);
 	}
 
 	public void process(String inFile, String outFile, String packageName) {
-		
+
 		File file = new File(inFile);
 		try {
 			FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);
-			
+
 			String line;
-			
+
 			while ((line = br.readLine()) != null) {
-			
+
 				String tokens[] = line.split("\\s|/");
-				
+
 //				System.out.println("line = " + line);
 //				System.out.println("token = " + tokens[0]);
-				
+
 				if ("v".equals(tokens[0])) {
 					vertexList.add(tokens[1] + "f, " + tokens[2] + "f, " + tokens[3] + "f");
 				} else if ("vn".equals(tokens[0])) {
@@ -65,7 +65,7 @@ public class Obj2Class {
 					facesSB.append(addVertexNormalUv(tokens[7], tokens[8], tokens[9]));
 				}
 			}
-			
+
 			br.close();
 			System.out.println("Vertex size=" + vertexList.size());
 			System.out.println("Normals size=" + normalsList.size());
@@ -75,9 +75,9 @@ public class Obj2Class {
 			//System.out.println(normalsSB.toString());
 			//System.out.println(uvsSB.toString());
 			//System.out.println(facesSB.toString());
-			
+
 			writeFile(packageName, outFile);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,15 +109,15 @@ public class Obj2Class {
 
 		return facesList.indexOf(key);
 	}
-	
-	
+
+
 	public void writeFile(String packageName, String fileName) {
 		StringBuilder sb = new StringBuilder();
 
 		String className = fileName.substring(fileName.lastIndexOf("/") + 1).replace(".java", "");
-		
+
 		System.out.println(className);
-		
+
 		sb.append("package ").append(packageName).append(";\n");
 		sb.append("import jmini3d.geometry.Geometry;");
 
@@ -173,5 +173,5 @@ public class Obj2Class {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

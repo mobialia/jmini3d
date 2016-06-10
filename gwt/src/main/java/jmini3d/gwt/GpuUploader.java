@@ -30,8 +30,8 @@ public class GpuUploader {
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
-    HashMap<VertexColors, WebGLBuffer> vertexColorsBuffers = new HashMap<VertexColors, WebGLBuffer>();
-    HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
+	HashMap<VertexColors, WebGLBuffer> vertexColorsBuffers = new HashMap<VertexColors, WebGLBuffer>();
+	HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
 	HashMap<Texture, ImageElement> textureImages = new HashMap<Texture, ImageElement>();
 	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<CubeMapTexture, WebGLTexture>();
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
@@ -127,31 +127,31 @@ public class GpuUploader {
 		return buffers;
 	}
 
-    public WebGLBuffer upload(VertexColors vertexColors) {
-	    if (vertexColors == null) {
-		    return null;
-	    }
+	public WebGLBuffer upload(VertexColors vertexColors) {
+		if (vertexColors == null) {
+			return null;
+		}
 
-        WebGLBuffer bufferId = vertexColorsBuffers.get(vertexColors);
-	    if ((vertexColors.status & GpuObjectStatus.VERTEX_COLORS_UPLOADED) == 0) {
-		    vertexColors.status |= GpuObjectStatus.VERTEX_COLORS_UPLOADED;
+		WebGLBuffer bufferId = vertexColorsBuffers.get(vertexColors);
+		if ((vertexColors.status & GpuObjectStatus.VERTEX_COLORS_UPLOADED) == 0) {
+			vertexColors.status |= GpuObjectStatus.VERTEX_COLORS_UPLOADED;
 
-		    float[] colors = vertexColors.getVertexColors();
-            if (colors != null) {
-                if (bufferId == null) {
-                    bufferId = gl.createBuffer();
-	                vertexColorsBuffers.put(vertexColors, bufferId);
-                }
-                gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, bufferId);
-                gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(colors), WebGLRenderingContext.STATIC_DRAW);
-            }
-        }
+			float[] colors = vertexColors.getVertexColors();
+			if (colors != null) {
+				if (bufferId == null) {
+					bufferId = gl.createBuffer();
+					vertexColorsBuffers.put(vertexColors, bufferId);
+				}
+				gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, bufferId);
+				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(colors), WebGLRenderingContext.STATIC_DRAW);
+			}
+		}
 
-        return bufferId;
-    }
+		return bufferId;
+	}
 
 
-    public void upload(final Renderer3d renderer3d, final Texture texture, final int activeTexture) {
+	public void upload(final Renderer3d renderer3d, final Texture texture, final int activeTexture) {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
@@ -258,38 +258,38 @@ public class GpuUploader {
 			if (geometryBuffers.containsKey(o)) {
 				((Geometry) o).status = 0;
 				GeometryBuffers buffers = geometryBuffers.remove(o);
-                if (buffers != null) {
-                    if (buffers.vertexBufferId != null) {
-                        gl.deleteBuffer(buffers.vertexBufferId);
-                    }
-                    if (buffers.normalsBufferId != null) {
-                        gl.deleteBuffer(buffers.normalsBufferId);
-                    }
-                    if (buffers.uvsBufferId != null) {
-                        gl.deleteBuffer(buffers.uvsBufferId);
-                    }
-                    if (buffers.facesBufferId != null) {
-                        gl.deleteBuffer(buffers.facesBufferId);
-                    }
-                }
+				if (buffers != null) {
+					if (buffers.vertexBufferId != null) {
+						gl.deleteBuffer(buffers.vertexBufferId);
+					}
+					if (buffers.normalsBufferId != null) {
+						gl.deleteBuffer(buffers.normalsBufferId);
+					}
+					if (buffers.uvsBufferId != null) {
+						gl.deleteBuffer(buffers.uvsBufferId);
+					}
+					if (buffers.facesBufferId != null) {
+						gl.deleteBuffer(buffers.facesBufferId);
+					}
+				}
 			}
 		} else if (o instanceof Texture) {
-            WebGLTexture texture = textures.remove(o);
+			WebGLTexture texture = textures.remove(o);
 			if (texture != null) {
 				((Texture) o).status = 0;
 				gl.deleteTexture(texture);
 			}
 		} else if (o instanceof CubeMapTexture) {
-            WebGLTexture texture = cubeMapTextures.remove(o);
+			WebGLTexture texture = cubeMapTextures.remove(o);
 			if (texture != null) {
 				((CubeMapTexture) o).status = 0;
 				gl.deleteTexture(texture);
 			}
-        } else if (o instanceof VertexColors) {
-            WebGLBuffer bufferId = vertexColorsBuffers.remove(o);
-            if (bufferId != null) {
-                gl.deleteBuffer(bufferId);
-            }
+		} else if (o instanceof VertexColors) {
+			WebGLBuffer bufferId = vertexColorsBuffers.remove(o);
+			if (bufferId != null) {
+				gl.deleteBuffer(bufferId);
+			}
 		}
 	}
 
@@ -304,9 +304,9 @@ public class GpuUploader {
 		for (CubeMapTexture texture : cubeMapTextures.keySet()) {
 			texture.status = 0;
 		}
-        for (VertexColors vertexColors : vertexColorsBuffers.keySet()) {
-            vertexColors.status = 0;
-        }
+		for (VertexColors vertexColors : vertexColorsBuffers.keySet()) {
+			vertexColors.status = 0;
+		}
 		geometryBuffers.clear();
 		vertexColorsBuffers.clear();
 		textures.clear();
