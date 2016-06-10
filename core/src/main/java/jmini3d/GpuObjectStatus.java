@@ -7,4 +7,5 @@ public class GpuObjectStatus {
 	public static final int NORMALS_UPLOADED = 0x8;
 	public static final int UVS_UPLOADED = 0x10;
 	public static final int FACES_UPLOADED = 0x20;
+	public static final int VERTEX_COLORS_UPLOADED = 0x100;
 }

@@ -13,9 +13,9 @@ import java.util.HashMap;
 
 import jmini3d.CubeMapTexture;
 import jmini3d.GpuObjectStatus;
-import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Texture;
+import jmini3d.VertexColors;
 import jmini3d.geometry.Geometry;
 import jmini3d.material.Material;
 
@@ -30,7 +30,7 @@ public class GpuUploader {
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
-    HashMap<Object3d, Integer> objectBuffers = new HashMap<Object3d, Integer>();
+    HashMap<VertexColors, Integer> vertexColorsBuffers = new HashMap<VertexColors, Integer>();
 	HashMap<Texture, Integer> textures = new HashMap<Texture, Integer>();
 	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<CubeMapTexture, Integer>();
 	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
@@ -131,26 +131,27 @@ public class GpuUploader {
         return buffers;
 	}
 
-    public Integer uploadVertexColors(Object3d object) {
+    public Integer upload(VertexColors vertexColors) {
+	    if (vertexColors == null) {
+		    return null;
+	    }
 
-        Integer bufferId = objectBuffers.get(object);
+	    Integer bufferId = vertexColorsBuffers.get(vertexColors);
+	    if ((vertexColors.status & GpuObjectStatus.VERTEX_COLORS_UPLOADED) == 0) {
+		    vertexColors.status |= GpuObjectStatus.VERTEX_COLORS_UPLOADED;
 
-        if ((object.getVertexColors() != null) && object.isVertexColorsDirty()) {
-            object.setVertexColorsDirty(false);
-            float[] colors = object.getVertexColors();
-            if (bufferId != null) {
-                unload(object);
-                bufferId = null;
-            }
-            if (bufferId == null) {
-                int[] vboId = new int[1];
-                GLES20.glGenBuffers(1, vboId, 0);
-                bufferId = vboId[0];
-                objectBuffers.put(object, bufferId);
-            }
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferId);
-            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, colors.length * 4, FloatBuffer.wrap(colors), GLES20.GL_STATIC_DRAW);
-        }
+		    float[] colors = vertexColors.getVertexColors();
+		    if (colors != null) {
+			    if (bufferId == null) {
+				    int[] vboId = new int[1];
+				    GLES20.glGenBuffers(1, vboId, 0);
+				    bufferId = vboId[0];
+				    vertexColorsBuffers.put(vertexColors, bufferId);
+			    }
+			    GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferId);
+			    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, colors.length * 4, FloatBuffer.wrap(colors), GLES20.GL_STATIC_DRAW);
+		    }
+	    }
 
         return bufferId;
     }
@@ -262,8 +263,8 @@ public class GpuUploader {
 				((CubeMapTexture) o).status = 0;
 				GLES20.glDeleteTextures(1, IntBuffer.wrap(new int[]{texture}));
 			}
-		} else if (o instanceof Object3d) {
-            Integer bufferId = objectBuffers.remove(o);
+		} else if (o instanceof VertexColors) {
+            Integer bufferId = vertexColorsBuffers.remove(o);
             if (bufferId != null) {
                 GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{bufferId}));
             }
@@ -281,13 +282,13 @@ public class GpuUploader {
 		for (CubeMapTexture texture : cubeMapTextures.keySet()) {
 			texture.status = 0;
 		}
-        for (Object3d o : objectBuffers.keySet()) {
-            o.setVertexColorsDirty(true);
+        for (VertexColors vertexColors : vertexColorsBuffers.keySet()) {
+            vertexColors.status = 0;
         }
 		geometryBuffers.clear();
+		vertexColorsBuffers.clear();
 		textures.clear();
 		cubeMapTextures.clear();
 		shaderPrograms.clear();
-        objectBuffers.clear();
 	}
 }

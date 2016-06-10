@@ -10,6 +10,7 @@ public class Object3d {
 
 	public Geometry geometry3d;
 	public Material material;
+	public VertexColors vertexColors;
 
 	public boolean visible = true;
 	public boolean clearDepthAfterDraw = false;
@@ -23,10 +24,6 @@ public class Object3d {
 	private float scaleMatrix[];
 	private float[] translationMatrix = new float[16];
 
-    protected float[] vertexColors;
-
-    protected boolean vertexColorsDirty = false;
-
 	public ArrayList<Object3d> children;
 
 	float scale = 1;
@@ -34,16 +31,17 @@ public class Object3d {
     protected boolean needsMatrixUpdate = true;
 
     public Object3d() {
-        this.geometry3d = new VariableGeometry(0, 0);
-        this.material = new Material();
-
-        position = new Vector3();
-        children = new ArrayList<Object3d>();
+	    this(new VariableGeometry(0, 0), new Material(), null);
     }
 
     public Object3d(Geometry geometry3d, Material material) {
+		this(geometry3d, material, null);
+	}
+
+	public Object3d(Geometry geometry3d, Material material, VertexColors vertexColors) {
 		this.geometry3d = geometry3d;
 		this.material = material;
+		this.vertexColors = vertexColors;
 
 		position = new Vector3();
 		children = new ArrayList<Object3d>();
@@ -166,21 +164,11 @@ public class Object3d {
 		return children;
 	}
 
-    public float[] getVertexColors() {
+    public VertexColors getVertexColors() {
         return vertexColors;
     }
 
-    public void setVertexColors(float[] vertexColors) {
+    public void setVertexColors(VertexColors vertexColors) {
         this.vertexColors = vertexColors;
-        this.vertexColorsDirty = true;
     }
-
-    public boolean isVertexColorsDirty() {
-        return vertexColorsDirty;
-    }
-
-    public void setVertexColorsDirty(boolean vertexColorsDirty) {
-        this.vertexColorsDirty = vertexColorsDirty;
-    }
-
 }

@@ -4,6 +4,7 @@ import jmini3d.Color4;
 import jmini3d.CubeMapTexture;
 import jmini3d.Object3d;
 import jmini3d.Vector3;
+import jmini3d.VertexColors;
 import jmini3d.geometry.BoxGeometry;
 import jmini3d.geometry.Geometry;
 import jmini3d.geometry.SkyboxGeometry;
@@ -16,7 +17,7 @@ public class ChildObjectsScene extends ParentScene {
 	Vector3 direction = new Vector3(1, 0, 0);
 	Vector3 up = new Vector3(0, 0, 1);
 	Vector3 side = new Vector3(0, 1, 0);
-    float vertexColors[] = new float[6*4*4];
+    VertexColors vertexColors = new VertexColors(6 * 4);
 
 	Object3d o3d, o3dChild1, o3dChild2;
 
@@ -45,10 +46,7 @@ public class ChildObjectsScene extends ParentScene {
         for (int i = 0; i < faceColors.length; ++i) {
             Color4 faceColor = faceColors[i];
             for (int k = 0; k < 4; ++k) {
-                vertexColors[j++] = faceColor.r;
-                vertexColors[j++] = faceColor.g;
-                vertexColors[j++] = faceColor.b;
-                vertexColors[j++] = faceColor.a;
+                vertexColors.setColor(j++, faceColor);
             }
         }
 
@@ -56,13 +54,9 @@ public class ChildObjectsScene extends ParentScene {
 		Material material1 = new Material(white);
         material1.setUseVertexColors(true);
 		Geometry geometry = new BoxGeometry(1);
-		o3d = new Object3d(geometry, material1);
-        o3d.setVertexColors(vertexColors);
-		o3dChild1 = new Object3d(geometry, material1);
-        o3dChild1.setVertexColors(vertexColors);
-		o3dChild2 = new Object3d(geometry, material1);
-        o3dChild2.setVertexColors(vertexColors);
-
+		o3d = new Object3d(geometry, material1, vertexColors);
+		o3dChild1 = new Object3d(geometry, material1 ,vertexColors);
+		o3dChild2 = new Object3d(geometry, material1, vertexColors);
 
 		addChild(o3d);
 		o3d.setPosition(0, 0, 0);

@@ -382,7 +382,7 @@ public class Program {
 
 		WebGLBuffer vertexColorsBufferId = null;
 		if (useVertexColors) {
-			vertexColorsBufferId = gpuUploader.uploadVertexColors(o3d);
+			vertexColorsBufferId = gpuUploader.upload(o3d.vertexColors);
 		}
 
 		if (useMap) {

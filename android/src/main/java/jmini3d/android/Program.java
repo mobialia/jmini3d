@@ -373,7 +373,10 @@ public class Program {
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
-		Integer vertexColorsBufferId = gpuUploader.uploadVertexColors(o3d);
+		Integer vertexColorsBufferId = null;
+		if (useVertexColors) {
+			vertexColorsBufferId = gpuUploader.upload(o3d.vertexColors);
+		}
 
 		if (useMap) {
 			gpuUploader.upload(renderer3d, o3d.material.map, GLES20.GL_TEXTURE0);

@@ -8,6 +8,7 @@ import jmini3d.CubeMapTexture;
 import jmini3d.Object3d;
 import jmini3d.Texture;
 import jmini3d.Vector3;
+import jmini3d.VertexColors;
 import jmini3d.geometry.BoxGeometry;
 import jmini3d.geometry.Geometry;
 import jmini3d.geometry.SkyboxGeometry;
@@ -65,34 +66,25 @@ public class RubikSceneFlickering extends ParentScene {
         for (int iz = -1; iz <= 1; ++iz) {
             for (int iy = -1; iy <= 1; ++iy) {
                 for (int ix = -1; ix <= 1; ++ix) {
-                    Object3d piece = new Object3d(geometry, material1);
-                    piece.setScale(0.5f);
-                    piece.setPosition(ix * 1f, iy * 1f, iz * 1f);
-                    o3d.addChild(piece);
-
-                    float color[] = new float[6 * 4 * 4];
-                    Arrays.fill(color, 0f);
+                    VertexColors vertexColors = new VertexColors(6 * 4);
                     int vertexIndex = 0;
                     int index[] = {ix, iy, iz};
                     for (int i = 0; i < geometry.vertex().length; ) {
                         for (int coordinate = 0; coordinate < 3; ++coordinate) {
                             if ((index[coordinate] > 0) && (geometry.vertex()[i] > 0) && (geometry.normals()[i] > 0)) {
-                                color[vertexIndex] = colors[coordinate][0].r;
-                                color[vertexIndex + 1] = colors[coordinate][0].g;
-                                color[vertexIndex + 2] = colors[coordinate][0].b;
-                                color[vertexIndex + 3] = colors[coordinate][0].a;
+                                vertexColors.setColor(vertexIndex, colors[coordinate][0].r, colors[coordinate][0].g, colors[coordinate][0].b, colors[coordinate][0].a);
                             }
                             if ((index[coordinate] < 0) && (geometry.vertex()[i] < 0) && (geometry.normals()[i] < 0)) {
-                                color[vertexIndex] = colors[coordinate][1].r;
-                                color[vertexIndex + 1] = colors[coordinate][1].g;
-                                color[vertexIndex + 2] = colors[coordinate][1].b;
-                                color[vertexIndex + 3] = colors[coordinate][1].a;
+                                vertexColors.setColor(vertexIndex, colors[coordinate][0].r, colors[coordinate][1].g, colors[coordinate][1].b, colors[coordinate][1].a);
                             }
                             ++i;
                         }
-                        vertexIndex += 4;
+                        ++vertexIndex;
                     }
-                    piece.setVertexColors(color);
+                    Object3d piece = new Object3d(geometry, material1, vertexColors);
+                    piece.setScale(0.5f);
+                    piece.setPosition(ix * 1f, iy * 1f, iz * 1f);
+                    o3d.addChild(piece);
                 }
             }
         }
