@@ -6,19 +6,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Obj2Class {
-
 	ArrayList<String> vertexList = new ArrayList<String>();
 	ArrayList<String> normalsList = new ArrayList<String>();
 	ArrayList<String> uvsList = new ArrayList<String>();
-	ArrayList<String> facesList = new ArrayList<String>();
+	HashMap<String, Integer> facesList = new HashMap<String, Integer>();
+	Integer facesIndex = 0;
 
-	StringBuffer vertexSB = new StringBuffer();
-	StringBuffer normalsSB = new StringBuffer();
-	StringBuffer uvsSB = new StringBuffer();
-	StringBuffer facesSB = new StringBuffer();
-
+	StringBuilder vertexSB = new StringBuilder();
+	StringBuilder normalsSB = new StringBuilder();
+	StringBuilder uvsSB = new StringBuilder();
+	StringBuilder facesSB = new StringBuilder();
 
 	public static void main(String args[]) {
 		if (args.length < 3) {
@@ -32,7 +32,6 @@ public class Obj2Class {
 	}
 
 	public void process(String inFile, String outFile, String packageName) {
-
 		File file = new File(inFile);
 		try {
 			FileReader fr = new FileReader(file);
@@ -41,11 +40,7 @@ public class Obj2Class {
 			String line;
 
 			while ((line = br.readLine()) != null) {
-
 				String tokens[] = line.split("\\s|/");
-
-//				System.out.println("line = " + line);
-//				System.out.println("token = " + tokens[0]);
 
 				if ("v".equals(tokens[0])) {
 					vertexList.add(tokens[1] + "f, " + tokens[2] + "f, " + tokens[3] + "f");
@@ -71,10 +66,6 @@ public class Obj2Class {
 			System.out.println("Normals size=" + normalsList.size());
 			System.out.println("Uvs size=" + uvsList.size());
 			System.out.println("FaceList (vertex+normals+uvs) size=" + facesList.size());
-			//System.out.println(vertexSB.toString());
-			//System.out.println(normalsSB.toString());
-			//System.out.println(uvsSB.toString());
-			//System.out.println(facesSB.toString());
 
 			writeFile(packageName, outFile);
 
@@ -90,7 +81,8 @@ public class Obj2Class {
 		Integer uvInt = "".equals(uvIndex) ? -1 : Integer.valueOf(uvIndex);
 		Integer normalInt = Integer.valueOf(normalIndex);
 
-		if (!facesList.contains(key)) {
+		Integer index = facesList.get(key);
+		if (index == null) {
 			if (vertexSB.length() > 0) {
 				vertexSB.append(", ");
 				normalsSB.append(", ");
@@ -104,10 +96,11 @@ public class Obj2Class {
 				uvsSB.append(uvsList.get(uvInt - 1));
 			}
 
-			facesList.add(key);
+			index = facesIndex++;
+			facesList.put(key, index);
 		}
 
-		return facesList.indexOf(key);
+		return index;
 	}
 
 
@@ -173,5 +166,4 @@ public class Obj2Class {
 			e.printStackTrace();
 		}
 	}
-
 }
