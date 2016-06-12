@@ -4,7 +4,7 @@ Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT (Go
 
 HTML5 demo: http://www.mobialia.com/jmini3d-demo-gwt/
 
-Also includes an input abstraction library (with key & pointer events) for Android and GWT.
+It also includes an input abstraction library (with key & pointer events) for Android and GWT.
 
 JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and HTML5 versions like:
 * Mobialia Chess: http://chess.mobialia.com http://www.mobialia.com/apps/chess
@@ -91,14 +91,13 @@ And convert to a Java class with:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.5.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.7.1.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
 ```
 
 The generated TeapotGeometry.java is a Java class in the jmini3d.demo package extending Geometry.
 
 Generate Fonts from FNT files
 =============================
-
 Jmini3D can use FNT bitmap fonts in text format exported with BMfont http://www.angelcode.com/products/bmfont/ or Littera (online, flash) http://kvazars.com/littera/.
 In BMFont export options select "White text with alpha".
 
@@ -109,6 +108,10 @@ gradle jar
 java -cp ./build/libs/jmini3d-utils-0.5.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
 ```
 The font texture must be placed in the images folder. It supports fonts with only one texture.
+
+Materials and Textures
+======================
+Texture images should be placed in the android's drawable-nodpi/ folder.
 
 Build
 =====
@@ -132,9 +135,8 @@ gradle jettyRun
 ```
 and access with your web browser to http://localhost:8080/jmini3d/
 
-Using Jmini3D in other projects
+Using JMini3D in other projects
 ===============================
-
 This library's JARs and AARs are distributed via Mobialia's bintray repo (https://bintray.com/mobialia/maven).
 To use them, first include this repository in your gradle file:
 ```
@@ -142,7 +144,7 @@ repositories {
     maven { url 'https://dl.bintray.com/mobialia/maven' }
 }
 ```
-and then reference the jmini3d libraries, for an Android project:
+and then reference the Jmini3D libraries; example for an Android project:
 ```
 dependencies {
     compile 'com.mobialia:jmini3d-core:0.6'
