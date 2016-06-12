@@ -12,8 +12,8 @@ public class Obj2Class {
 	ArrayList<String> vertexList = new ArrayList<String>();
 	ArrayList<String> normalsList = new ArrayList<String>();
 	ArrayList<String> uvsList = new ArrayList<String>();
-	HashMap<String, Integer> facesList = new HashMap<String, Integer>();
-	Integer facesIndex = 0;
+	HashMap<String, Integer> vertexMap = new HashMap<String, Integer>();
+	Integer vertexMapIndex = 0;
 
 	StringBuilder vertexSB = new StringBuilder();
 	StringBuilder normalsSB = new StringBuilder();
@@ -65,7 +65,7 @@ public class Obj2Class {
 			System.out.println("Vertex size=" + vertexList.size());
 			System.out.println("Normals size=" + normalsList.size());
 			System.out.println("Uvs size=" + uvsList.size());
-			System.out.println("FaceList (vertex+normals+uvs) size=" + facesList.size());
+			System.out.println("FaceList (vertex+normals+uvs) size=" + vertexMap.size());
 
 			writeFile(packageName, outFile);
 
@@ -81,7 +81,7 @@ public class Obj2Class {
 		Integer uvInt = "".equals(uvIndex) ? -1 : Integer.valueOf(uvIndex);
 		Integer normalInt = Integer.valueOf(normalIndex);
 
-		Integer index = facesList.get(key);
+		Integer index = vertexMap.get(key);
 		if (index == null) {
 			if (vertexSB.length() > 0) {
 				vertexSB.append(", ");
@@ -96,8 +96,8 @@ public class Obj2Class {
 				uvsSB.append(uvsList.get(uvInt - 1));
 			}
 
-			index = facesIndex++;
-			facesList.put(key, index);
+			index = vertexMapIndex++;
+			vertexMap.put(key, index);
 		}
 
 		return index;
