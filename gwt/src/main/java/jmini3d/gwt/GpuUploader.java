@@ -21,7 +21,7 @@ import jmini3d.geometry.Geometry;
 import jmini3d.material.Material;
 
 public class GpuUploader {
-	// Use our Axis system
+	// Use our axis system
 	static final int[] CUBE_MAP_SIDES = {WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
 			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z,
 			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y};
