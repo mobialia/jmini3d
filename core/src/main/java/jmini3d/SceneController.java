@@ -3,7 +3,7 @@ package jmini3d;
 public interface SceneController {
 
 	/**
-	 * if updateScene() returns true gets the scene to draw
+	 * If updateScene() returns true, this method is called to get the scene to draw
 	 */
 	public Scene getScene();
 
