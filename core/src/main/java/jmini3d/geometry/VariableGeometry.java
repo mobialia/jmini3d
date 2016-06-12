@@ -19,6 +19,13 @@ public class VariableGeometry extends Geometry {
 		faces = new short[3 * faceCount];
 	}
 
+	public VariableGeometry(float[] vertex, float[] normals, float[] uvs, short[] faces) {
+		this.vertex = vertex;
+		this.normals = normals;
+		this.uvs = uvs;
+		this.faces = faces;
+	}
+
 	public short addVertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
 		vertex[vertexPointer * 3] = x;
 		vertex[vertexPointer * 3 + 1] = y;
