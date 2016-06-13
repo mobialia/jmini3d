@@ -31,6 +31,12 @@ public class Vector3 {
 		this.z = z;
 	}
 
+	public void setAll(float[] array, int offset) {
+		x = array[offset];
+		y = array[offset + 1];
+		z = array[offset + 2];
+	}
+
 	public void setAllFrom(Vector3 n) {
 		x = n.x;
 		y = n.y;
@@ -38,36 +44,36 @@ public class Vector3 {
 	}
 
 	public void normalize() {
-		float mod = (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+		float mod = (float) Math.sqrt(x * x + y * y + z * z);
 
 		if (mod != 0 && mod != 1) {
 			mod = 1 / mod;
-			this.x *= mod;
-			this.y *= mod;
-			this.z *= mod;
+			x *= mod;
+			y *= mod;
+			z *= mod;
 		}
 	}
 
 	public void add(Vector3 n) {
-		this.x += n.x;
-		this.y += n.y;
-		this.z += n.z;
+		x += n.x;
+		y += n.y;
+		z += n.z;
 	}
 
 	public void subtract(Vector3 n) {
-		this.x -= n.x;
-		this.y -= n.y;
-		this.z -= n.z;
+		x -= n.x;
+		y -= n.y;
+		z -= n.z;
 	}
 
 	public void multiply(float f) {
-		this.x *= f;
-		this.y *= f;
-		this.z *= f;
+		x *= f;
+		y *= f;
+		z *= f;
 	}
 
 	public float length() {
-		return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+		return (float) Math.sqrt(x * x + y * y + z * z);
 	}
 
 	public Vector3 clone() {
@@ -78,30 +84,30 @@ public class Vector3 {
 		float cosRY = (float) Math.cos(angle);
 		float sinRY = (float) Math.sin(angle);
 
-		tmp.setAll(this.x, this.y, this.z);
+		tmp.setAll(x, y, z);
 
-		this.y = (tmp.y * cosRY) - (tmp.z * sinRY);
-		this.z = (tmp.y * sinRY) + (tmp.z * cosRY);
+		y = (tmp.y * cosRY) - (tmp.z * sinRY);
+		z = (tmp.y * sinRY) + (tmp.z * cosRY);
 	}
 
 	public void rotateY(float angle) {
 		float cosRY = (float) Math.cos(angle);
 		float sinRY = (float) Math.sin(angle);
 
-		tmp.setAll(this.x, this.y, this.z);
+		tmp.setAll(x, y, z);
 
-		this.x = (tmp.x * cosRY) + (tmp.z * sinRY);
-		this.z = (tmp.x * -sinRY) + (tmp.z * cosRY);
+		x = (tmp.x * cosRY) + (tmp.z * sinRY);
+		z = (tmp.x * -sinRY) + (tmp.z * cosRY);
 	}
 
 	public void rotateZ(float angle) {
 		float cosRY = (float) Math.cos(angle);
 		float sinRY = (float) Math.sin(angle);
 
-		tmp.setAll(this.x, this.y, this.z);
+		tmp.setAll(x, y, z);
 
-		this.x = (tmp.x * cosRY) - (tmp.y * sinRY);
-		this.y = (tmp.x * sinRY) + (tmp.y * cosRY);
+		x = (tmp.x * cosRY) - (tmp.y * sinRY);
+		y = (tmp.x * sinRY) + (tmp.y * cosRY);
 	}
 
 	public void rotateAxis(Vector3 a, float angle) {

@@ -47,11 +47,18 @@ public class Color4 {
 		this.a = a / 255f;
 	}
 
+	public void setAll(float[] array, int offset) {
+		r = array[offset];
+		g = array[offset + 1];
+		b = array[offset + 2];
+		a = array[offset + 3];
+	}
+
 	public void setAllFrom(Color4 color) {
-		this.r = color.r;
-		this.g = color.g;
-		this.b = color.b;
-		this.a = color.a;
+		r = color.r;
+		g = color.g;
+		b = color.b;
+		a = color.a;
 	}
 
 	public boolean equals(Object o) {
