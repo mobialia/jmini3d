@@ -105,6 +105,10 @@ public class Object3d {
 		}
 	}
 
+	public float getScale() {
+		return scale;
+	}
+
 	public void updateMatrices() {
 		updateMatrices(MatrixUtils.IDENTITY4, false);
 	}
