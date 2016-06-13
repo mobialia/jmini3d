@@ -145,7 +145,7 @@ public class Vector3 {
 	}
 
 	public static float dot(Vector3 v, Vector3 w) {
-		return (v.x * w.x + v.y * w.y + w.z * v.z);
+		return (v.x * w.x + v.y * w.y + v.z * w.z);
 	}
 
 	@Override
