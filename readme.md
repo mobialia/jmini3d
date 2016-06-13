@@ -17,8 +17,9 @@ Features
 * Extremely fast model loading (converts OBJ models to Java classes)
 * Phong lighting model with multiple lights (Ambient/Point/Directional), no attenuation with the distance
 * Reflections with cube environment mapping
-* Normal maps
 * HUD and 2D sprites support
+* Normal maps
+* Vertex colors
 * Bitmap font support
 
 Subprojects
@@ -111,7 +112,13 @@ The font texture must be placed in the images folder. It supports fonts with onl
 
 Materials and Textures
 ======================
-Texture images should be placed in the android's drawable-nodpi/ folder.
+* A Material can receive a Texture, example:
+```
+Material m1 = new Material(new Texture("texture.png"));
+```
+* Textures support PNG and JPEG formats
+* A same Texture object can be shared between different materials, and it is uploaded only one time to the GPU
+* Material has a setBlending method to enable texture transparency
 
 Build
 =====
