@@ -32,6 +32,8 @@ task sourcesJar(type: Jar) {
     from 'src/main/java'
 }
 
+publishToMavenLocal.dependsOn 'assembleRelease'
+
 publishing {
     publications {
         jmini3dAndroid(MavenPublication) {
