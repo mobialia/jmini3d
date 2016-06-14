@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 archivesBaseName = 'jmini3d-utils'
 
@@ -10,4 +10,14 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
+}
+
+publishing {
+    publications {
+        jmini3dCore(MavenPublication) {
+            from components.java
+            artifactId = 'jmini3d-utils'
+            artifact sourcesJar
+        }
+    }
 }
