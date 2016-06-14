@@ -33,6 +33,7 @@ task sourcesJar(type: Jar) {
 }
 
 publishToMavenLocal.dependsOn 'assembleRelease'
+bintrayUpload.dependsOn 'assembleRelease'
 
 publishing {
     publications {
