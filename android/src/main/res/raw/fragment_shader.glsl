@@ -59,9 +59,9 @@ varying vec4 vPosition;
 void main(void) {
     #ifdef USE_ENVMAP_AS_MAP
         #ifdef USE_VERTEX_COLORS
-            vec4 fragmentColor = vVertexColor * textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+            vec4 fragmentColor = vVertexColor * textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.y, vPositionEnvMap.z));
         #else
-            vec4 fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.z, vPositionEnvMap.y));
+            vec4 fragmentColor = textureCube(envMap, vec3(vPositionEnvMap.x, vPositionEnvMap.y, vPositionEnvMap.z));
         #endif
         fragmentColor.rgb = mix(fragmentColor.rgb, objectColor.rgb, objectColor.a);
     #else
@@ -91,7 +91,7 @@ void main(void) {
         if (reflectivity > 0.0) {
             vec3 eyeDirection = normalize(cameraPosition - vPosition.xyz);
             vec3 lookup = reflect(eyeDirection, normalize(vNormal.xyz));
-            vec4 cubeColor = textureCube(envMap, vec3(-lookup.x, -lookup.z, -lookup.y));
+            vec4 cubeColor = textureCube(envMap, vec3(-lookup.x, -lookup.y, -lookup.z));
 
             fragmentColor.rgb = mix(fragmentColor.rgb, cubeColor.rgb, reflectivity);
         }
