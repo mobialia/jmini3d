@@ -8,7 +8,7 @@ import jmini3d.Texture;
  */
 public class PhongMaterial extends Material {
 
-	// alpha is intensity
+	// Alpha is intensity
 	public Color4 ambient;
 	public Color4 diffuse;
 	public Color4 specular;
