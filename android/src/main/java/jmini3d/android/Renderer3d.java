@@ -95,15 +95,16 @@ public class Renderer3d {
 
 		if (scene.hud.size() > 0) {
 			GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
-		}
 
-		for (int i = 0; i < scene.hud.size(); i++) {
-			Object3d o3d = scene.hud.get(i);
-			if (o3d.visible) {
-				o3d.updateMatrices();
-				drawObject(scene, o3d, ortho, MatrixUtils.IDENTITY4);
+			for (int i = 0; i < scene.hud.size(); i++) {
+				Object3d o3d = scene.hud.get(i);
+				if (o3d.visible) {
+					o3d.updateMatrices();
+					drawObject(scene, o3d, ortho, MatrixUtils.IDENTITY4);
+				}
 			}
 		}
+
 		if (logFps) {
 			doFps();
 		}
