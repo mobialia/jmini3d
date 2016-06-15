@@ -13,6 +13,20 @@ public abstract class ShaderPlugin {
 	public abstract int getShaderKey();
 
 	/**
+	 * Override with the custom vertex shader name
+	 */
+	public String getVertexShaderName() {
+		return null;
+	}
+
+	/**
+	 * Override with the custom fragment shader name
+	 */
+	public String getFragmentShaderName() {
+		return null;
+	}
+
+	/**
 	 * Defines to be included in both fragment and vertex shader
 	 */
 	public void addShaderDefines(ArrayList<String> defines) {

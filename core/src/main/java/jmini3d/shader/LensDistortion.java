@@ -25,6 +25,11 @@ public class LensDistortion extends ShaderPlugin {
 	}
 
 	@Override
+	public String getVertexShaderName() {
+		return "lens_distortion_vertex_shader.glsl";
+	}
+
+	@Override
 	public void addShaderDefines(ArrayList<String> defines) {
 		defines.add("USE_LENS_DISTORTION");
 	}

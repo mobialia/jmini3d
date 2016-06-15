@@ -208,8 +208,20 @@ public class Program implements UniformSetter {
 			fragmentShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
 		}
 
-		fragmentShaderStringBuffer.append(resourceLoader.loadRawString(R.raw.fragment_shader));
-		vertexShaderStringBuffer.append(resourceLoader.loadRawString(R.raw.vertex_shader));
+		String vertexShaderName = "vertex_shader.glsl";
+		String fragmentShaderName = "fragment_shader.glsl";
+
+		for (ShaderPlugin sp : scene.shaderPlugins) {
+			if (sp.getVertexShaderName() != null) {
+				vertexShaderName = sp.getVertexShaderName();
+			}
+			if (sp.getFragmentShaderName() != null) {
+				fragmentShaderName = sp.getFragmentShaderName();
+			}
+		}
+
+		vertexShaderStringBuffer.append(resourceLoader.loadRawString(vertexShaderName));
+		fragmentShaderStringBuffer.append(resourceLoader.loadRawString(fragmentShaderName));
 
 		String vertexShaderString = vertexShaderStringBuffer.toString();
 		String fragmentShaderString = fragmentShaderStringBuffer.toString();
@@ -315,8 +327,8 @@ public class Program implements UniformSetter {
 			}
 		}
 
-		for (ShaderPlugin e : scene.shaderPlugins) {
-			e.setSceneUniforms(this);
+		for (ShaderPlugin sp : scene.shaderPlugins) {
+			sp.setSceneUniforms(this);
 		}
 	}
 

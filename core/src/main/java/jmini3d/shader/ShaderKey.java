@@ -15,8 +15,8 @@ import jmini3d.material.PhongMaterial;
  * generating the shader.
  * The final shader key is the scene shader key BITWISE AND the material key
  * <p/>
- * 0xffff0000 is reserved for the lights
- * 0x0000ff00 is reserved for the shader plugins
+ * 0x00ffff00 is reserved for the lights
+ * 0xff000000 is reserved for the shader plugins
  */
 public class ShaderKey {
 
@@ -42,13 +42,13 @@ public class ShaderKey {
 		int key = 0xff;
 
 		for (ShaderPlugin sp : scene.shaderPlugins) {
-			key |= (sp.getShaderKey() << 8);
+			key |= (sp.getShaderKey() << 24);
 		}
 
 		return key |
-				(useAmbientlight ? 0x10000 : 0) |
-				(maxPointLights * 0x0100000) |
-				(maxDirLights * 0x1000000);
+				(useAmbientlight ? 0x100 : 0) |
+				(maxPointLights * 0x01000) |
+				(maxDirLights * 0x10000);
 	}
 
 	public static int getMaterialKey(Material material) {
@@ -60,7 +60,7 @@ public class ShaderKey {
 		boolean useApplyColorToAlpha = material.applyColorToAlpha;
 		boolean useVertexColors = material.useVertexColors;
 
-		return (useLight ? 0xffffff00 : 0) |
+		return (useLight ? 0xffffff00 : 0xff000000) |
 				(useMap ? 0x01 : 0) |
 				(useEnvMap ? 0x02 : 0) |
 				(useEnvMapAsMap ? 0x04 : 0) |

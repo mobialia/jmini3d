@@ -75,10 +75,12 @@ public class ResourceLoader {
 		return context;
 	}
 
-	public String loadRawString(int id) {
+	public String loadRawString(String file) {
 		try {
-			InputStream inputStream = context.getResources().openRawResource(id);
-			;
+			if (file.lastIndexOf(".") > 0) {
+				file = file.substring(0, file.lastIndexOf("."));
+			}
+			InputStream inputStream = context.getResources().openRawResource(context.getResources().getIdentifier(file, "raw", context.getPackageName()));
 			return inputStream2String(inputStream);
 		} catch (Exception e) {
 			return null;

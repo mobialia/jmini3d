@@ -26,7 +26,6 @@ varying vec4 vPosition;
     varying vec4 vVertexColor;
 #endif
 
-#ifdef USE_LENS_DISTORTION
 uniform float lensDistortionC1;
 uniform float lensDistortionC2;
 uniform float lensDistortionC3;
@@ -51,15 +50,10 @@ vec4 distortVertex(vec4 pos) {
     pos.xy *= distortionFactor(r2);
     return pos;
 }
-#endif
 
 void main(void) {
     vPosition = modelViewMatrix * vec4(vertexPosition, 1.0);
-    #ifdef USE_LENS_DISTORTION
-        gl_Position = perspectiveMatrix * distortVertex(cameraModelViewMatrix * vPosition);
-    #else
-        gl_Position = perspectiveMatrix * cameraModelViewMatrix * vPosition;
-    #endif
+    gl_Position = perspectiveMatrix * distortVertex(cameraModelViewMatrix * vPosition);
 
     #ifdef USE_NORMALS
         vNormal = normalize(normalMatrix * vertexNormal);
