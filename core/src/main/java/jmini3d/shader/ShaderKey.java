@@ -42,9 +42,8 @@ public class ShaderKey {
 		int key = 0xff;
 
 		for (ShaderPlugin sp : scene.shaderPlugins) {
-			key |= sp.getShaderKey();
+			key |= (sp.getShaderKey() << 8);
 		}
-
 
 		return key |
 				(useAmbientlight ? 0x10000 : 0) |
