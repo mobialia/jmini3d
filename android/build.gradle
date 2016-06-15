@@ -25,7 +25,15 @@ android {
     buildToolsVersion "23.0.3"
 }
 
-apply plugin: 'maven'
+task copyResources(type: Copy)
+
+copyResources {
+    from '../core/shaders'
+    into 'src/main/res/raw'
+    include('**/*')
+}
+
+preBuild.dependsOn copyResources
 
 task sourcesJar(type: Jar) {
     classifier = 'sources'

@@ -12,14 +12,14 @@ import jmini3d.GpuObjectStatus;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Vector3;
-import jmini3d.shader.ShaderPlugin;
-import jmini3d.shader.UniformSetter;
 import jmini3d.light.AmbientLight;
 import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
 import jmini3d.light.PointLight;
 import jmini3d.material.Material;
 import jmini3d.material.PhongMaterial;
+import jmini3d.shader.ShaderPlugin;
+import jmini3d.shader.UniformSetter;
 
 public class Program implements UniformSetter {
 	public static final String TAG = "Program";
@@ -51,6 +51,7 @@ public class Program implements UniformSetter {
 	int envMap = -1;
 	int normalMap = -1;
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float cameraModelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	Color4 objectColor = Color4.fromFloat(-1, -1, -1, -1);
@@ -69,6 +70,7 @@ public class Program implements UniformSetter {
 
 	@Override
 	public void setUniform(String uniformName, float value) {
+		// TODO cache values
 		GLES20.glUniform1f(uniforms.get(uniformName), value);
 	}
 
@@ -78,12 +80,13 @@ public class Program implements UniformSetter {
 
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
-		ArrayList<String> uniformsInit = new ArrayList<String>();
+		ArrayList<String> uniformsInit = new ArrayList<>();
 
-		ArrayList<String> defines = new ArrayList<String>();
-		HashMap<String, String> definesValues = new HashMap<String, String>();
+		ArrayList<String> defines = new ArrayList<>();
+		HashMap<String, String> definesValues = new HashMap<>();
 
 		uniformsInit.add("perspectiveMatrix");
+		uniformsInit.add("cameraModelViewMatrix");
 		uniformsInit.add("modelViewMatrix");
 		uniformsInit.add("objectColor");
 
@@ -317,10 +320,14 @@ public class Program implements UniformSetter {
 		}
 	}
 
-	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix, float cameraModelViewMatrix[]) {
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
 			GLES20.glUniformMatrix4fv(uniforms.get("perspectiveMatrix"), 1, false, perspectiveMatrix, 0);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
+		}
+		if (!Arrays.equals(this.cameraModelViewMatrix, cameraModelViewMatrix)) {
+			GLES20.glUniformMatrix4fv(uniforms.get("cameraModelViewMatrix"), 1, false, cameraModelViewMatrix, 0);
+			System.arraycopy(cameraModelViewMatrix, 0, this.cameraModelViewMatrix, 0, 16);
 		}
 		if (!Arrays.equals(modelViewMatrix, o3d.modelViewMatrix)) {
 			GLES20.glUniformMatrix4fv(uniforms.get("modelViewMatrix"), 1, false, o3d.modelViewMatrix, 0);

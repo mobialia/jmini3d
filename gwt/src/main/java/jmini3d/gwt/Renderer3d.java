@@ -90,7 +90,7 @@ public class Renderer3d {
 			Object3d o3d = scene.children.get(i);
 			if (o3d.visible) {
 				o3d.updateMatrices();
-				drawObject(scene, o3d, scene.camera.perspectiveMatrix);
+				drawObject(scene, o3d, scene.camera.perspectiveMatrix, scene.camera.modelViewMatrix);
 
 				if (o3d.clearDepthAfterDraw) {
 					GLES20.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
@@ -106,7 +106,7 @@ public class Renderer3d {
 			Object3d o3d = scene.hud.get(i);
 			if (o3d.visible) {
 				o3d.updateMatrices();
-				drawObject(scene, o3d, ortho);
+				drawObject(scene, o3d, ortho, MatrixUtils.IDENTITY4);
 			}
 		}
 		if (logFps) {
@@ -114,7 +114,7 @@ public class Renderer3d {
 		}
 	}
 
-	private void drawObject(Scene scene, Object3d o3d, float[] perspectiveMatrix) {
+	private void drawObject(Scene scene, Object3d o3d, float[] perspectiveMatrix, float[] cameraModelViewMatrix) {
 		Program program = gpuUploader.getProgram(scene, o3d.material);
 
 		if (program != currentProgram) {
@@ -127,9 +127,9 @@ public class Renderer3d {
 			setBlending(o3d.material.blending);
 		}
 
-		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix);
+		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix, cameraModelViewMatrix);
 		for (Object3d child : o3d.getChildren()) {
-			drawObject(scene, child, perspectiveMatrix);
+			drawObject(scene, child, perspectiveMatrix, cameraModelViewMatrix);
 		}
 	}
 

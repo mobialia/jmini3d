@@ -52,7 +52,7 @@ public class Utils {
 	}
 
 	/**
-	 * Calculates if it a line crosses a regular quad defined by 3 points in the space avoiding
+	 * Calculates if a line crosses a regular quad defined by 3 points in the space avoiding
 	 * object creations
 	 */
 	public static boolean lineIntersectsQuad(Vector3 l0, Vector3 l, Vector3 a, Vector3 b, Vector3 c) {

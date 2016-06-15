@@ -121,7 +121,6 @@ public class Camera {
 		if (needsMatrixUpdate) {
 			MatrixUtils.perspective(perspectiveMatrix, fovy, ((float) width) / height, near, far);
 			MatrixUtils.lookAt(modelViewMatrix, position, target, upAxis, vx, vy, vz);
-			MatrixUtils.multiply(perspectiveMatrix, modelViewMatrix, perspectiveMatrix);
 
 			needsMatrixUpdate = false;
 			return true;

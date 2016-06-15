@@ -57,6 +57,7 @@ public class Program implements UniformSetter {
 	int envMap = -1;
 	int normalMap = -1;
 	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float cameraModelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	Color4 objectColor = Color4.fromFloat(-1, -1, -1, -1);
@@ -91,6 +92,7 @@ public class Program implements UniformSetter {
 		HashMap<String, String> definesValues = new HashMap<>();
 
 		uniformsInit.add("perspectiveMatrix");
+		uniformsInit.add("cameraModelViewMatrix");
 		uniformsInit.add("modelViewMatrix");
 		uniformsInit.add("objectColor");
 
@@ -320,14 +322,14 @@ public class Program implements UniformSetter {
 		}
 	}
 
-	public static void console(String text) {
-		Renderer3d.log(text);
-	}
-
-	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix, float cameraModelViewMatrix[]) {
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
 			GLES20.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
+		}
+		if (!Arrays.equals(this.cameraModelViewMatrix, cameraModelViewMatrix)) {
+			GLES20.uniformMatrix4fv(uniforms.get("cameraModelViewMatrix"), false, cameraModelViewMatrix);
+			System.arraycopy(cameraModelViewMatrix, 0, this.cameraModelViewMatrix, 0, 16);
 		}
 		if (!Arrays.equals(modelViewMatrix, o3d.modelViewMatrix)) {
 			GLES20.uniformMatrix4fv(uniforms.get("modelViewMatrix"), false, o3d.modelViewMatrix);
@@ -339,7 +341,6 @@ public class Program implements UniformSetter {
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
-
 		WebGLBuffer vertexColorsBufferId = null;
 		if (useVertexColors) {
 			vertexColorsBufferId = gpuUploader.upload(o3d.vertexColors);
