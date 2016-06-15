@@ -35,13 +35,18 @@ Subprojects
 
 Axis
 ====
-This library uses the same axis system than Blender, z is up, y is front. It is right handed.
+The branch opengl_axis uses the opengl axis system, y is up, -z is front. It is right handed.
 
 ```
- z   y
- |  /
- | /
- |------x
+```
+  y
+  |  
+  |
+  |------x
+ /
+/
+Z
+```
 ```
 
 HUD Coordinates

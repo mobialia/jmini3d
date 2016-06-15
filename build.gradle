@@ -1,6 +1,6 @@
 allprojects {
     project.group = 'com.mobialia'
-    project.version = '0.7.2'
+    project.version = '0.7.2_opengl_axis'
 
     repositories {
         mavenLocal()
