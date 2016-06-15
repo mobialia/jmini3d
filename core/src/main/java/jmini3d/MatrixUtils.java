@@ -5,7 +5,7 @@ public class MatrixUtils {
 	public static float[] IDENTITY4 = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,};
 
 	/**
-	 * this is the old gl.glFustrum
+	 * This is the old gl.glFustrum
 	 */
 	public static void perspective(float destination[], float fovy, float aspectRatio, float near, float far) {
 		float top = near * (float) Math.tan(fovy * Math.PI / 360.0);
