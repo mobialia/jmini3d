@@ -23,8 +23,10 @@ import jmini3d.light.Light;
 import jmini3d.light.PointLight;
 import jmini3d.material.Material;
 import jmini3d.material.PhongMaterial;
+import jmini3d.shader.ShaderPlugin;
+import jmini3d.shader.UniformSetter;
 
-public class Program {
+public class Program implements UniformSetter {
 	static final String TAG = "Program";
 
 	int key = -1;
@@ -47,8 +49,8 @@ public class Program {
 	boolean useCameraPosition = false;
 	boolean useBarrelDistortion = false;
 
-	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
-	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<String, WebGLUniformLocation>();
+	HashMap<String, Integer> attributes = new HashMap<>();
+	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<>();
 
 	// *********************** BEGIN cached values to avoid setting uniforms two times
 	int map = -1;
@@ -73,61 +75,20 @@ public class Program {
 		this.GLES20 = GLES20;
 	}
 
+	@Override
+	public void setUniform(String uniformName, float value) {
+		GLES20.uniform1f(uniforms.get(uniformName), value);
+	}
+
 	native void log(String message) /*-{
 		console.log(message);
     }-*/;
 
-	/**
-	 * Generates a unique signature for the shaders
-	 */
-	public static int getSceneKey(Scene scene) {
-		boolean useAmbientlight = false;
-		int maxPointLights = 0;
-		int maxDirLights = 0;
-
-		for (Light light : scene.lights) {
-			if (light instanceof AmbientLight) {
-				useAmbientlight = true;
-			}
-
-			if (light instanceof PointLight) {
-				maxPointLights++;
-			}
-
-			if (light instanceof DirectionalLight) {
-				maxDirLights++;
-			}
-		}
-		return 0xffff +
-				(useAmbientlight ? 0x10000 : 0) +
-				(scene.barrelDistortion != 1.0f ? 0x20000 : 0) +
-				(maxPointLights * 0x0100000) +
-				(maxDirLights * 0x1000000);
-	}
-
-	public static int getMaterialKey(Material material) {
-		boolean useLight = material instanceof PhongMaterial;
-		boolean useMap = material.map != null;
-		boolean useEnvMap = material.envMap != null;
-		boolean useEnvMapAsMap = material.useEnvMapAsMap;
-		boolean useNormalMap = material.normalMap != null;
-		boolean useApplyColorToAlpha = material.applyColorToAlpha;
-		boolean useVertexColors = material.useVertexColors;
-
-		return (useLight ? 0xffff0000 : 0) + //
-				(useMap ? 0x01 : 0) + //
-				(useEnvMap ? 0x02 : 0) + //
-				(useEnvMapAsMap ? 0x04 : 0) + //
-				(useNormalMap ? 0x08 : 0) + //
-				(useApplyColorToAlpha ? 0x10 : 0) + //
-				(useVertexColors ? 0x20 : 0);
-	}
-
 	public void init(Scene scene, Material material) {
-		ArrayList<String> uniformsInit = new ArrayList<String>();
+		ArrayList<String> uniformsInit = new ArrayList<>();
 
-		ArrayList<String> defines = new ArrayList<String>();
-		HashMap<String, String> definesValues = new HashMap<String, String>();
+		ArrayList<String> defines = new ArrayList<>();
+		HashMap<String, String> definesValues = new HashMap<>();
 
 		uniformsInit.add("perspectiveMatrix");
 		uniformsInit.add("modelViewMatrix");
@@ -232,10 +193,9 @@ public class Program {
 			}
 		}
 
-		if (scene.barrelDistortion != 1.0f) {
-			defines.add("USE_BARREL_DISTORTION");
-			uniformsInit.add("barrelDistortion");
-			useBarrelDistortion = true;
+		for (ShaderPlugin e : scene.shaderPlugins) {
+			e.addShaderDefines(defines);
+			e.addUniformNames(uniformsInit);
 		}
 
 		StringBuffer vertexShaderStringBuffer = new StringBuffer();
@@ -355,8 +315,8 @@ public class Program {
 			}
 		}
 
-		if (useBarrelDistortion) {
-			GLES20.uniform1f(uniforms.get("barrelDistortion"), scene.barrelDistortion);
+		for (ShaderPlugin e : scene.shaderPlugins) {
+			e.setSceneUniforms(this);
 		}
 	}
 

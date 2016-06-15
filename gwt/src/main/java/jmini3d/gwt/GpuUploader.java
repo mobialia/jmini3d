@@ -19,6 +19,7 @@ import jmini3d.Texture;
 import jmini3d.VertexColors;
 import jmini3d.geometry.Geometry;
 import jmini3d.material.Material;
+import jmini3d.shader.ShaderKey;
 
 public class GpuUploader {
 	// Use our axis system
@@ -29,13 +30,13 @@ public class GpuUploader {
 	WebGLRenderingContext gl;
 	ResourceLoader resourceLoader;
 
-	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
-	HashMap<VertexColors, WebGLBuffer> vertexColorsBuffers = new HashMap<VertexColors, WebGLBuffer>();
-	HashMap<Texture, WebGLTexture> textures = new HashMap<Texture, WebGLTexture>();
-	HashMap<Texture, ImageElement> textureImages = new HashMap<Texture, ImageElement>();
-	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<CubeMapTexture, WebGLTexture>();
-	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<CubeMapTexture, ImageElement[]>();
-	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
+	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<>();
+	HashMap<VertexColors, WebGLBuffer> vertexColorsBuffers = new HashMap<>();
+	HashMap<Texture, WebGLTexture> textures = new HashMap<>();
+	HashMap<Texture, ImageElement> textureImages = new HashMap<>();
+	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<>();
+	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<>();
+	ArrayList<Program> shaderPrograms = new ArrayList<>();
 
 	TextureLoadedListener textureLoadedListener;
 
@@ -47,10 +48,10 @@ public class GpuUploader {
 
 	public Program getProgram(Scene scene, Material material) {
 		if (scene.shaderKey == -1) {
-			scene.shaderKey = Program.getSceneKey(scene);
+			scene.shaderKey = ShaderKey.getSceneKey(scene);
 		}
 		if (material.shaderKey == -1) {
-			material.shaderKey = Program.getMaterialKey(material);
+			material.shaderKey = ShaderKey.getMaterialKey(material);
 		}
 		int key = scene.shaderKey & material.shaderKey;
 		Program program = null;

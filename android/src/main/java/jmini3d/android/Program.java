@@ -12,6 +12,8 @@ import jmini3d.GpuObjectStatus;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Vector3;
+import jmini3d.shader.ShaderPlugin;
+import jmini3d.shader.UniformSetter;
 import jmini3d.light.AmbientLight;
 import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
@@ -19,7 +21,7 @@ import jmini3d.light.PointLight;
 import jmini3d.material.Material;
 import jmini3d.material.PhongMaterial;
 
-public class Program {
+public class Program implements UniformSetter {
 	public static final String TAG = "Program";
 
 	int key = -1;
@@ -40,10 +42,9 @@ public class Program {
 	boolean useNormalMap = false;
 	boolean useVertexColors = false;
 	boolean useCameraPosition = false;
-	boolean useBarrelDistortion = false;
 
-	HashMap<String, Integer> attributes = new HashMap<String, Integer>();
-	HashMap<String, Integer> uniforms = new HashMap<String, Integer>();
+	HashMap<String, Integer> attributes = new HashMap<>();
+	HashMap<String, Integer> uniforms = new HashMap<>();
 
 	// *********************** BEGIN cached values to avoid setting uniforms two times
 	int map = -1;
@@ -66,55 +67,15 @@ public class Program {
 
 	}
 
+	@Override
+	public void setUniform(String uniformName, float value) {
+		GLES20.glUniform1f(uniforms.get(uniformName), value);
+	}
+
 	public void log(String message) {
 		Log.d(TAG, message);
 	}
 
-	/**
-	 * Generates a unique signature for the shaders
-	 */
-	public static int getSceneKey(Scene scene) {
-		boolean useAmbientlight = false;
-		int maxPointLights = 0;
-		int maxDirLights = 0;
-
-		for (Light light : scene.lights) {
-			if (light instanceof AmbientLight) {
-				useAmbientlight = true;
-			}
-
-			if (light instanceof PointLight) {
-				maxPointLights++;
-			}
-
-			if (light instanceof DirectionalLight) {
-				maxDirLights++;
-			}
-		}
-		return 0xffff +
-				(useAmbientlight ? 0x10000 : 0) +
-				(scene.barrelDistortion != 1.0f ? 0x20000 : 0) +
-				(maxPointLights * 0x0100000) +
-				(maxDirLights * 0x1000000);
-	}
-
-	public static int getMaterialKey(Material material) {
-		boolean useLight = material instanceof PhongMaterial;
-		boolean useMap = material.map != null;
-		boolean useEnvMap = material.envMap != null;
-		boolean useEnvMapAsMap = material.useEnvMapAsMap;
-		boolean useNormalMap = material.normalMap != null;
-		boolean useApplyColorToAlpha = material.applyColorToAlpha;
-		boolean useVertexColors = material.useVertexColors;
-
-		return (useLight ? 0xffff0000 : 0) + //
-				(useMap ? 0x01 : 0) + //
-				(useEnvMap ? 0x02 : 0) + //
-				(useEnvMapAsMap ? 0x04 : 0) + //
-				(useNormalMap ? 0x08 : 0) + //
-				(useApplyColorToAlpha ? 0x10 : 0) + //
-				(useVertexColors ? 0x20 : 0);
-	}
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
 		ArrayList<String> uniformsInit = new ArrayList<String>();
@@ -225,10 +186,9 @@ public class Program {
 			}
 		}
 
-		if (scene.barrelDistortion != 1.0f) {
-			defines.add("USE_BARREL_DISTORTION");
-			uniformsInit.add("barrelDistortion");
-			useBarrelDistortion = true;
+		for (ShaderPlugin e : scene.shaderPlugins) {
+			e.addShaderDefines(defines);
+			e.addUniformNames(uniformsInit);
 		}
 
 		StringBuffer vertexShaderStringBuffer = new StringBuffer();
@@ -274,7 +234,6 @@ public class Program {
 
 		for (String s : uniformsInit) {
 			uniforms.put(s, GLES20.glGetUniformLocation(webGLProgram, s));
-//			log("uniform: " + s + " = " + GLES20.glGetUniformLocation(webGLProgram, s));
 		}
 		GLES20.glDeleteShader(vertexShader);
 		GLES20.glDeleteShader(fragmentShader);
@@ -353,8 +312,8 @@ public class Program {
 			}
 		}
 
-		if (useBarrelDistortion) {
-			GLES20.glUniform1f(uniforms.get("barrelDistortion"), scene.barrelDistortion);
+		for (ShaderPlugin e : scene.shaderPlugins) {
+			e.setSceneUniforms(this);
 		}
 	}
 
@@ -483,14 +442,6 @@ public class Program {
 		GLES20.glShaderSource(shader, source);
 		GLES20.glCompileShader(shader);
 
-//		int[] linkStatus = new int[1];
-//		GLES20.glGetProgramiv(webGLProgram, GLES20.GL_COMPILE_STATUS, linkStatus, 0);
-//		if (linkStatus[0] != GLES20.GL_TRUE) {
-//			Log.e(TAG, "Could not compile shader: ");
-//			Log.e(TAG, source);
-//			GLES20.glDeleteProgram(webGLProgram);
-//			throw new RuntimeException(GLES20.glGetShaderInfoLog(shader));
-//		}
 		return shader;
 	}
 }

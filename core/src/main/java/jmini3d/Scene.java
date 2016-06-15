@@ -2,20 +2,17 @@ package jmini3d;
 
 import java.util.ArrayList;
 
+import jmini3d.shader.ShaderPlugin;
 import jmini3d.light.Light;
 
 public class Scene {
 	public int shaderKey = -1;
 	public Camera camera = new Camera();
-	public ArrayList<Object3d> children = new ArrayList<Object3d>();
-	public ArrayList<Object3d> hud = new ArrayList<Object3d>();
-	public ArrayList<Light> lights = new ArrayList<Light>();
-	public ArrayList<Object> unload = new ArrayList<Object>();
-
-	// A lens barrel distortion effect at the vertex level https://www.youtube.com/watch?v=yJVkdsZc9YA
-	// The value is the power of the distortion effect, <1 for VR corrections
-	// It is disabled if == 1
-	public float barrelDistortion = 1f;
+	public ArrayList<Object3d> children = new ArrayList<>();
+	public ArrayList<Object3d> hud = new ArrayList<>();
+	public ArrayList<Light> lights = new ArrayList<>();
+	public ArrayList<Object> unload = new ArrayList<>();
+	public ArrayList<ShaderPlugin> shaderPlugins = new ArrayList<>();
 
 	public Color4 backgroundColor = new Color4(0, 0, 0, 255);
 
@@ -27,6 +24,11 @@ public class Scene {
 
 	public void addLight(Light l) {
 		lights.add(l);
+		shaderKey = -1;
+	}
+
+	public void addShaderPlugin(ShaderPlugin e) {
+		shaderPlugins.add(e);
 		shaderKey = -1;
 	}
 

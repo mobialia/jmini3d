@@ -1,6 +1,7 @@
 package jmini3d.android;
 
 import android.graphics.Bitmap;
+import android.graphics.Shader;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
@@ -18,6 +19,7 @@ import jmini3d.Texture;
 import jmini3d.VertexColors;
 import jmini3d.geometry.Geometry;
 import jmini3d.material.Material;
+import jmini3d.shader.ShaderKey;
 
 public class GpuUploader {
 	static final String TAG = "GpuUploader";
@@ -29,11 +31,11 @@ public class GpuUploader {
 
 	ResourceLoader resourceLoader;
 
-	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<Geometry, GeometryBuffers>();
-	HashMap<VertexColors, Integer> vertexColorsBuffers = new HashMap<VertexColors, Integer>();
-	HashMap<Texture, Integer> textures = new HashMap<Texture, Integer>();
-	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<CubeMapTexture, Integer>();
-	ArrayList<Program> shaderPrograms = new ArrayList<Program>();
+	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<>();
+	HashMap<VertexColors, Integer> vertexColorsBuffers = new HashMap<>();
+	HashMap<Texture, Integer> textures = new HashMap<>();
+	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<>();
+	ArrayList<Program> shaderPrograms = new ArrayList<>();
 
 	public GpuUploader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
@@ -41,10 +43,10 @@ public class GpuUploader {
 
 	public Program getProgram(Scene scene, Material material) {
 		if (scene.shaderKey == -1) {
-			scene.shaderKey = Program.getSceneKey(scene);
+			scene.shaderKey = ShaderKey.getSceneKey(scene);
 		}
 		if (material.shaderKey == -1) {
-			material.shaderKey = Program.getMaterialKey(material);
+			material.shaderKey = ShaderKey.getMaterialKey(material);
 		}
 		int key = scene.shaderKey & material.shaderKey;
 		Program program = null;
