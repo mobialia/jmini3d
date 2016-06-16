@@ -109,6 +109,7 @@ public class Renderer3d {
 				}
 			}
 		}
+
 		if (logFps) {
 			doFps();
 		}
@@ -128,8 +129,8 @@ public class Renderer3d {
 		}
 
 		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix, cameraModelViewMatrix);
-		for (Object3d child : o3d.getChildren()) {
-			drawObject(scene, child, perspectiveMatrix, cameraModelViewMatrix);
+		for (int i = 0; i < o3d.getChildren().size(); i++) {
+			drawObject(scene, o3d.getChildren().get(i), perspectiveMatrix, cameraModelViewMatrix);
 		}
 	}
 
