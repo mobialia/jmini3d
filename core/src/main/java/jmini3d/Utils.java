@@ -89,7 +89,7 @@ public class Utils {
 		float iy = l0.y + d * l.y;
 		float iz = l0.z + d * l.z;
 
-		// Now that we have the intersection point, compute if i is inside the QUAD checking that
+		// Now that we have the intersection point, compute if it is inside the QUAD checking that
 		// the dot product between ab * ai and ac * ai is between 0 and each vector length^2
 		float aix = ix - a.x;
 		float aiy = iy - a.y;
