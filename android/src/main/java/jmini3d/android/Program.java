@@ -19,9 +19,8 @@ import jmini3d.light.PointLight;
 import jmini3d.material.Material;
 import jmini3d.material.PhongMaterial;
 import jmini3d.shader.ShaderPlugin;
-import jmini3d.shader.UniformSetter;
 
-public class Program implements UniformSetter {
+public class Program extends jmini3d.shader.Program {
 	public static final String TAG = "Program";
 
 	int key = -1;
@@ -208,8 +207,8 @@ public class Program implements UniformSetter {
 			fragmentShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
 		}
 
-		String vertexShaderName = "vertex_shader.glsl";
-		String fragmentShaderName = "fragment_shader.glsl";
+		String vertexShaderName = DEFAULT_VERTEX_SHADER;
+		String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
 
 		for (ShaderPlugin sp : scene.shaderPlugins) {
 			if (sp.getVertexShaderName() != null) {

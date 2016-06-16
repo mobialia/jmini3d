@@ -3,12 +3,12 @@ package jmini3d.shader;
 import java.util.ArrayList;
 
 /**
- * The shaderPlugins modify the shaders at the scene Level
+ * The ShaderPlugins modify the shaders at the scene Level
  */
 public abstract class ShaderPlugin {
 
 	/**
-	 * A unique bit < 256 for the shader key
+	 * A bit < 256 for the shader key, unique for each shader plugin
 	 */
 	public abstract int getShaderKey();
 
@@ -33,15 +33,19 @@ public abstract class ShaderPlugin {
 	}
 
 	/**
-	 * Uniforms names that the shader uses
+	 * Uniform names that the shader uses
 	 */
 	public void addUniformNames(ArrayList<String> uniformNames) {
 	}
 
 	/**
-	 * Initialize the scene uniforms
+	 * Initialize the scene uniforms before each frame
 	 */
-	public void setSceneUniforms(UniformSetter program) {
+	public void setSceneUniforms(Program program) {
 	}
+
+	/**
+	 * TODO before each material initialization???
+	 */
 
 }

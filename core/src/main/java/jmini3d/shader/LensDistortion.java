@@ -26,7 +26,7 @@ public class LensDistortion extends ShaderPlugin {
 
 	@Override
 	public String getVertexShaderName() {
-		return "lens_distortion_vertex_shader.glsl";
+		return "vertex_shader_lens_distortion.glsl";
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class LensDistortion extends ShaderPlugin {
 	}
 
 	@Override
-	public void setSceneUniforms(UniformSetter setter) {
+	public void setSceneUniforms(Program setter) {
 		setter.setUniform("lensDistortionC1", c1);
 		setter.setUniform("lensDistortionC2", c2);
 		setter.setUniform("lensDistortionC3", c3);

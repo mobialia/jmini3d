@@ -1,7 +1,6 @@
 package jmini3d.android;
 
 import android.graphics.Bitmap;
-import android.graphics.Shader;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
@@ -23,11 +22,6 @@ import jmini3d.shader.ShaderKey;
 
 public class GpuUploader {
 	static final String TAG = "GpuUploader";
-
-	// Use our axis system
-	static final int[] CUBE_MAP_SIDES = {GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
-			GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y};
 
 	ResourceLoader resourceLoader;
 
@@ -222,7 +216,7 @@ public class GpuUploader {
 					return;
 				}
 
-				GLUtils.texImage2D(CUBE_MAP_SIDES[i], 0, bitmap, 0);
+				GLUtils.texImage2D(Program.CUBE_MAP_SIDES[i], 0, bitmap, 0);
 
 				resourceLoader.freeBitmap(null, bitmap);
 			}

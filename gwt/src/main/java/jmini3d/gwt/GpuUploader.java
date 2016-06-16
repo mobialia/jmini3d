@@ -22,10 +22,6 @@ import jmini3d.material.Material;
 import jmini3d.shader.ShaderKey;
 
 public class GpuUploader {
-	// Use our axis system
-	static final int[] CUBE_MAP_SIDES = {WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
-			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-			WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y};
 
 	WebGLRenderingContext gl;
 	ResourceLoader resourceLoader;
@@ -237,7 +233,7 @@ public class GpuUploader {
 			renderer3d.envMapTextureId = envMapTextureId;
 
 			for (int i = 0; i < 6; i++) {
-				gl.texImage2D(CUBE_MAP_SIDES[i], 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
+				gl.texImage2D(Program.CUBE_MAP_SIDES[i], 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE,
 						cubeMapImages.get(cubeMapTexture)[i]);
 			}
 
