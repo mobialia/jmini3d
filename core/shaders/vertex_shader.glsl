@@ -1,8 +1,8 @@
 attribute vec3 vertexPosition;
 
-uniform mat4 perspectiveMatrix;
-uniform mat4 cameraModelViewMatrix;
-uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
 
 varying vec4 vPosition;
 
@@ -27,8 +27,8 @@ varying vec4 vPosition;
 #endif
 
 void main(void) {
-    vPosition = modelViewMatrix * vec4(vertexPosition, 1.0);
-    gl_Position = perspectiveMatrix * cameraModelViewMatrix * vPosition;
+    vPosition = modelMatrix * vec4(vertexPosition, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * vPosition;
 
     #ifdef USE_NORMALS
         vNormal = normalize(normalMatrix * vertexNormal);

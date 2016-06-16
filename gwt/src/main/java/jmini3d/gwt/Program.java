@@ -56,9 +56,9 @@ public class Program extends jmini3d.shader.Program {
 	int map = -1;
 	int envMap = -1;
 	int normalMap = -1;
-	float perspectiveMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	float cameraModelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	float modelViewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float projectionMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float viewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	float modelMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	Color4 objectColor = Color4.fromFloat(-1, -1, -1, -1);
 	Color4 ambientColor = Color4.fromFloat(-1, -1, -1, -1);
@@ -148,9 +148,9 @@ public class Program extends jmini3d.shader.Program {
 		ArrayList<String> defines = new ArrayList<>();
 		HashMap<String, String> definesValues = new HashMap<>();
 
-		uniformsInit.add("perspectiveMatrix");
-		uniformsInit.add("cameraModelViewMatrix");
-		uniformsInit.add("modelViewMatrix");
+		uniformsInit.add("projectionMatrix");
+		uniformsInit.add("viewMatrix");
+		uniformsInit.add("modelMatrix");
 		uniformsInit.add("objectColor");
 
 		if (material.map != null) {
@@ -391,22 +391,22 @@ public class Program extends jmini3d.shader.Program {
 		}
 	}
 
-	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix, float cameraModelViewMatrix[]) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] projectionMatrix, float viewMatrix[]) {
 		if (!shaderLoaded) {
 			return;
 		}
 
-		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
-			GLES20.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
-			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);
+		if (!Arrays.equals(this.projectionMatrix, projectionMatrix)) {
+			GLES20.uniformMatrix4fv(uniforms.get("projectionMatrix"), false, projectionMatrix);
+			System.arraycopy(projectionMatrix, 0, this.projectionMatrix, 0, 16);
 		}
-		if (!Arrays.equals(this.cameraModelViewMatrix, cameraModelViewMatrix)) {
-			GLES20.uniformMatrix4fv(uniforms.get("cameraModelViewMatrix"), false, cameraModelViewMatrix);
-			System.arraycopy(cameraModelViewMatrix, 0, this.cameraModelViewMatrix, 0, 16);
+		if (!Arrays.equals(this.viewMatrix, viewMatrix)) {
+			GLES20.uniformMatrix4fv(uniforms.get("viewMatrix"), false, viewMatrix);
+			System.arraycopy(viewMatrix, 0, this.viewMatrix, 0, 16);
 		}
-		if (!Arrays.equals(modelViewMatrix, o3d.modelViewMatrix)) {
-			GLES20.uniformMatrix4fv(uniforms.get("modelViewMatrix"), false, o3d.modelViewMatrix);
-			System.arraycopy(o3d.modelViewMatrix, 0, modelViewMatrix, 0, 16);
+		if (!Arrays.equals(modelMatrix, o3d.modelMatrix)) {
+			GLES20.uniformMatrix4fv(uniforms.get("modelMatrix"), false, o3d.modelMatrix);
+			System.arraycopy(o3d.modelMatrix, 0, modelMatrix, 0, 16);
 		}
 		if ((useNormals || useNormalMap) && o3d.normalMatrix != null && !Arrays.equals(normalMatrix, o3d.normalMatrix)) {
 			GLES20.uniformMatrix3fv(uniforms.get("normalMatrix"), false, o3d.normalMatrix);

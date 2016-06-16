@@ -17,7 +17,7 @@ public class Object3d {
 
 	private Vector3 position;
 
-	public float[] modelViewMatrix = new float[16];
+	public float[] modelMatrix = new float[16];
 	public float[] normalMatrix = new float[9];
 
 	public float rotationMatrix[];
@@ -44,7 +44,7 @@ public class Object3d {
 		this.vertexColors = vertexColors;
 
 		position = new Vector3();
-		children = new ArrayList<Object3d>();
+		children = new ArrayList<>();
 	}
 
 	public boolean isVisible() {
@@ -130,28 +130,28 @@ public class Object3d {
 		if (doesMatrixNeedUpdate() || forceUpdate) {
 			needsMatrixUpdate = false;
 
-			MatrixUtils.copyMatrix(initialMatrix, modelViewMatrix);
+			MatrixUtils.copyMatrix(initialMatrix, modelMatrix);
 
 			if (position != null) {
 				MatrixUtils.translate(translationMatrix, position);
-				MatrixUtils.multiply(modelViewMatrix, translationMatrix, modelViewMatrix);
+				MatrixUtils.multiply(modelMatrix, translationMatrix, modelMatrix);
 			}
 
 			if (rotationMatrix != null) {
-				MatrixUtils.multiply(modelViewMatrix, rotationMatrix, modelViewMatrix);
+				MatrixUtils.multiply(modelMatrix, rotationMatrix, modelMatrix);
 			}
 
 			if (scale != 1 && scaleMatrix != null) {
-				MatrixUtils.multiply(modelViewMatrix, scaleMatrix, modelViewMatrix);
+				MatrixUtils.multiply(modelMatrix, scaleMatrix, modelMatrix);
 			}
 
-			normalMatrix = MatrixUtils.toInverseMat3(modelViewMatrix, normalMatrix);
+			normalMatrix = MatrixUtils.toInverseMat3(modelMatrix, normalMatrix);
 			if (normalMatrix != null) {
 				normalMatrix = MatrixUtils.transpose(normalMatrix, normalMatrix);
 			}
 
 			for (int i = 0; i < children.size(); i++) {
-				children.get(i).updateMatrices(modelViewMatrix, true);
+				children.get(i).updateMatrices(modelMatrix, true);
 			}
 		}
 	}

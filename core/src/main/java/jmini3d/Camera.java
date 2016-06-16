@@ -15,8 +15,8 @@ public class Camera {
 	private float near = 1;
 	private float far = 1000;
 
-	public float[] perspectiveMatrix = new float[16];
-	public float[] modelViewMatrix = new float[16];
+	public float[] projectionMatrix = new float[16];
+	public float[] viewMatrix = new float[16];
 
 	public boolean needsMatrixUpdate = true;
 
@@ -119,8 +119,8 @@ public class Camera {
 
 	public boolean updateMatrices() {
 		if (needsMatrixUpdate) {
-			MatrixUtils.perspective(perspectiveMatrix, fovy, ((float) width) / height, near, far);
-			MatrixUtils.lookAt(modelViewMatrix, position, target, upAxis, vx, vy, vz);
+			MatrixUtils.perspective(projectionMatrix, fovy, ((float) width) / height, near, far);
+			MatrixUtils.lookAt(viewMatrix, position, target, upAxis, vx, vy, vz);
 
 			needsMatrixUpdate = false;
 			return true;
@@ -128,7 +128,7 @@ public class Camera {
 		return false;
 	}
 
-	public void updateModelView() {
-		MatrixUtils.lookAt(modelViewMatrix, position, target, upAxis, vx, vy, vz);
+	public void updateViewMatrix() {
+		MatrixUtils.lookAt(viewMatrix, position, target, upAxis, vx, vy, vz);
 	}
 }

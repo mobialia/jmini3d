@@ -6,7 +6,7 @@ public class Utils {
 	public static void getRay(Camera camera, int x, int y, Vector3 ray) {
 		int[] viewport = {0, 0, camera.getWidth(), camera.getHeight()};
 
-		gluUnProject(x, camera.getHeight() - y, 0.9f, camera.perspectiveMatrix, viewport, ray);
+		gluUnProject(x, camera.getHeight() - y, 0.9f, camera.projectionMatrix, viewport, ray);
 
 		// Ray vector
 		ray.x -= camera.getPosition().x;
