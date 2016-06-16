@@ -1,12 +1,12 @@
-JMini3D
+JMini3d
 =======
-Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
+Minimalistic OpenGL2 3d engine for mobile apps that supports Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
 
 HTML5 demo: http://www.mobialia.com/jmini3d-demo-gwt/
 
 It also includes an input abstraction library (with key & pointer events) for Android and GWT.
 
-JMini3D is used in 3D Mobialia games (http://www.mobialia.com) with Android and HTML5 versions like:
+JMini3d is used in 3d Mobialia games (http://www.mobialia.com) with Android and HTML5 versions like:
 * Mobialia Chess: http://chess.mobialia.com http://www.mobialia.com/apps/chess
 * Slot Racing: http://slot.mobialia.com http://www.mobialia.com/apps/slot
 * Mobialia Four in a Row: http://fourinarow.mobialia.com http://www.mobialia.com/apps/fourinarow
@@ -17,7 +17,7 @@ Features
 * Extremely fast model loading (converts OBJ models to Java classes)
 * Phong lighting model with multiple lights (Ambient/Point/Directional), no attenuation with the distance
 * Reflections with cube environment mapping
-* HUD and 2D sprites support
+* HUD and 2d sprites support
 * Normal maps
 * Vertex colors
 * Bitmap font support
@@ -35,7 +35,7 @@ Subprojects
 
 Axis
 ====
-This library uses the same axis system than Blender, z is up, y is front. It is right handed.
+This library uses by default the same axis system than Blender, Z is up, Y is front. It is right handed.
 
 ```
  z   y
@@ -43,6 +43,7 @@ This library uses the same axis system than Blender, z is up, y is front. It is 
  | /
  |------x
 ```
+The Axis system can be changed to the standard OpenGL system (-Z front, Y up) calling to JMini3d.useOpenglAxisSystem();
 
 HUD Coordinates
 ===============
@@ -71,6 +72,8 @@ In GWT you must extend the EntryPoint3d or use the Canvas3d wrapper (wraps a DOM
 The image resources must be in a folder or subfolder of the web project location (src/main/webapp/).
 The ResourceLoader is initialized with "./" if the resources are in that folder or with the subfolder name.
 
+The GLSL shaders should be copied manually to the shaders/ folder.
+
 In mobile devices when using:
 ```
 <meta name="viewport" content="width=device-width">
@@ -92,7 +95,7 @@ And convert to a Java class with:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.7.1.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.8.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
 ```
 
 The generated TeapotGeometry.java is a Java class in the jmini3d.demo package extending Geometry.
@@ -106,7 +109,7 @@ To convert the FNT file to a Java class:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.5.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.8.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
 ```
 The font texture must be placed in the images folder. It supports fonts with only one texture.
 
@@ -142,7 +145,7 @@ gradle jettyRun
 ```
 and access with your web browser to http://localhost:8080/jmini3d/
 
-Using JMini3D in other projects
+Using JMini3d in other projects
 ===============================
 This library's JARs and AARs are distributed via Mobialia's bintray repo (https://bintray.com/mobialia/maven).
 To use them, first include this repository in your gradle file:
@@ -154,8 +157,8 @@ repositories {
 and then reference the Jmini3D libraries; example for an Android project:
 ```
 dependencies {
-    compile 'com.mobialia:jmini3d-core:0.6'
-    compile 'com.mobialia:jmini3d-android:0.6@aar'
+    compile 'com.mobialia:jmini3d-core:0.8'
+    compile 'com.mobialia:jmini3d-android:0.8@aar'
 }
 ```
 
