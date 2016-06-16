@@ -71,6 +71,11 @@ public class Program extends jmini3d.shader.Program {
 
 	private WebGLRenderingContext GLES20;
 
+	boolean shaderLoaded = false;
+
+	String vertexShaderLoaded;
+	String fragmentShaderLoaded;
+
 	public Program(WebGLRenderingContext GLES20) {
 		this.GLES20 = GLES20;
 	}
@@ -84,7 +89,40 @@ public class Program extends jmini3d.shader.Program {
 		console.log(message);
     }-*/;
 
-	public void init(Scene scene, Material material) {
+	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
+		String vertexShaderName = DEFAULT_VERTEX_SHADER;
+		String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
+
+		for (ShaderPlugin sp : scene.shaderPlugins) {
+			if (sp.getVertexShaderName() != null) {
+				vertexShaderName = sp.getVertexShaderName();
+			}
+			if (sp.getFragmentShaderName() != null) {
+				fragmentShaderName = sp.getFragmentShaderName();
+			}
+		}
+
+		resourceLoader.loadShader(vertexShaderName, new ResourceLoader.OnTextResourceLoaded() {
+			@Override
+			public void onResourceLoaded(String text) {
+				vertexShaderLoaded = text;
+				if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
+					finishShaderLoad(scene, material);
+				}
+			}
+		});
+		resourceLoader.loadShader(fragmentShaderName, new ResourceLoader.OnTextResourceLoaded() {
+			@Override
+			public void onResourceLoaded(String text) {
+				fragmentShaderLoaded = text;
+				if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
+					finishShaderLoad(scene, material);
+				}
+			}
+		});
+	}
+
+	public void finishShaderLoad(Scene scene, Material material) {
 		ArrayList<String> uniformsInit = new ArrayList<>();
 
 		ArrayList<String> defines = new ArrayList<>();
@@ -213,21 +251,8 @@ public class Program extends jmini3d.shader.Program {
 			fragmentShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
 		}
 
-		String vertexShaderName = DEFAULT_VERTEX_SHADER;
-		String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
-
-		for (ShaderPlugin sp : scene.shaderPlugins) {
-			if (sp.getVertexShaderName() != null) {
-				vertexShaderName = sp.getVertexShaderName();
-			}
-			if (sp.getFragmentShaderName() != null) {
-				fragmentShaderName = sp.getFragmentShaderName();
-			}
-		}
-
-		// TODO
-		fragmentShaderStringBuffer.append(EngineResources.INSTANCE.fragmentShader().getText());
-		vertexShaderStringBuffer.append(EngineResources.INSTANCE.vertexShader().getText());
+		vertexShaderStringBuffer.append(vertexShaderLoaded);
+		fragmentShaderStringBuffer.append(fragmentShaderLoaded);
 
 		String vertexShaderString = vertexShaderStringBuffer.toString();
 		String fragmentShaderString = fragmentShaderStringBuffer.toString();
@@ -254,6 +279,10 @@ public class Program extends jmini3d.shader.Program {
 		}
 		GLES20.deleteShader(vertexShader);
 		GLES20.deleteShader(fragmentShader);
+
+		vertexShaderLoaded = null;
+		fragmentShaderLoaded = null;
+		shaderLoaded = true;
 	}
 
 	Integer getAttribLocation(String attribName) {
@@ -266,6 +295,10 @@ public class Program extends jmini3d.shader.Program {
 	}
 
 	public void setSceneUniforms(Scene scene) {
+		if (!shaderLoaded) {
+			return;
+		}
+
 		if (useMap && map != 0) {
 			GLES20.uniform1i(uniforms.get("map"), 0);
 			map = 0;
@@ -335,6 +368,10 @@ public class Program extends jmini3d.shader.Program {
 	}
 
 	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] perspectiveMatrix, float cameraModelViewMatrix[]) {
+		if (!shaderLoaded) {
+			return;
+		}
+
 		if (!Arrays.equals(this.perspectiveMatrix, perspectiveMatrix)) {
 			GLES20.uniformMatrix4fv(uniforms.get("perspectiveMatrix"), false, perspectiveMatrix);
 			System.arraycopy(perspectiveMatrix, 0, this.perspectiveMatrix, 0, 16);

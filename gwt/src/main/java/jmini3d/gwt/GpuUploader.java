@@ -60,7 +60,7 @@ public class GpuUploader {
 		if (program == null) {
 			program = new Program(gl);
 			program.key = key;
-			program.init(scene, material);
+			program.init(scene, material, resourceLoader);
 			shaderPrograms.add(program);
 		}
 		return program;

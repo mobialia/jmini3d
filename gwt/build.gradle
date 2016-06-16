@@ -22,16 +22,6 @@ dependencies {
     compile project(':core')
 }
 
-task copyResources(type: Copy)
-
-copyResources {
-    from '../core/shaders'
-    into 'src/main/resources/jmini3d/gwt'
-    include('**/*')
-}
-
-compileJava.dependsOn copyResources
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource

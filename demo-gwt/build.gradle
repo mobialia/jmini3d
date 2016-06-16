@@ -90,6 +90,16 @@ copyResources {
 
 compileGwt.dependsOn copyResources
 
+task copyShaders(type: Copy)
+
+copyShaders {
+    from '../core/shaders'
+    into 'src/main/webapp/shaders'
+    include('**/*')
+}
+
+compileJava.dependsOn copyShaders
+
 jettyRun.doFirst {
     logger.quiet('Starting Jetty...')
 }
