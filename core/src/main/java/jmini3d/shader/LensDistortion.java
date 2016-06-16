@@ -46,13 +46,15 @@ public class LensDistortion extends ShaderPlugin {
 	}
 
 	@Override
-	public void setSceneUniforms(Program setter) {
-		setter.setUniform("lensDistortionC1", c1);
-		setter.setUniform("lensDistortionC2", c2);
-		setter.setUniform("lensDistortionC3", c3);
-		setter.setUniform("lensDistortionC4", c4);
-		setter.setUniform("lensDistortionC5", c5);
-		setter.setUniform("lensDistortionC6", c6);
-		setter.setUniform("lensDistortionMaxRadiusSQ", maxRadiusSQ);
+	public void setSceneUniforms(Program program) {
+		float[] cachedValues = program.getValueCache("lensDistortion", 7);
+
+		program.setUniformIfCachedValueChanged("lensDistortionC1", c1, cachedValues, 0);
+		program.setUniformIfCachedValueChanged("lensDistortionC2", c2, cachedValues, 1);
+		program.setUniformIfCachedValueChanged("lensDistortionC3", c3, cachedValues, 2);
+		program.setUniformIfCachedValueChanged("lensDistortionC4", c4, cachedValues, 3);
+		program.setUniformIfCachedValueChanged("lensDistortionC5", c5, cachedValues, 4);
+		program.setUniformIfCachedValueChanged("lensDistortionC6", c6, cachedValues, 5);
+		program.setUniformIfCachedValueChanged("lensDistortionMaxRadiusSQ", maxRadiusSQ, cachedValues, 5);
 	}
 }

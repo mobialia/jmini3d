@@ -20,5 +20,7 @@ public abstract class Program {
 	/**
 	 * To be used from the Shader plugins
 	 */
-	public abstract void setUniform(String uniformName, float value);
+	public abstract void setUniformIfCachedValueChanged(String uniformName, float uniformValue, float[] cachedValues, int cachedValueIndex);
+
+	public abstract float[] getValueCache(String cacheKey, int size);
 }

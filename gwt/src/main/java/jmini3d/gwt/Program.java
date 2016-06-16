@@ -23,6 +23,7 @@ import jmini3d.light.Light;
 import jmini3d.light.PointLight;
 import jmini3d.material.Material;
 import jmini3d.material.PhongMaterial;
+import jmini3d.shader.ShaderKey;
 import jmini3d.shader.ShaderPlugin;
 
 public class Program extends jmini3d.shader.Program {
@@ -46,7 +47,7 @@ public class Program extends jmini3d.shader.Program {
 	boolean useNormalMap = false;
 	boolean useVertexColors = false;
 	boolean useCameraPosition = false;
-	boolean useBarrelDistortion = false;
+	boolean useShaderPlugins = false;
 
 	HashMap<String, Integer> attributes = new HashMap<>();
 	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<>();
@@ -67,6 +68,7 @@ public class Program extends jmini3d.shader.Program {
 	float shininess = 0;
 	Vector3 cameraPosition = new Vector3(0, 0, 0);
 	float reflectivity;
+	HashMap<String, float[]> cachedValues = new HashMap<>();
 	// *********************** END
 
 	private WebGLRenderingContext GLES20;
@@ -81,8 +83,22 @@ public class Program extends jmini3d.shader.Program {
 	}
 
 	@Override
-	public void setUniform(String uniformName, float value) {
-		GLES20.uniform1f(uniforms.get(uniformName), value);
+	public void setUniformIfCachedValueChanged(String uniformName, float uniformValue, float[] cachedValues, int cachedValueIndex) {
+		if (cachedValues[0] != uniformValue) {
+			cachedValues[0] = uniformValue;
+			GLES20.uniform1f(uniforms.get(uniformName), uniformValue);
+		}
+	}
+
+	@Override
+	public float[] getValueCache(String cacheKey, int size) {
+		if (cachedValues.containsKey(cacheKey)) {
+			return cachedValues.get(cacheKey);
+		} else {
+			float[] cachedValueFloats = new float[size];
+			cachedValues.put(cacheKey, cachedValueFloats);
+			return cachedValueFloats;
+		}
 	}
 
 	native void log(String message) /*-{
@@ -90,15 +106,19 @@ public class Program extends jmini3d.shader.Program {
     }-*/;
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
+		useShaderPlugins = (scene.shaderKey & material.shaderKey & ShaderKey.SHADER_PLUGIN_MASK) != 0;
+
 		String vertexShaderName = DEFAULT_VERTEX_SHADER;
 		String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
 
-		for (ShaderPlugin sp : scene.shaderPlugins) {
-			if (sp.getVertexShaderName() != null) {
-				vertexShaderName = sp.getVertexShaderName();
-			}
-			if (sp.getFragmentShaderName() != null) {
-				fragmentShaderName = sp.getFragmentShaderName();
+		if (useShaderPlugins) {
+			for (ShaderPlugin sp : scene.shaderPlugins) {
+				if (sp.getVertexShaderName() != null) {
+					vertexShaderName = sp.getVertexShaderName();
+				}
+				if (sp.getFragmentShaderName() != null) {
+					fragmentShaderName = sp.getFragmentShaderName();
+				}
 			}
 		}
 
@@ -232,9 +252,11 @@ public class Program extends jmini3d.shader.Program {
 			}
 		}
 
-		for (ShaderPlugin sp : scene.shaderPlugins) {
-			sp.addShaderDefines(defines);
-			sp.addUniformNames(uniformsInit);
+		if (useShaderPlugins) {
+			for (ShaderPlugin sp : scene.shaderPlugins) {
+				sp.addShaderDefines(defines);
+				sp.addUniformNames(uniformsInit);
+			}
 		}
 
 		StringBuffer vertexShaderStringBuffer = new StringBuffer();
@@ -362,8 +384,10 @@ public class Program extends jmini3d.shader.Program {
 			}
 		}
 
-		for (ShaderPlugin sp : scene.shaderPlugins) {
-			sp.setSceneUniforms(this);
+		if (useShaderPlugins) {
+			for (int i = 0; i < scene.shaderPlugins.size(); i++) {
+				scene.shaderPlugins.get(i).setSceneUniforms(this);
+			}
 		}
 	}
 
