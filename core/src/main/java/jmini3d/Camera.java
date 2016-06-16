@@ -18,7 +18,7 @@ public class Camera {
 	public float[] perspectiveMatrix = new float[16];
 	public float[] modelViewMatrix = new float[16];
 
-	private boolean needsMatrixUpdate = true;
+	public boolean needsMatrixUpdate = true;
 
 	public Camera() {
 		setTarget(0, 0, 0);
@@ -126,5 +126,9 @@ public class Camera {
 			return true;
 		}
 		return false;
+	}
+
+	public void updateModelView() {
+		MatrixUtils.lookAt(modelViewMatrix, position, target, upAxis, vx, vy, vz);
 	}
 }
