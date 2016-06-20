@@ -29,7 +29,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 	private float fps = 0;
 	private long timeLastSample;
 
-	public Canvas3d(String resourceLoaderDir) {
+	public Canvas3d(String resourcePath, String shaderPath) {
 
 		webGLCanvas = DOM.createElement("canvas");
 		webGLCanvas.setAttribute("tabindex", "0"); // Workaround to receive key events
@@ -43,7 +43,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 			return;
 		}
 
-		renderer3d = new Renderer3d(gl, new ResourceLoader(resourceLoaderDir), this);
+		renderer3d = new Renderer3d(gl, new ResourceLoader(resourcePath, shaderPath), this);
 	}
 
 	public final native Context getContext(Element el, String contextId) /*-{

@@ -10,9 +10,10 @@ public class EntryPoint3d implements EntryPoint {
 
 	public Canvas3d canvas3d;
 	public String resourceDir = "./";
+	public String shaderDir = "./shaders/";
 
 	public void onModuleLoad() {
-		canvas3d = new Canvas3d(resourceDir);
+		canvas3d = new Canvas3d(resourceDir, shaderDir);
 		canvas3d.setScale(canvas3d.getDevicePixelRatio());
 		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
 		Window.addResizeHandler(new ResizeHandler() {

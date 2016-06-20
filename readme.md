@@ -75,8 +75,7 @@ In GWT you must extend the EntryPoint3d or use the Canvas3d wrapper (wraps a DOM
 
 The image resources must be in a folder or subfolder of the web project location (src/main/webapp/).
 The ResourceLoader is initialized with "./" if the resources are in that folder or with the subfolder name.
-
-The GLSL shaders should be copied manually to the shaders/ folder.
+The GLSL shaders should be copied manually to a web project folder, "./shaders/" by default.
 
 In mobile devices when using:
 ```

@@ -9,18 +9,19 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 public class ResourceLoader {
 
 	String resourcePath;
-	String shaderPath = "shaders/";
+	String shaderPath;
 
 	public static interface OnTextResourceLoaded {
 		public void onResourceLoaded(String text);
 	}
 
 	/**
-	 * @param resourcePath Path where images are located, with the trailing slash i.e.
-	 *                     "img/"
+	 * @param resourcePath Path where images are located, with the trailing slash i.e. "img/"
+	 * @param shaderPath Path where the shaders can be found (caution! they must be copied manually)
 	 */
-	public ResourceLoader(String resourcePath) {
+	public ResourceLoader(String resourcePath, String shaderPath) {
 		this.resourcePath = resourcePath;
+		this.shaderPath = shaderPath;
 	}
 
 	public ImageElement getImage(String image) {
