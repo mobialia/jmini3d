@@ -2,21 +2,31 @@ package jmini3d;
 
 import java.util.ArrayList;
 
-import jmini3d.shader.ShaderPlugin;
+import jmini3d.camera.Camera;
+import jmini3d.camera.PerspectiveCamera;
 import jmini3d.light.Light;
+import jmini3d.shader.ShaderPlugin;
 
 public class Scene {
 	public int shaderKey = -1;
-	public Camera camera = new Camera();
+	public Camera camera;
 	public ArrayList<Object3d> children = new ArrayList<>();
-	public ArrayList<Object3d> hud = new ArrayList<>();
 	public ArrayList<Light> lights = new ArrayList<>();
 	public ArrayList<Object> unload = new ArrayList<>();
 	public ArrayList<ShaderPlugin> shaderPlugins = new ArrayList<>();
 
-	public Color4 backgroundColor = new Color4(0, 0, 0, 255);
+	public Color4 backgroundColor;
 
-	int width = -1, height = -1;
+	public int width = -1, height = -1;
+
+	public Scene() {
+		this(new PerspectiveCamera());
+	}
+
+	public Scene(Camera camera) {
+		this.camera = camera;
+		backgroundColor = new Color4(0, 0, 0, 255);
+	}
 
 	public Color4 getBackgroundColor() {
 		return backgroundColor;
@@ -45,13 +55,6 @@ public class Scene {
 		}
 	}
 
-	public void addHudElement(Object3d o) {
-		if (hud.contains(o)) {
-			return;
-		}
-		hud.add(o);
-	}
-
 	public Camera getCamera() {
 		return camera;
 	}
@@ -62,7 +65,6 @@ public class Scene {
 
 	public void reset() {
 		children.clear();
-		hud.clear();
 		unload.clear();
 		lights.clear();
 	}

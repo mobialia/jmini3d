@@ -5,7 +5,7 @@ import android.widget.LinearLayout;
 
 import jmini3d.android.Activity3d;
 import jmini3d.android.input.InputController;
-import jmini3d.demo.DemoSceneController;
+import jmini3d.demo.DemoScreenController;
 
 public class DemoActivity extends Activity3d {
 	InputController inputController;
@@ -13,12 +13,12 @@ public class DemoActivity extends Activity3d {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		DemoSceneController sceneController = new DemoSceneController();
-		glSurfaceView3d.setSceneController(sceneController);
-		glSurfaceView3d.getRenderer3d().setLogFps(true);
+		DemoScreenController screenController = new DemoScreenController();
+		glSurfaceView3d.setScreenController(screenController);
+		glSurfaceView3d.setLogFps(true);
 		inputController = new InputController(glSurfaceView3d);
-		inputController.setTouchListener(sceneController);
-		inputController.setKeyListener(sceneController);
+		inputController.setTouchListener(screenController);
+		inputController.setKeyListener(screenController);
 	}
 
 	public void onCreateSetContentView() {

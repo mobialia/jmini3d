@@ -4,12 +4,12 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import jmini3d.Scene;
-import jmini3d.SceneController;
+import jmini3d.ScreenController;
 import jmini3d.android.compat.CompatibilityWrapper5;
 
 public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Renderer {
@@ -18,10 +18,17 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	int width, height;
 
 	Renderer3d renderer3d;
-	SceneController sceneController;
+	ScreenController screenController;
 	int forceRedraw = 0;
 
 	GL10 gl;
+
+	// stats-related
+	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 10000;
+	private boolean logFps = false;
+	private long frameCount = 0;
+	private float fps = 0;
+	private long timeLastSample;
 
 	public GlSurfaceView3d(Context ctx, boolean traslucent) {
 		super(ctx);
@@ -47,30 +54,32 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig) {
 		this.gl = gl;
+		renderer3d.reset();
 	}
 
 	@Override
 	public void onSurfaceChanged(GL10 unused, int w, int h) {
 		width = w;
 		height = h;
-		renderer3d.reset();
+		renderer3d.setViewPort(width, height);
 	}
 
 	@Override
 	public void onDrawFrame(GL10 unused) {
-		if (sceneController != null) {
-			if (sceneController.updateScene(width, height)) {
+		if (screenController != null) {
+
+			if (screenController.onNewFrame(forceRedraw > 0)) {
 				// due to buffer swapping we need to redraw three frames
 				forceRedraw = 3;
 			}
 
 			if (forceRedraw > 0) {
-				Scene scene = sceneController.getScene();
-				if (scene != null) {
-					forceRedraw--;
-					renderer3d.render(scene);
-				}
+				screenController.render(renderer3d);
+				forceRedraw--;
 			}
+		}
+		if (logFps) {
+			doFps();
 		}
 	}
 
@@ -78,8 +87,8 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		forceRedraw = 3;
 	}
 
-	public void setSceneController(SceneController sceneController) {
-		this.sceneController = sceneController;
+	public void setScreenController(ScreenController screenController) {
+		this.screenController = screenController;
 	}
 
 	public Renderer3d getRenderer3d() {
@@ -88,5 +97,41 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 	public GL10 getGl() {
 		return gl;
+	}
+
+
+	/**
+	 * If true, framerate and memory is periodically calculated and Log'ed, and
+	 * gettable thru fps()
+	 */
+	public void setLogFps(boolean b) {
+		logFps = b;
+
+		if (logFps) { // init
+			timeLastSample = System.currentTimeMillis();
+			frameCount = 0;
+		}
+	}
+
+	private void doFps() {
+		frameCount++;
+
+		long now = System.currentTimeMillis();
+		long delta = now - timeLastSample;
+		if (delta >= FRAMERATE_SAMPLEINTERVAL_MS) {
+			fps = frameCount / (delta / 1000f);
+
+			Log.v(TAG, "FPS: " + fps);
+
+			timeLastSample = now;
+			frameCount = 0;
+		}
+	}
+
+	/**
+	 * Returns last sampled framerate (logFps must be set to true)
+	 */
+	public float getFps() {
+		return fps;
 	}
 }

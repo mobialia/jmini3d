@@ -2,33 +2,30 @@ package jmini3d.demo;
 
 import java.util.HashMap;
 
-import jmini3d.Scene;
-import jmini3d.SceneController;
+import jmini3d.Renderer3d;
+import jmini3d.ScreenController;
 import jmini3d.Vector3;
 import jmini3d.input.KeyListener;
 import jmini3d.input.TouchListener;
 import jmini3d.input.TouchPointer;
 
-public class DemoSceneController implements SceneController, TouchListener, KeyListener {
+public class DemoScreenController implements ScreenController, TouchListener, KeyListener {
 	float cameraAngle;
 	long initialTime;
 
 	int sceneIndex = 0;
-	Scene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectsScene(), new RubikSceneFlickering(), new RubikSceneNoFlickering()};
+	ParentScene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectsScene(), new RubikSceneFlickering(), new RubikSceneNoFlickering()};
+	ArrowsHudScene hudScene;
 	int cameraModes[] = {0, 0, 0, 0, 1, 2, 2, 2};
 
-	public DemoSceneController() {
+	public DemoScreenController() {
 		initialTime = System.currentTimeMillis();
+		hudScene = new ArrowsHudScene();
 	}
 
 	@Override
-	public Scene getScene() {
-		return scenes[sceneIndex];
-	}
-
-	@Override
-	public boolean updateScene(int width, int height) {
-		scenes[sceneIndex].setViewPort(width, height);
+	public boolean onNewFrame(boolean forceRedraw) {
+		hudScene.setTitle(scenes[sceneIndex].title);
 
 		// Rotate camera...
 		cameraAngle = 0.0005f * (System.currentTimeMillis() - initialTime);
@@ -50,9 +47,14 @@ public class DemoSceneController implements SceneController, TouchListener, KeyL
 				scenes[sceneIndex].getCamera().setPosition(target.x - d, target.y, target.z + d / 4);
 				break;
 		}
-		((ParentScene) scenes[sceneIndex]).update();
+		scenes[sceneIndex].update();
+		return true; // Render all the frames
+	}
 
-		return true;
+	@Override
+	public void render(Renderer3d renderer3d) {
+		renderer3d.render(scenes[sceneIndex]);
+		renderer3d.render(hudScene);
 	}
 
 	private void nextScene() {

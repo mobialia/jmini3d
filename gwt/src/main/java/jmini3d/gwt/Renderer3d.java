@@ -4,24 +4,14 @@ import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLTexture;
 
 import jmini3d.Blending;
-import jmini3d.MatrixUtils;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 
-public class Renderer3d {
+public class Renderer3d implements jmini3d.Renderer3d {
 	public static final String TAG = "Renderer";
-
-	// stats-related
-	public static final int FRAMERATE_SAMPLEINTERVAL_MS = 10000;
-	private boolean logFps = false;
-	private long frameCount = 0;
-	private float fps = 0;
-	private long timeLastSample;
 
 	private ResourceLoader resourceLoader;
 	private GpuUploader gpuUploader;
-
-	public float[] ortho = new float[16];
 
 	Blending blending = null;
 	Program currentProgram = null;
@@ -38,7 +28,6 @@ public class Renderer3d {
 	public Renderer3d(WebGLRenderingContext gl, ResourceLoader resourceLoader, TextureLoadedListener textureLoadedListener) {
 		this.GLES20 = gl;
 		this.resourceLoader = resourceLoader;
-		MatrixUtils.ortho(ortho, 0, 1, 0, 1, -5, 1);
 		gpuUploader = new GpuUploader(gl, resourceLoader, textureLoadedListener);
 		reset();
 	}
@@ -66,56 +55,49 @@ public class Renderer3d {
 		GLES20.enable(WebGLRenderingContext.CULL_FACE);
 	}
 
-	public void render(Scene scene) {
-		scene.camera.updateMatrices();
-
-		if (width != scene.camera.getWidth() || height != scene.camera.getHeight()) {
-			width = scene.camera.getWidth();
-			height = scene.camera.getHeight();
+	public void setViewPort(int width, int height) {
+		if (this.width != width || this.height != height) {
+			this.width = width;
+			this.height = height;
 			GLES20.viewport(0, 0, width, height);
-			MatrixUtils.ortho(ortho, 0, width, height, 0, -5, 1);
 		}
+	}
+
+	public void render(Scene scene) {
+		scene.setViewPort(width, height);
+		scene.camera.updateMatrices();
+		render(scene, scene.camera.projectionMatrix, scene.camera.viewMatrix);
+	}
+
+	public void render(Scene scene, float[] projectionMatrix, float[] viewMatrix) {
+		currentProgram = null;
 
 		for (int i = 0; i < scene.unload.size(); i++) {
 			gpuUploader.unload(scene.unload.get(i));
 		}
 		scene.unload.clear();
 
-		GLES20.clearColor(scene.getBackgroundColor().r, scene.getBackgroundColor().g, scene.getBackgroundColor().b, scene.getBackgroundColor().a);
-		GLES20.clear(WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT);
-
-		currentProgram = null;
+		if (scene.backgroundColor != null) {
+			GLES20.clearColor(scene.backgroundColor.r, scene.backgroundColor.g, scene.backgroundColor.b, scene.backgroundColor.a);
+			GLES20.clear(WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT);
+		} else {
+			GLES20.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
+		}
 
 		for (int i = 0; i < scene.children.size(); i++) {
 			Object3d o3d = scene.children.get(i);
 			if (o3d.visible) {
 				o3d.updateMatrices();
-				drawObject(scene, o3d, scene.camera.projectionMatrix, scene.camera.viewMatrix);
+				drawObject(scene, o3d, projectionMatrix, viewMatrix);
 
 				if (o3d.clearDepthAfterDraw) {
 					GLES20.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
 				}
 			}
 		}
-
-		if (scene.hud.size() > 0) {
-			GLES20.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
-
-			for (int i = 0; i < scene.hud.size(); i++) {
-				Object3d o3d = scene.hud.get(i);
-				if (o3d.visible) {
-					o3d.updateMatrices();
-					drawObject(scene, o3d, ortho, MatrixUtils.IDENTITY4);
-				}
-			}
-		}
-
-		if (logFps) {
-			doFps();
-		}
 	}
 
-	private void drawObject(Scene scene, Object3d o3d, float[] perspectiveMatrix, float[] viewMatrix) {
+	private void drawObject(Scene scene, Object3d o3d, float[] projectionMatrix, float[] viewMatrix) {
 		Program program = gpuUploader.getProgram(scene, o3d.material);
 
 		if (program != currentProgram) {
@@ -128,9 +110,9 @@ public class Renderer3d {
 			setBlending(o3d.material.blending);
 		}
 
-		program.drawObject(this, gpuUploader, o3d, perspectiveMatrix, viewMatrix);
+		program.drawObject(this, gpuUploader, o3d, projectionMatrix, viewMatrix);
 		for (int i = 0; i < o3d.getChildren().size(); i++) {
-			drawObject(scene, o3d.getChildren().get(i), perspectiveMatrix, viewMatrix);
+			drawObject(scene, o3d.getChildren().get(i), projectionMatrix, viewMatrix);
 		}
 	}
 
@@ -166,46 +148,7 @@ public class Renderer3d {
 		return gpuUploader;
 	}
 
-	/**
-	 * If true, framerate and memory is periodically calculated and Log'ed, and
-	 * gettable thru fps()
-	 */
-	public void setLogFps(boolean b) {
-		logFps = b;
-
-		if (logFps) { // init
-			timeLastSample = System.currentTimeMillis();
-			frameCount = 0;
-		}
-	}
-
-	private void doFps() {
-		frameCount++;
-
-		long now = System.currentTimeMillis();
-		long delta = now - timeLastSample;
-		if (delta >= FRAMERATE_SAMPLEINTERVAL_MS) {
-			fps = frameCount / (delta / 1000f);
-
-			log("FPS: " + fps);
-
-			timeLastSample = now;
-			frameCount = 0;
-		}
-	}
-
-	/**
-	 * Returns last sampled framerate (logFps must be set to true)
-	 */
-	public float getFps() {
-		return fps;
-	}
-
 	public ResourceLoader getResourceLoader() {
 		return resourceLoader;
 	}
-
-	public static native void log(String message) /*-{
-		console.log(message);
-    }-*/;
 }

@@ -1,5 +1,7 @@
 package jmini3d;
 
+import jmini3d.camera.Camera;
+
 public class Utils {
 	public static float PI = (float) Math.PI;
 
