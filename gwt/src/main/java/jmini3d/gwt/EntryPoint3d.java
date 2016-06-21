@@ -9,7 +9,7 @@ import com.google.gwt.user.client.Window;
 public class EntryPoint3d implements EntryPoint {
 
 	public Canvas3d canvas3d;
-	public String resourceDir = "./";
+	public String resourceDir = "./resources/";
 	public String shaderDir = "./shaders/";
 
 	public void onModuleLoad() {
