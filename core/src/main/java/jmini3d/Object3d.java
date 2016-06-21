@@ -116,8 +116,8 @@ public class Object3d {
 	private boolean doesMatrixNeedUpdate() {
 		boolean result = needsMatrixUpdate;
 		if (!result) {
-			for (Object3d o : children) {
-				if (o.doesMatrixNeedUpdate()) {
+			for (int i = 0; i < children.size(); i++) {
+				if (children.get(i).doesMatrixNeedUpdate()) {
 					result = true;
 					break;
 				}
