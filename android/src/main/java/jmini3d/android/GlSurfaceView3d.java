@@ -99,7 +99,6 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		return gl;
 	}
 
-
 	/**
 	 * If true, framerate and memory is periodically calculated and Log'ed, and
 	 * gettable thru fps()
