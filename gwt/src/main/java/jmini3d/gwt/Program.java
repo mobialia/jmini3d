@@ -49,9 +49,19 @@ public class Program extends jmini3d.shader.Program {
 	boolean useCameraPosition = false;
 	boolean useShaderPlugins = false;
 
-	HashMap<String, Integer> attributes = new HashMap<>();
-	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<>();
+	int vertexPositionAttribLocation = -1;
+	int vertexNormalAttribLocation = -1;
+	int textureCoordAttribLocation = -1;
+	int vertexColorAttribLocation = -1;
 
+	// Cached values to avoid setting buffers with an already existing value
+	WebGLBuffer activeVertexPosition = null;
+	WebGLBuffer activeVertexNormal = null;
+	WebGLBuffer activeTextureCoord = null;
+	WebGLBuffer activeVertexColor = null;
+	WebGLBuffer activeFacesBuffer = null;
+
+	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<>();
 	// *********************** BEGIN cached values to avoid setting uniforms two times
 	int map = -1;
 	int envMap = -1;
@@ -295,10 +305,19 @@ public class Program extends jmini3d.shader.Program {
 		}
 		GLES20.useProgram(webGLProgram);
 
-		for (String s : uniformsInit) {
-			uniforms.put(s, GLES20.getUniformLocation(webGLProgram, s));
-//			log("uniform: " + s + " = " + GLES20.getUniformLocation(webGLProgram, s));
+		for (String uniform : uniformsInit) {
+			uniforms.put(uniform, GLES20.getUniformLocation(webGLProgram, uniform));
 		}
+
+		// Initialize attrib locations
+		vertexPositionAttribLocation = getAttribLocation("vertexPosition");
+		if (useNormals) {
+			vertexNormalAttribLocation = getAttribLocation("vertexNormal");
+		}
+		if (useMap) {
+			textureCoordAttribLocation = getAttribLocation("textureCoord");
+		}
+
 		GLES20.deleteShader(vertexShader);
 		GLES20.deleteShader(fragmentShader);
 
@@ -307,12 +326,9 @@ public class Program extends jmini3d.shader.Program {
 		shaderLoaded = true;
 	}
 
-	Integer getAttribLocation(String attribName) {
-		Integer attribLocation = attributes.get(attribName);
-		if (attribLocation == null) {
-			attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
-			GLES20.enableVertexAttribArray(attribLocation);
-		}
+	private int getAttribLocation(String attribName) {
+		int attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
+		GLES20.enableVertexAttribArray(attribLocation);
 		return attribLocation;
 	}
 
@@ -320,6 +336,13 @@ public class Program extends jmini3d.shader.Program {
 		if (!shaderLoaded) {
 			return;
 		}
+
+		// Reset cached attribs at the beginning of each frame
+		activeVertexPosition = null;
+		activeVertexNormal = null;
+		activeTextureCoord = null;
+		activeVertexColor = null;
+		activeFacesBuffer = null;
 
 		if (useMap && map != 0) {
 			GLES20.uniform1i(uniforms.get("map"), 0);
@@ -438,25 +461,43 @@ public class Program extends jmini3d.shader.Program {
 			}
 		}
 
-		GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
-		GLES20.vertexAttribPointer(getAttribLocation("vertexPosition"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+		if (activeVertexPosition == null || activeVertexPosition != buffers.vertexBufferId) {
+			activeVertexPosition = buffers.vertexBufferId;
+			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
+			GLES20.vertexAttribPointer(vertexPositionAttribLocation, 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+		}
 
 		if (useNormals) {
-			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
-			GLES20.vertexAttribPointer(getAttribLocation("vertexNormal"), 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+			if (activeVertexNormal == null || activeVertexNormal != buffers.normalsBufferId) {
+				activeVertexNormal = buffers.normalsBufferId;
+				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
+				GLES20.vertexAttribPointer(vertexNormalAttribLocation, 3, WebGLRenderingContext.FLOAT, false, 0, 0);
+			}
 		}
 
 		if (useMap) {
-			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
-			GLES20.vertexAttribPointer(getAttribLocation("textureCoord"), 2, WebGLRenderingContext.FLOAT, false, 0, 0);
+			if (activeTextureCoord == null || activeTextureCoord != buffers.uvsBufferId) {
+				activeTextureCoord = buffers.uvsBufferId;
+				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
+				GLES20.vertexAttribPointer(textureCoordAttribLocation, 2, WebGLRenderingContext.FLOAT, false, 0, 0);
+			}
 		}
 
 		if (useVertexColors && (vertexColorsBufferId != null)) {
-			GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, vertexColorsBufferId);
-			GLES20.vertexAttribPointer(getAttribLocation("vertexColor"), 4, WebGLRenderingContext.FLOAT, false, 0, 0);
+			if (vertexColorAttribLocation == -1) {
+				vertexColorAttribLocation = getAttribLocation("vertexColor");
+			}
+			if (activeTextureCoord == null || activeVertexColor != vertexColorsBufferId) {
+				activeVertexColor = vertexColorsBufferId;
+				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, vertexColorsBufferId);
+				GLES20.vertexAttribPointer(vertexColorAttribLocation, 4, WebGLRenderingContext.FLOAT, false, 0, 0);
+			}
 		}
 
-		GLES20.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
+		if (activeFacesBuffer == null || activeFacesBuffer != buffers.facesBufferId) {
+			GLES20.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
+			activeFacesBuffer = buffers.facesBufferId;
+		}
 
 		if (!objectColor.equals(o3d.material.color)) {
 			GLES20.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
