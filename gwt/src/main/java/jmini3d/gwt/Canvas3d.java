@@ -60,7 +60,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 		webGLCanvas.setAttribute("width", String.valueOf(this.width));
 		webGLCanvas.setAttribute("height", String.valueOf(this.height));
 		webGLCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px;");
-		renderer3d.setViewPort(width, height);
+		renderer3d.setViewPort(this.width, this.height);
 		requestRender();
 	}
 
