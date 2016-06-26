@@ -49,6 +49,22 @@ public class Scene {
 		children.add(o);
 	}
 
+	/**
+	 * Having childs sorted by geometry saves calls to OpenGL
+	 */
+	public void addChildNearSameGeometry(Object3d o) {
+		if (children.contains(o)) {
+			return;
+		}
+		for (int i = 0; i < children.size(); i++) {
+			if (children.get(i).geometry3d.equals(o.geometry3d)) {
+				children.add(i, o);
+				return;
+			}
+		}
+		children.add(o);
+	}
+
 	public void removeChild(Object3d o) {
 		if (children.contains(o)) {
 			children.remove(o);
