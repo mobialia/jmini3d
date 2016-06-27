@@ -487,7 +487,7 @@ public class Program extends jmini3d.shader.Program {
 			if (vertexColorAttribLocation == -1) {
 				vertexColorAttribLocation = getAttribLocation("vertexColor");
 			}
-			if (activeTextureCoord == null || activeVertexColor != vertexColorsBufferId) {
+			if (activeVertexColor == null || activeVertexColor != vertexColorsBufferId) {
 				activeVertexColor = vertexColorsBufferId;
 				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, vertexColorsBufferId);
 				GLES20.vertexAttribPointer(vertexColorAttribLocation, 4, WebGLRenderingContext.FLOAT, false, 0, 0);
