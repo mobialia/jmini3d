@@ -257,9 +257,6 @@ public class Program extends jmini3d.shader.Program {
 		String vertexShaderString = vertexShaderStringBuffer.toString();
 		String fragmentShaderString = fragmentShaderStringBuffer.toString();
 
-//		log(vertexShaderStringBuffer.toString());
-//		log(fragmentShaderStringBuffer.toString());
-
 		int vertexShader = getShader(GLES20.GL_VERTEX_SHADER, vertexShaderString);
 		int fragmentShader = getShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderString);
 
@@ -283,19 +280,13 @@ public class Program extends jmini3d.shader.Program {
 		}
 
 		// Initialize attrib locations
-		vertexPositionAttribLocation = getAttribLocation("vertexPosition");
-		if (useNormals) {
-			vertexNormalAttribLocation = getAttribLocation("vertexNormal");
-		}
-		if (useMap) {
-			textureCoordAttribLocation = getAttribLocation("textureCoord");
-		}
+		vertexPositionAttribLocation = getAndEnableAttribLocation("vertexPosition");
 
 		GLES20.glDeleteShader(vertexShader);
 		GLES20.glDeleteShader(fragmentShader);
 	}
 
-	private int getAttribLocation(String attribName) {
+	private int getAndEnableAttribLocation(String attribName) {
 		int attribLocation = GLES20.glGetAttribLocation(webGLProgram, attribName);
 		GLES20.glEnableVertexAttribArray(attribLocation);
 		return attribLocation;
@@ -431,6 +422,9 @@ public class Program extends jmini3d.shader.Program {
 		if (useNormals) {
 			if (activeVertexNormal == null || activeVertexNormal != buffers.normalsBufferId) {
 				activeVertexNormal = buffers.normalsBufferId;
+				if (vertexNormalAttribLocation == -1) {
+					vertexNormalAttribLocation = getAndEnableAttribLocation("vertexNormal");
+				}
 				GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers.normalsBufferId);
 				GLES20.glVertexAttribPointer(vertexNormalAttribLocation, 3, GLES20.GL_FLOAT, false, 0, 0);
 			}
@@ -439,17 +433,20 @@ public class Program extends jmini3d.shader.Program {
 		if (useMap) {
 			if (activeTextureCoord == null || activeTextureCoord != buffers.uvsBufferId) {
 				activeTextureCoord = buffers.uvsBufferId;
+				if (textureCoordAttribLocation == -1) {
+					textureCoordAttribLocation = getAndEnableAttribLocation("textureCoord");
+				}
 				GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers.uvsBufferId);
 				GLES20.glVertexAttribPointer(textureCoordAttribLocation, 2, GLES20.GL_FLOAT, false, 0, 0);
 			}
 		}
 
 		if (useVertexColors && (vertexColorsBufferId != null)) {
-			if (vertexColorAttribLocation == -1) {
-				vertexColorAttribLocation = getAttribLocation("vertexColor");
-			}
 			if (activeVertexColor == null || activeVertexColor != vertexColorsBufferId) {
 				activeVertexColor = vertexColorsBufferId;
+				if (vertexColorAttribLocation == -1) {
+					vertexColorAttribLocation = getAndEnableAttribLocation("vertexColor");
+				}
 				GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexColorsBufferId);
 				GLES20.glVertexAttribPointer(vertexColorAttribLocation, 4, GLES20.GL_FLOAT, false, 0, 0);
 			}

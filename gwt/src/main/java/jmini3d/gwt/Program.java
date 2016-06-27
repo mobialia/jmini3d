@@ -289,9 +289,6 @@ public class Program extends jmini3d.shader.Program {
 		String vertexShaderString = vertexShaderStringBuffer.toString();
 		String fragmentShaderString = fragmentShaderStringBuffer.toString();
 
-//		log(vertexShaderStringBuffer.toString());
-//		log(fragmentShaderStringBuffer.toString());
-
 		WebGLShader vertexShader = getShader(WebGLRenderingContext.VERTEX_SHADER, vertexShaderString);
 		WebGLShader fragmentShader = getShader(WebGLRenderingContext.FRAGMENT_SHADER, fragmentShaderString);
 
@@ -310,13 +307,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 
 		// Initialize attrib locations
-		vertexPositionAttribLocation = getAttribLocation("vertexPosition");
-		if (useNormals) {
-			vertexNormalAttribLocation = getAttribLocation("vertexNormal");
-		}
-		if (useMap) {
-			textureCoordAttribLocation = getAttribLocation("textureCoord");
-		}
+		vertexPositionAttribLocation = getAndEnableAttribLocation("vertexPosition");
 
 		GLES20.deleteShader(vertexShader);
 		GLES20.deleteShader(fragmentShader);
@@ -326,7 +317,7 @@ public class Program extends jmini3d.shader.Program {
 		shaderLoaded = true;
 	}
 
-	private int getAttribLocation(String attribName) {
+	private int getAndEnableAttribLocation(String attribName) {
 		int attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
 		GLES20.enableVertexAttribArray(attribLocation);
 		return attribLocation;
@@ -470,6 +461,9 @@ public class Program extends jmini3d.shader.Program {
 		if (useNormals) {
 			if (activeVertexNormal == null || activeVertexNormal != buffers.normalsBufferId) {
 				activeVertexNormal = buffers.normalsBufferId;
+				if (vertexNormalAttribLocation == -1) {
+					vertexNormalAttribLocation = getAndEnableAttribLocation("vertexNormal");
+				}
 				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
 				GLES20.vertexAttribPointer(vertexNormalAttribLocation, 3, WebGLRenderingContext.FLOAT, false, 0, 0);
 			}
@@ -478,17 +472,20 @@ public class Program extends jmini3d.shader.Program {
 		if (useMap) {
 			if (activeTextureCoord == null || activeTextureCoord != buffers.uvsBufferId) {
 				activeTextureCoord = buffers.uvsBufferId;
+				if (textureCoordAttribLocation == -1) {
+					textureCoordAttribLocation = getAndEnableAttribLocation("textureCoord");
+				}
 				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
 				GLES20.vertexAttribPointer(textureCoordAttribLocation, 2, WebGLRenderingContext.FLOAT, false, 0, 0);
 			}
 		}
 
 		if (useVertexColors && (vertexColorsBufferId != null)) {
-			if (vertexColorAttribLocation == -1) {
-				vertexColorAttribLocation = getAttribLocation("vertexColor");
-			}
 			if (activeVertexColor == null || activeVertexColor != vertexColorsBufferId) {
 				activeVertexColor = vertexColorsBufferId;
+				if (vertexColorAttribLocation == -1) {
+					vertexColorAttribLocation = getAndEnableAttribLocation("vertexColor");
+				}
 				GLES20.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, vertexColorsBufferId);
 				GLES20.vertexAttribPointer(vertexColorAttribLocation, 4, WebGLRenderingContext.FLOAT, false, 0, 0);
 			}
