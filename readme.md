@@ -99,7 +99,7 @@ And convert to a Java class with:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.9.2.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.9.3.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
 ```
 
 The generated TeapotGeometry.java is a Java class in the jmini3d.demo package extending Geometry.
@@ -113,7 +113,7 @@ To convert the FNT file to a Java class:
 ```
 cd utils
 gradle jar
-java -cp ./build/libs/jmini3d-utils-0.9.2.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
+java -cp ./build/libs/jmini3d-utils-0.9.3.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
 ```
 The font texture must be placed in the images folder. It supports fonts with only one texture.
 
@@ -161,8 +161,8 @@ repositories {
 and then reference the Jmini3D libraries; example for an Android project:
 ```
 dependencies {
-    compile 'com.mobialia:jmini3d-core:0.9.2'
-    compile 'com.mobialia:jmini3d-android:0.9.2@aar'
+    compile 'com.mobialia:jmini3d-core:0.9.3'
+    compile 'com.mobialia:jmini3d-android:0.9.3@aar'
 }
 ```
 
