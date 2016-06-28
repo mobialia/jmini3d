@@ -1,7 +1,6 @@
 package jmini3d.gwt;
 
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
-import com.googlecode.gwtgl.binding.WebGLTexture;
 
 import jmini3d.Blending;
 import jmini3d.Object3d;
@@ -15,9 +14,9 @@ public class Renderer3d implements jmini3d.Renderer3d {
 
 	Blending blending = null;
 	Program currentProgram = null;
-	WebGLTexture mapTextureId = null;
-	WebGLTexture envMapTextureId = null;
-	WebGLTexture normalMapTextureId = null;
+	Integer mapTextureId = -1;
+	Integer envMapTextureId = -1;
+	Integer normalMapTextureId = -1;
 	int activeTexture = -1;
 
 	int width = -1;

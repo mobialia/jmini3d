@@ -1,13 +1,12 @@
 package jmini3d.gwt;
 
+import com.google.gwt.core.client.JsArrayUtils;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.typedarrays.client.JsUtils;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
-import com.googlecode.gwtgl.array.Float32Array;
-import com.googlecode.gwtgl.binding.WebGLBuffer;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
-import com.googlecode.gwtgl.binding.WebGLTexture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +26,10 @@ public class GpuUploader {
 	ResourceLoader resourceLoader;
 
 	HashMap<Geometry, GeometryBuffers> geometryBuffers = new HashMap<>();
-	HashMap<VertexColors, WebGLBuffer> vertexColorsBuffers = new HashMap<>();
-	HashMap<Texture, WebGLTexture> textures = new HashMap<>();
+	HashMap<VertexColors, Integer> vertexColorsBuffers = new HashMap<>();
+	HashMap<Texture, Integer> textures = new HashMap<>();
 	HashMap<Texture, ImageElement> textureImages = new HashMap<>();
-	HashMap<CubeMapTexture, WebGLTexture> cubeMapTextures = new HashMap<>();
+	HashMap<CubeMapTexture, Integer> cubeMapTextures = new HashMap<>();
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<>();
 	ArrayList<Program> shaderPrograms = new ArrayList<>();
 
@@ -81,7 +80,7 @@ public class GpuUploader {
 					buffers.vertexBufferId = gl.createBuffer();
 				}
 				gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.vertexBufferId);
-				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(vertex), WebGLRenderingContext.STATIC_DRAW);
+				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, JsUtils.createFloat32Array(JsArrayUtils.readOnlyJsArray(vertex)), WebGLRenderingContext.STATIC_DRAW);
 			}
 		}
 
@@ -93,7 +92,7 @@ public class GpuUploader {
 					buffers.normalsBufferId = gl.createBuffer();
 				}
 				gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.normalsBufferId);
-				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(normals), WebGLRenderingContext.STATIC_DRAW);
+				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, JsUtils.createFloat32Array(JsArrayUtils.readOnlyJsArray(normals)), WebGLRenderingContext.STATIC_DRAW);
 			}
 		}
 
@@ -105,7 +104,7 @@ public class GpuUploader {
 					buffers.uvsBufferId = gl.createBuffer();
 				}
 				gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, buffers.uvsBufferId);
-				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(uvs), WebGLRenderingContext.STATIC_DRAW);
+				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, JsUtils.createFloat32Array(JsArrayUtils.readOnlyJsArray(uvs)), WebGLRenderingContext.STATIC_DRAW);
 			}
 		}
 
@@ -118,18 +117,18 @@ public class GpuUploader {
 					buffers.facesBufferId = gl.createBuffer();
 				}
 				gl.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, buffers.facesBufferId);
-				gl.bufferData(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, MyInt16Array.create(faces), WebGLRenderingContext.STATIC_DRAW);
+				gl.bufferData(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, JsUtils.createInt16Array(JsArrayUtils.readOnlyJsArray(faces)), WebGLRenderingContext.STATIC_DRAW);
 			}
 		}
 		return buffers;
 	}
 
-	public WebGLBuffer upload(VertexColors vertexColors) {
+	public Integer upload(VertexColors vertexColors) {
 		if (vertexColors == null) {
 			return null;
 		}
 
-		WebGLBuffer bufferId = vertexColorsBuffers.get(vertexColors);
+		Integer bufferId = vertexColorsBuffers.get(vertexColors);
 		if ((vertexColors.status & GpuObjectStatus.VERTEX_COLORS_UPLOADED) == 0) {
 			vertexColors.status |= GpuObjectStatus.VERTEX_COLORS_UPLOADED;
 
@@ -140,7 +139,7 @@ public class GpuUploader {
 					vertexColorsBuffers.put(vertexColors, bufferId);
 				}
 				gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, bufferId);
-				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, Float32Array.create(colors), WebGLRenderingContext.STATIC_DRAW);
+				gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, JsUtils.createFloat32Array(JsArrayUtils.readOnlyJsArray(colors)), WebGLRenderingContext.STATIC_DRAW);
 			}
 		}
 
@@ -152,8 +151,8 @@ public class GpuUploader {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
-			WebGLTexture webGlTexture = gl.createTexture();
-			textures.put(texture, webGlTexture);
+			Integer Integer = gl.createTexture();
+			textures.put(texture, Integer);
 
 			ImageElement textureImage = resourceLoader.getImage(texture.image);
 			if (textureImage == null) {
@@ -176,7 +175,7 @@ public class GpuUploader {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
-			WebGLTexture texture = gl.createTexture();
+			Integer texture = gl.createTexture();
 			cubeMapTextures.put(cubeMapTexture, texture);
 
 			ImageElement[] textureImages = new ImageElement[6];
@@ -197,7 +196,7 @@ public class GpuUploader {
 	}
 
 	public void textureLoaded(Renderer3d renderer3d, Texture texture, int activeTexture) {
-		WebGLTexture mapTextureId = textures.get(texture);
+		Integer mapTextureId = textures.get(texture);
 
 		if (renderer3d.activeTexture != activeTexture) {
 			gl.activeTexture(activeTexture);
@@ -223,7 +222,7 @@ public class GpuUploader {
 	public void cubeTextureLoaded(Renderer3d renderer3d, CubeMapTexture cubeMapTexture, int activeTexture) {
 		cubeMapTexture.loadCount++;
 		if (cubeMapTexture.loadCount == 6) {
-			WebGLTexture envMapTextureId = cubeMapTextures.get(cubeMapTexture);
+			Integer envMapTextureId = cubeMapTextures.get(cubeMapTexture);
 
 			if (renderer3d.activeTexture != activeTexture) {
 				gl.activeTexture(activeTexture);
@@ -271,19 +270,19 @@ public class GpuUploader {
 				}
 			}
 		} else if (o instanceof Texture) {
-			WebGLTexture texture = textures.remove(o);
+			Integer texture = textures.remove(o);
 			if (texture != null) {
 				((Texture) o).status = 0;
 				gl.deleteTexture(texture);
 			}
 		} else if (o instanceof CubeMapTexture) {
-			WebGLTexture texture = cubeMapTextures.remove(o);
+			Integer texture = cubeMapTextures.remove(o);
 			if (texture != null) {
 				((CubeMapTexture) o).status = 0;
 				gl.deleteTexture(texture);
 			}
 		} else if (o instanceof VertexColors) {
-			WebGLBuffer bufferId = vertexColorsBuffers.remove(o);
+			Integer bufferId = vertexColorsBuffers.remove(o);
 			if (bufferId != null) {
 				gl.deleteBuffer(bufferId);
 			}

@@ -1,10 +1,9 @@
 package jmini3d.gwt;
 
-import com.googlecode.gwtgl.binding.WebGLBuffer;
 
 public class GeometryBuffers {
-	WebGLBuffer vertexBufferId;
-	WebGLBuffer normalsBufferId;
-	WebGLBuffer uvsBufferId;
-	WebGLBuffer facesBufferId;
+	Integer vertexBufferId;
+	Integer normalsBufferId;
+	Integer uvsBufferId;
+	Integer facesBufferId;
 }

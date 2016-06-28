@@ -1,12 +1,10 @@
 package jmini3d.gwt;
 
-import com.googlecode.gwtgl.array.Float32Array;
-import com.googlecode.gwtgl.binding.WebGLBuffer;
+import com.google.gwt.typedarrays.client.Float32ArrayNative;
+import com.google.gwt.typedarrays.shared.Float32Array;
 import com.googlecode.gwtgl.binding.WebGLProgram;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
-import com.googlecode.gwtgl.binding.WebGLTexture;
-import com.googlecode.gwtgl.binding.WebGLUniformLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,13 +53,13 @@ public class Program extends jmini3d.shader.Program {
 	int vertexColorAttribLocation = -1;
 
 	// Cached values to avoid setting buffers with an already existing value
-	WebGLBuffer activeVertexPosition = null;
-	WebGLBuffer activeVertexNormal = null;
-	WebGLBuffer activeTextureCoord = null;
-	WebGLBuffer activeVertexColor = null;
-	WebGLBuffer activeFacesBuffer = null;
+	Integer activeVertexPosition = null;
+	Integer activeVertexNormal = null;
+	Integer activeTextureCoord = null;
+	Integer activeVertexColor = null;
+	Integer activeFacesBuffer = null;
 
-	HashMap<String, WebGLUniformLocation> uniforms = new HashMap<>();
+	HashMap<String, Integer> uniforms = new HashMap<>();
 	// *********************** BEGIN cached values to avoid setting uniforms two times
 	int map = -1;
 	int envMap = -1;
@@ -224,8 +222,8 @@ public class Program extends jmini3d.shader.Program {
 				uniformsInit.add("pointLightColor");
 				useCameraPosition = true;
 
-				pointLightPositions = Float32Array.create(maxPointLights * 3);
-				pointLightColors = Float32Array.create(maxPointLights * 4);
+				pointLightPositions = Float32ArrayNative.create(maxPointLights * 3);
+				pointLightColors = Float32ArrayNative.create(maxPointLights * 4);
 			}
 
 			if (maxDirLights > 0) {
@@ -234,8 +232,8 @@ public class Program extends jmini3d.shader.Program {
 				uniformsInit.add("dirLightColor");
 				useCameraPosition = true;
 
-				dirLightDirections = Float32Array.create(maxDirLights * 3);
-				dirLightColors = Float32Array.create(maxDirLights * 4);
+				dirLightDirections = Float32ArrayNative.create(maxDirLights * 3);
+				dirLightColors = Float32ArrayNative.create(maxDirLights * 4);
 			}
 
 			useNormals = true;
@@ -428,7 +426,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
-		WebGLBuffer vertexColorsBufferId = null;
+		Integer vertexColorsBufferId = null;
 		if (useVertexColors) {
 			vertexColorsBufferId = gpuUploader.upload(o3d.vertexColors);
 		}
@@ -501,7 +499,7 @@ public class Program extends jmini3d.shader.Program {
 			objectColor.setAllFrom(o3d.material.color);
 		}
 		if (useMap) {
-			WebGLTexture mapTextureId = gpuUploader.textures.get(o3d.material.map);
+			Integer mapTextureId = gpuUploader.textures.get(o3d.material.map);
 			if (renderer3d.mapTextureId == null || renderer3d.mapTextureId != mapTextureId) {
 				if (renderer3d.activeTexture != WebGLRenderingContext.TEXTURE0) {
 					GLES20.activeTexture(WebGLRenderingContext.TEXTURE0);
@@ -516,7 +514,7 @@ public class Program extends jmini3d.shader.Program {
 				GLES20.uniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
 				reflectivity = o3d.material.reflectivity;
 			}
-			WebGLTexture envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
+			Integer envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
 			if (renderer3d.envMapTextureId == null || renderer3d.envMapTextureId != envMapTextureId) {
 				if (renderer3d.activeTexture != WebGLRenderingContext.TEXTURE1) {
 					GLES20.activeTexture(WebGLRenderingContext.TEXTURE1);
@@ -527,7 +525,7 @@ public class Program extends jmini3d.shader.Program {
 			}
 		}
 		if (useNormalMap) {
-			WebGLTexture normalMapTextureId = gpuUploader.textures.get(o3d.material.normalMap);
+			Integer normalMapTextureId = gpuUploader.textures.get(o3d.material.normalMap);
 			if (renderer3d.normalMapTextureId != normalMapTextureId) {
 				if (renderer3d.activeTexture != WebGLRenderingContext.TEXTURE2) {
 					GLES20.activeTexture(WebGLRenderingContext.TEXTURE2);
