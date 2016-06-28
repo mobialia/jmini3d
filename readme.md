@@ -21,7 +21,7 @@ Features
 * Normal maps
 * Vertex colors
 * Bitmap font support
-* Ready to use in Virtual Reality (VR) projects for Google Cardboard, there is a sample in https://github.com/albertoruibal/jmini3d-vr-demo
+* Ready to use in Virtual Reality (VR) projects for Google Cardboard, there is a sample in https://github.com/mobialia/jmini3d-vr-demo
 
 Subprojects
 ===========
