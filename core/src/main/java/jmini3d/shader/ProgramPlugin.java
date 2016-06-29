@@ -1,9 +1,8 @@
 package jmini3d.shader;
 
-import java.util.HashMap;
-
 import jmini3d.Object3d;
 import jmini3d.Scene;
+import jmini3d.material.Material;
 
 public class ProgramPlugin {
 
@@ -14,25 +13,11 @@ public class ProgramPlugin {
 	}
 
 	/**
-	 * Override with the custom vertex shader name
-	 */
-	public String getVertexShaderName() {
-		return null;
-	}
-
-	/**
-	 * Override with the custom fragment shader name
-	 */
-	public String getFragmentShaderName() {
-		return null;
-	}
-
-	/**
 	 * Prepare shaders
 	 *
 	 * @defines to be included in both fragment and vertex shader
 	 */
-	public void prepareShader(Scene scene, HashMap<String, String> defines) {
+	public void prepareShader(Scene scene, Material material) {
 	}
 
 	/**

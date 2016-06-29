@@ -52,13 +52,13 @@ public class GpuUploader {
 		Program program = null;
 		// Use ArrayList instead HashMap to avoid Integer creation
 		for (int i = 0; i < shaderPrograms.size(); i++) {
-			if (key == shaderPrograms.get(i).key) {
+			if (key == shaderPrograms.get(i).shaderKey) {
 				program = shaderPrograms.get(i);
 			}
 		}
 		if (program == null) {
 			program = new Program(gl);
-			program.key = key;
+			program.shaderKey = key;
 			program.init(scene, material, resourceLoader);
 			shaderPrograms.add(program);
 		}

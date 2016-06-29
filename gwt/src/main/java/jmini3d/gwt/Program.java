@@ -4,66 +4,16 @@ import com.googlecode.gwtgl.binding.WebGLProgram;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
 
-import java.util.HashMap;
-
 import jmini3d.Color4;
 import jmini3d.GpuObjectStatus;
 import jmini3d.Object3d;
 import jmini3d.Scene;
-import jmini3d.Vector3;
 import jmini3d.material.Material;
-import jmini3d.shader.ShaderKey;
 
 public class Program extends jmini3d.shader.Program {
 	static final String TAG = "Program";
 
-	int key = -1;
-
 	WebGLProgram webGLProgram;
-
-	boolean useNormals = false;
-	boolean useMap = false;
-	boolean useEnvMap = false;
-	boolean useNormalMap = false;
-	boolean useVertexColors = false;
-	boolean useCameraPosition = false;
-	boolean useShaderPlugins = false;
-
-	int vertexPositionAttribLocation = -1;
-	int vertexNormalAttribLocation = -1;
-	int textureCoordAttribLocation = -1;
-	int vertexColorAttribLocation = -1;
-
-	// Cached values to avoid setting buffers with an already existing value
-	Integer activeVertexPosition = null;
-	Integer activeVertexNormal = null;
-	Integer activeTextureCoord = null;
-	Integer activeVertexColor = null;
-	Integer activeFacesBuffer = null;
-
-	int projectionMatrixUniform;
-	int modelMatrixUniform;
-	int viewMatrixUniform;
-	int normalMatrixUniform;
-
-	int mapUniform;
-	int reflectivityUniform;
-	int envMapUniform;
-	int normalMapUniform;
-	int cameraPositionUniform;
-	int objectColorUniform;
-
-	// Cached values to avoid setting uniforms two times
-	int map = -1;
-	int envMap = -1;
-	int normalMap = -1;
-	float projectionMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	float viewMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	float modelMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-	Color4 objectColor = Color4.fromFloat(-1, -1, -1, -1);
-	Vector3 cameraPosition = new Vector3(0, 0, 0);
-	float reflectivity;
 
 	private WebGLRenderingContext GLES20;
 
@@ -81,31 +31,7 @@ public class Program extends jmini3d.shader.Program {
     }-*/;
 
 	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
-		useShaderPlugins = (scene.shaderKey & material.shaderKey & ShaderKey.SHADER_PLUGIN_MASK) != 0;
-
-		String vertexShaderName = DEFAULT_VERTEX_SHADER;
-		String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
-
-		if (useShaderPlugins) {
-			if (scene.shaderPlugin != null) {
-				sceneProgramPlugin = scene.shaderPlugin.getProgramPlugin(this);
-				if (sceneProgramPlugin.getVertexShaderName() != null) {
-					vertexShaderName = sceneProgramPlugin.getVertexShaderName();
-				}
-				if (sceneProgramPlugin.getFragmentShaderName() != null) {
-					fragmentShaderName = sceneProgramPlugin.getFragmentShaderName();
-				}
-			}
-			if (material.shaderPlugin != null) {
-				materialProgramPlugin = material.shaderPlugin.getProgramPlugin(this);
-				if (materialProgramPlugin.getVertexShaderName() != null) {
-					vertexShaderName = materialProgramPlugin.getVertexShaderName();
-				}
-				if (materialProgramPlugin.getFragmentShaderName() != null) {
-					fragmentShaderName = materialProgramPlugin.getFragmentShaderName();
-				}
-			}
-		}
+		prepareShader(scene, material);
 
 		resourceLoader.loadShader(vertexShaderName, new ResourceLoader.OnTextResourceLoaded() {
 			@Override
@@ -128,65 +54,17 @@ public class Program extends jmini3d.shader.Program {
 	}
 
 	public void finishShaderLoad(Scene scene, Material material) {
-		HashMap<String, String> defines = new HashMap<>();
-
-		if (sceneProgramPlugin != null) {
-			sceneProgramPlugin.prepareShader(scene, defines);
-		}
-		if (materialProgramPlugin != null) {
-			materialProgramPlugin.prepareShader(scene, defines);
-		}
-
-		if (material.map != null) {
-			defines.put("USE_MAP", null);
-			useMap = true;
-		}
-
-		if (material.envMap != null) {
-			defines.put("USE_ENVMAP", null);
-			useNormals = true;
-			useEnvMap = true;
-			useCameraPosition = true;
-		}
-
-		if (material.useEnvMapAsMap) {
-			defines.put("USE_ENVMAP_AS_MAP", null);
-		}
-
-		if (material.applyColorToAlpha) {
-			defines.put("APPLY_COLOR_TO_ALPHA", null);
-		}
-
-		if (material.useVertexColors) {
-			useVertexColors = true;
-			defines.put("USE_VERTEX_COLORS", null);
-		}
-
-		if (useCameraPosition) {
-			defines.put("USE_CAMERA_POSITION", null);
-		}
-
-		if (useNormals) {
-			if (material.normalMap != null) {
-				defines.put("USE_NORMAL_MAP", null);
-				useNormalMap = true;
-				useNormals = false;
-			} else {
-				defines.put("USE_NORMALS", null);
-			}
-		}
-
 		StringBuffer vertexShaderStringBuffer = new StringBuffer();
 		StringBuffer fragmentShaderStringBuffer = new StringBuffer();
 
 		// TODO precision
-		for (String k : defines.keySet()) {
-			if (defines.get(k) == null) {
+		for (String k : shaderDefines.keySet()) {
+			if (shaderDefines.get(k) == null) {
 				vertexShaderStringBuffer.append("#define " + k + "\n");
 				fragmentShaderStringBuffer.append("#define " + k + "\n");
 			} else {
-				vertexShaderStringBuffer.append("#define " + k + " " + defines.get(k) + "\n");
-				fragmentShaderStringBuffer.append("#define " + k + " " + defines.get(k) + "\n");
+				vertexShaderStringBuffer.append("#define " + k + " " + shaderDefines.get(k) + "\n");
+				fragmentShaderStringBuffer.append("#define " + k + " " + shaderDefines.get(k) + "\n");
 			}
 		}
 
@@ -209,33 +87,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 		GLES20.useProgram(webGLProgram);
 
-		projectionMatrixUniform = GLES20.getUniformLocation(webGLProgram, "projectionMatrix");
-		viewMatrixUniform = GLES20.getUniformLocation(webGLProgram, "viewMatrix");
-		modelMatrixUniform = GLES20.getUniformLocation(webGLProgram, "modelMatrix");
-		objectColorUniform = GLES20.getUniformLocation(webGLProgram, "objectColor");
-
-		if (useNormals || useNormalMap) {
-			normalMatrixUniform = GLES20.getUniformLocation(webGLProgram, "normalMatrix");
-		}
-		if (useNormalMap) {
-			normalMapUniform = GLES20.getUniformLocation(webGLProgram, "normalMap");
-		}
-		if (useMap) {
-			mapUniform = GLES20.getUniformLocation(webGLProgram, "map");
-		}
-		if (useEnvMap) {
-			reflectivityUniform = GLES20.getUniformLocation(webGLProgram, "reflectivity");
-			envMapUniform = GLES20.getUniformLocation(webGLProgram, "envMap");
-		}
-		if (useCameraPosition) {
-			cameraPositionUniform = GLES20.getUniformLocation(webGLProgram, "cameraPosition");
-		}
-		if (sceneProgramPlugin != null) {
-			sceneProgramPlugin.onShaderLoaded();
-		}
-		if (materialProgramPlugin != null) {
-			materialProgramPlugin.onShaderLoaded();
-		}
+		onShaderLoaded();
 
 		// Initialize attrib locations
 		vertexPositionAttribLocation = getAndEnableAttribLocation("vertexPosition");
@@ -248,7 +100,7 @@ public class Program extends jmini3d.shader.Program {
 		shaderLoaded = true;
 	}
 
-	private int getAndEnableAttribLocation(String attribName) {
+	public int getAndEnableAttribLocation(String attribName) {
 		int attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
 		GLES20.enableVertexAttribArray(attribLocation);
 		return attribLocation;
@@ -266,21 +118,21 @@ public class Program extends jmini3d.shader.Program {
 		activeVertexColor = null;
 		activeFacesBuffer = null;
 
-		if (useMap && map != 0) {
+		if (useMap && mapLast != 0) {
 			GLES20.uniform1i(mapUniform, 0);
-			map = 0;
+			mapLast = 0;
 		}
-		if (useEnvMap && envMap != 1) {
+		if (useEnvMap && envMapLast != 1) {
 			GLES20.uniform1i(envMapUniform, 1);
-			envMap = 1;
+			envMapLast = 1;
 		}
-		if (useCameraPosition && !cameraPosition.equals(scene.camera.position)) {
+		if (useCameraPosition && !cameraPositionLast.equals(scene.camera.position)) {
 			GLES20.uniform3f(cameraPositionUniform, scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
-			cameraPosition.setAllFrom(scene.camera.position);
+			cameraPositionLast.setAllFrom(scene.camera.position);
 		}
-		if (useNormalMap && normalMap != 2) {
+		if (useNormalMap && normalMapLast != 2) {
 			GLES20.uniform1i(normalMapUniform, 2);
-			normalMap = 2;
+			normalMapLast = 2;
 		}
 		if (sceneProgramPlugin != null) {
 			sceneProgramPlugin.onSetSceneUniforms(scene);
@@ -295,11 +147,11 @@ public class Program extends jmini3d.shader.Program {
 			return;
 		}
 
-		setMatrix4UniformIfChanged(projectionMatrixUniform, projectionMatrix, this.projectionMatrix);
-		setMatrix4UniformIfChanged(viewMatrixUniform, viewMatrix, this.viewMatrix);
-		setMatrix4UniformIfChanged(modelMatrixUniform, o3d.modelMatrix, this.modelMatrix);
+		setMatrix4UniformIfChanged(projectionMatrixUniform, projectionMatrix, this.projectionMatrixLast);
+		setMatrix4UniformIfChanged(viewMatrixUniform, viewMatrix, this.viewMatrixLast);
+		setMatrix4UniformIfChanged(modelMatrixUniform, o3d.modelMatrix, this.modelMatrixLast);
 		if ((useNormals || useNormalMap) && o3d.normalMatrix != null) {
-			setMatrix3UniformIfChanged(normalMatrixUniform, o3d.normalMatrix, this.normalMatrix);
+			setMatrix3UniformIfChanged(normalMatrixUniform, o3d.normalMatrix, this.normalMatrixLast);
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
@@ -371,7 +223,7 @@ public class Program extends jmini3d.shader.Program {
 			activeFacesBuffer = buffers.facesBufferId;
 		}
 
-		setColorUniformIfChanged(objectColorUniform, o3d.material.color, objectColor);
+		setColorUniformIfChanged(objectColorUniform, o3d.material.color, objectColorLast);
 
 		if (useMap) {
 			Integer mapTextureId = gpuUploader.textures.get(o3d.material.map);
@@ -385,9 +237,9 @@ public class Program extends jmini3d.shader.Program {
 			}
 		}
 		if (useEnvMap) {
-			if (reflectivity != o3d.material.reflectivity) {
+			if (reflectivityLast != o3d.material.reflectivity) {
 				GLES20.uniform1f(reflectivityUniform, o3d.material.reflectivity);
-				reflectivity = o3d.material.reflectivity;
+				reflectivityLast = o3d.material.reflectivity;
 			}
 			Integer envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
 			if (renderer3d.envMapTextureId == null || renderer3d.envMapTextureId != envMapTextureId) {
@@ -511,16 +363,6 @@ public class Program extends jmini3d.shader.Program {
 	@Override
 	public void setUniform4fv(int location, int count, float[] v) {
 		GLES20.uniform4fv(location, v);
-	}
-
-	@Override
-	public void setUseNormals(boolean useNormals) {
-		this.useNormals = useNormals;
-	}
-
-	@Override
-	public void setUseCameraPosition(boolean useCameraPosition) {
-		this.useCameraPosition = useCameraPosition;
 	}
 
 

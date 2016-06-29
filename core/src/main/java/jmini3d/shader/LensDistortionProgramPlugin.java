@@ -1,8 +1,7 @@
 package jmini3d.shader;
 
-import java.util.HashMap;
-
 import jmini3d.Scene;
+import jmini3d.material.Material;
 
 /**
  * A barrel lens distortion shader plugin applied at vertex level
@@ -33,13 +32,13 @@ public class LensDistortionProgramPlugin extends ProgramPlugin {
 	}
 
 	@Override
-	public String getVertexShaderName() {
-		return "vertex_shader_lens_distortion.glsl";
-	}
+	public void prepareShader(Scene scene, Material material) {
+		//
+		// Change the vertex shader
+		//
+		program.vertexShaderName = "vertex_shader_lens_distortion.glsl";
 
-	@Override
-	public void prepareShader(Scene scene, HashMap<String, String> defines) {
-		defines.put("USE_LENS_DISTORTION", null);
+		program.shaderDefines.put("USE_LENS_DISTORTION", null);
 	}
 
 	@Override

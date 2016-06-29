@@ -1,7 +1,5 @@
 package jmini3d.shader;
 
-import java.util.HashMap;
-
 import jmini3d.Color4;
 import jmini3d.Object3d;
 import jmini3d.Scene;
@@ -9,6 +7,7 @@ import jmini3d.light.AmbientLight;
 import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
 import jmini3d.light.PointLight;
+import jmini3d.material.Material;
 import jmini3d.material.PhongMaterial;
 
 public class PhongProgramPlugin extends ProgramPlugin {
@@ -46,26 +45,21 @@ public class PhongProgramPlugin extends ProgramPlugin {
 		super(program);
 	}
 
-//	@Override
-//	public String getFragmentShaderName() {
-//		return "fragment_shader_phong.glsl";
-//	}
-
 	@Override
-	public void prepareShader(Scene scene, HashMap<String, String> defines) {
+	public void prepareShader(Scene scene, Material material) {
 		maxPointLights = 0;
 		maxDirLights = 0;
 
 		if (scene.lights.size() > 0) {
-			defines.put("USE_PHONG_LIGHTING", null);
+			program.shaderDefines.put("USE_PHONG_LIGHTING", null);
 			useLighting = true;
-			program.setUseNormals(true);
+			program.useNormals = true;
 
 			for (Light light : scene.lights) {
 
 				if (light instanceof AmbientLight) {
 					useAmbientLight = true;
-					defines.put("USE_AMBIENT_LIGHT", null);
+					program.shaderDefines.put("USE_AMBIENT_LIGHT", null);
 				}
 
 				if (light instanceof PointLight) {
@@ -78,26 +72,26 @@ public class PhongProgramPlugin extends ProgramPlugin {
 			}
 
 			if (maxPointLights > 0) {
-				defines.put("USE_POINT_LIGHT", null);
+				program.shaderDefines.put("USE_POINT_LIGHT", null);
 				usePointLight = true;
-				program.setUseCameraPosition(true);
+				program.useCameraPosition = true;
 
 				pointLightPositions = new float[maxPointLights * 3];
 				pointLightColors = new float[maxPointLights * 4];
 			}
 
 			if (maxDirLights > 0) {
-				defines.put("USE_DIR_LIGHT", null);
+				program.shaderDefines.put("USE_DIR_LIGHT", null);
 				useDirLight = true;
-				program.setUseCameraPosition(true);
+				program.useCameraPosition = true;
 
 				dirLightDirections = new float[maxDirLights * 3];
 				dirLightColors = new float[maxDirLights * 4];
 			}
 		}
 
-		defines.put("MAX_POINT_LIGHTS", String.valueOf(maxPointLights));
-		defines.put("MAX_DIR_LIGHTS", String.valueOf(maxDirLights));
+		program.shaderDefines.put("MAX_POINT_LIGHTS", String.valueOf(maxPointLights));
+		program.shaderDefines.put("MAX_DIR_LIGHTS", String.valueOf(maxDirLights));
 	}
 
 	@Override
