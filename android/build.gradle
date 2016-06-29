@@ -63,8 +63,8 @@ bintray {
         desc = 'Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT'
         userOrg = 'mobialia'
         licenses = ['MIT']
-        vcsUrl = 'https://github.com/albertoruibal/jmini3d.git'
-        githubRepo = 'albertoruibal/jmini3d'
+        vcsUrl = 'https://github.com/mobialia/jmini3d.git'
+        githubRepo = 'mobialia/jmini3d'
         publish = true
     }
 }
