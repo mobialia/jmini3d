@@ -89,21 +89,12 @@ public class Program extends jmini3d.shader.Program {
 
 		onShaderLoaded();
 
-		// Initialize attrib locations
-		vertexPositionAttribLocation = getAndEnableAttribLocation("vertexPosition");
-
 		GLES20.deleteShader(vertexShader);
 		GLES20.deleteShader(fragmentShader);
 
 		vertexShaderLoaded = null;
 		fragmentShaderLoaded = null;
 		shaderLoaded = true;
-	}
-
-	public int getAndEnableAttribLocation(String attribName) {
-		int attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
-		GLES20.enableVertexAttribArray(attribLocation);
-		return attribLocation;
 	}
 
 	public void setSceneUniforms(Scene scene) {
@@ -269,6 +260,13 @@ public class Program extends jmini3d.shader.Program {
 			materialProgramPlugin.onDrawObject(o3d);
 		}
 		GLES20.drawElements(WebGLRenderingContext.TRIANGLES, o3d.geometry3d.facesLength, WebGLRenderingContext.UNSIGNED_SHORT, 0);
+	}
+
+	@Override
+	public int getAndEnableAttribLocation(String attribName) {
+		int attribLocation = GLES20.getAttribLocation(webGLProgram, attribName);
+		GLES20.enableVertexAttribArray(attribLocation);
+		return attribLocation;
 	}
 
 	@Override

@@ -167,7 +167,13 @@ public abstract class Program {
 		if (useCameraPosition) {
 			cameraPositionUniform = getUniformLocation("cameraPosition");
 		}
+
+		// Initialize attrib locations: be carefull, they are also enabled, so it
+		// cannot be called before the value is going to be set
+		vertexPositionAttribLocation = getAndEnableAttribLocation("vertexPosition");
 	}
+
+	public abstract int getAndEnableAttribLocation(String attribName);
 
 	public abstract int getUniformLocation(String uniformName);
 
