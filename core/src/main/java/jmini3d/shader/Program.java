@@ -33,8 +33,7 @@ public abstract class Program {
 	// The shader program can be changed by a shader plugin
 	public String vertexShaderName = DEFAULT_VERTEX_SHADER;
 	public String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
-	// A list of "#define key value" or "#define key" (if value == null) to be appended at the
-	// beginning of the shader
+	// A list of "#define key value" or "#define key" (if value == null) to be appended at the beginning of the shader
 	public HashMap<String, String> shaderDefines = new HashMap<>();
 
 	public boolean useNormals = false;
@@ -168,9 +167,12 @@ public abstract class Program {
 			cameraPositionUniform = getUniformLocation("cameraPosition");
 		}
 
-		// Initialize attrib locations: be carefull, they are also enabled, so it
+		// Initialize attrib locations: be careful, they are also enabled, so it
 		// cannot be called before the value is going to be set
 		vertexPositionAttribLocation = getAndEnableAttribLocation("vertexPosition");
+
+		// Save memory
+		shaderDefines = null;
 	}
 
 	public abstract int getAndEnableAttribLocation(String attribName);
