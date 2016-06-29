@@ -13,7 +13,7 @@ public class Scene {
 	public ArrayList<Object3d> children = new ArrayList<>();
 	public ArrayList<Light> lights = new ArrayList<>();
 	public ArrayList<Object> unload = new ArrayList<>();
-	public ArrayList<ShaderPlugin> shaderPlugins = new ArrayList<>();
+	public ShaderPlugin shaderPlugin;
 
 	public Color4 backgroundColor;
 
@@ -34,11 +34,6 @@ public class Scene {
 
 	public void addLight(Light l) {
 		lights.add(l);
-		shaderKey = -1;
-	}
-
-	public void addShaderPlugin(ShaderPlugin e) {
-		shaderPlugins.add(e);
 		shaderKey = -1;
 	}
 
@@ -98,5 +93,10 @@ public class Scene {
 
 	public void onViewPortChanged(int width, int height) {
 
+	}
+
+	public void setShaderPlugin(ShaderPlugin shaderPlugin) {
+		this.shaderPlugin = shaderPlugin;
+		shaderKey = -1;
 	}
 }

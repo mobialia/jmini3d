@@ -1,51 +1,38 @@
 package jmini3d.shader;
 
-import java.util.ArrayList;
-
 /**
- * The ShaderPlugins modify the shaders at the scene Level
+ * The ShaderPlugins modify the shaders at the scene or material Level
  */
 public abstract class ShaderPlugin {
+
+	private static int nextSceneShadePluginKey = 1;
+	private static int nextMaterialShadePluginrKey = 1;
+	public static int shaderKey;
+
+	public static int getNextSceneShaderPluginKey() {
+		int shaderKey = ShaderPlugin.nextSceneShadePluginKey;
+		ShaderPlugin.nextSceneShadePluginKey <<= 1;
+		return shaderKey;
+	}
+
+	public static int getNextMaterialShaderPluginKey() {
+		int shaderKey = ShaderPlugin.nextMaterialShadePluginrKey;
+		ShaderPlugin.nextMaterialShadePluginrKey <<= 1;
+		return shaderKey;
+	}
 
 	/**
 	 * A bit < 256 for the shader key, unique for each shader plugin
 	 */
-	public abstract int getShaderKey();
-
-	/**
-	 * Override with the custom vertex shader name
-	 */
-	public String getVertexShaderName() {
-		return null;
+	public int getShaderKey() {
+		return shaderKey;
 	}
 
 	/**
-	 * Override with the custom fragment shader name
+	 * Each program instance has its own ProgramPlugin object
+	 *
+	 * @param program
+	 * @return
 	 */
-	public String getFragmentShaderName() {
-		return null;
-	}
-
-	/**
-	 * Defines to be included in both fragment and vertex shader
-	 */
-	public void addShaderDefines(ArrayList<String> defines) {
-	}
-
-	/**
-	 * Uniform names that the shader uses
-	 */
-	public void addUniformNames(ArrayList<String> uniformNames) {
-	}
-
-	/**
-	 * Initialize the scene uniforms before each frame
-	 */
-	public void setSceneUniforms(Program program) {
-	}
-
-	/**
-	 * TODO before each material initialization???
-	 */
-
+	public abstract ProgramPlugin getProgramPlugin(Program program);
 }

@@ -7,7 +7,6 @@ import jmini3d.light.DirectionalLight;
 import jmini3d.light.Light;
 import jmini3d.light.PointLight;
 import jmini3d.material.Material;
-import jmini3d.material.PhongMaterial;
 
 /**
  * Generates a unique shader key for scenes and materials.
@@ -20,6 +19,8 @@ import jmini3d.material.PhongMaterial;
  */
 public class ShaderKey {
 	public static int SHADER_PLUGIN_MASK = 0xff000000;
+	public static int SHADER_PLUGIN_SCENE_MASK = 0xf0000000;
+	public static int SHADER_PLUGIN_MATERIAL_MASK = 0x0f000000;
 
 	public static int getSceneKey(Scene scene) {
 		boolean useAmbientlight = false;
@@ -42,19 +43,19 @@ public class ShaderKey {
 
 		int key = 0xff;
 
-		for (ShaderPlugin sp : scene.shaderPlugins) {
-			key |= (sp.getShaderKey() << 24);
+		if (scene.shaderPlugin != null) {
+			key |= (scene.shaderPlugin.getShaderKey() << 28);
 		}
 
-		return key |
+		return SHADER_PLUGIN_MATERIAL_MASK |
+				key |
 				(useAmbientlight ? 0x100 : 0) |
 				(maxPointLights * 0x01000) |
 				(maxDirLights * 0x10000);
 	}
 
 	public static int getMaterialKey(Material material) {
-		// Do not apply shader plugins to the sprites
-		boolean useLight = material instanceof PhongMaterial;
+		boolean useLights = material.useLigths;
 		boolean useMap = material.map != null;
 		boolean useEnvMap = material.envMap != null;
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;
@@ -62,8 +63,15 @@ public class ShaderKey {
 		boolean useApplyColorToAlpha = material.applyColorToAlpha;
 		boolean useVertexColors = material.useVertexColors;
 
-		return SHADER_PLUGIN_MASK |
-				(useLight ? 0xffff00 : 0) |
+		int key = 0;
+
+		if (material.shaderPlugin != null) {
+			key |= (material.shaderPlugin.getShaderKey() << 24);
+		}
+
+		return SHADER_PLUGIN_SCENE_MASK |
+				key |
+				(useLights ? 0xffff00 : 0) |
 				(useMap ? 0x01 : 0) |
 				(useEnvMap ? 0x02 : 0) |
 				(useEnvMapAsMap ? 0x04 : 0) |

@@ -1,5 +1,7 @@
 package jmini3d.shader;
 
+import jmini3d.Color4;
+
 public abstract class Program {
 
 	public static String DEFAULT_VERTEX_SHADER = "vertex_shader.glsl";
@@ -17,10 +19,27 @@ public abstract class Program {
 			TEXTURE_CUBE_MAP_POSITIVE_Z, TEXTURE_CUBE_MAP_NEGATIVE_Z,
 			TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y};
 
+	public ProgramPlugin sceneProgramPlugin;
+	public ProgramPlugin materialProgramPlugin;
+
 	/**
 	 * To be used from the Shader plugins
 	 */
-	public abstract void setUniformIfCachedValueChanged(String uniformName, float uniformValue, float[] cachedValues, int cachedValueIndex);
+	public abstract int getUniformLocation(String uniformName);
 
-	public abstract float[] getValueCache(String cacheKey, int size);
+	/**
+	 * @returns uniformValue
+	 */
+	public abstract float setFloatUniformIfValueChanged(int uniform, float uniformValue, float lastValue);
+
+	public abstract void setColorUniformIfChanged(int colorUniform, Color4 newColor, Color4 lastColor);
+
+	public abstract void setUniform3fv(int location, int count, float[] v);
+
+	public abstract void setUniform4fv(int location, int count, float[] v);
+
+	public abstract void setUseNormals(boolean useNormals);
+
+	public abstract void setUseCameraPosition(boolean useCameraPosition);
+
 }

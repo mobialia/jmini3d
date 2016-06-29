@@ -1,13 +1,9 @@
 package jmini3d.gwt;
 
-import com.google.gwt.typedarrays.client.Float32ArrayNative;
-import com.google.gwt.typedarrays.shared.Float32Array;
 import com.googlecode.gwtgl.binding.WebGLProgram;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import jmini3d.Color4;
@@ -15,14 +11,8 @@ import jmini3d.GpuObjectStatus;
 import jmini3d.Object3d;
 import jmini3d.Scene;
 import jmini3d.Vector3;
-import jmini3d.light.AmbientLight;
-import jmini3d.light.DirectionalLight;
-import jmini3d.light.Light;
-import jmini3d.light.PointLight;
 import jmini3d.material.Material;
-import jmini3d.material.PhongMaterial;
 import jmini3d.shader.ShaderKey;
-import jmini3d.shader.ShaderPlugin;
 
 public class Program extends jmini3d.shader.Program {
 	static final String TAG = "Program";
@@ -31,14 +21,6 @@ public class Program extends jmini3d.shader.Program {
 
 	WebGLProgram webGLProgram;
 
-	int maxPointLights;
-	int maxDirLights;
-	Float32Array pointLightPositions;
-	Float32Array pointLightColors;
-	Float32Array dirLightDirections;
-	Float32Array dirLightColors;
-
-	boolean useLighting = false;
 	boolean useNormals = false;
 	boolean useMap = false;
 	boolean useEnvMap = false;
@@ -59,8 +41,19 @@ public class Program extends jmini3d.shader.Program {
 	Integer activeVertexColor = null;
 	Integer activeFacesBuffer = null;
 
-	HashMap<String, Integer> uniforms = new HashMap<>();
-	// *********************** BEGIN cached values to avoid setting uniforms two times
+	int projectionMatrixUniform;
+	int modelMatrixUniform;
+	int viewMatrixUniform;
+	int normalMatrixUniform;
+
+	int mapUniform;
+	int reflectivityUniform;
+	int envMapUniform;
+	int normalMapUniform;
+	int cameraPositionUniform;
+	int objectColorUniform;
+
+	// Cached values to avoid setting uniforms two times
 	int map = -1;
 	int envMap = -1;
 	int normalMap = -1;
@@ -69,15 +62,8 @@ public class Program extends jmini3d.shader.Program {
 	float modelMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	float normalMatrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	Color4 objectColor = Color4.fromFloat(-1, -1, -1, -1);
-	Color4 ambientColor = Color4.fromFloat(-1, -1, -1, -1);
-	Color4 diffuseColor = Color4.fromFloat(-1, -1, -1, -1);
-	Color4 specularColor = Color4.fromFloat(-1, -1, -1, -1);
-	Color4 ambientLightColor = Color4.fromFloat(-1, -1, -1, -1);
-	float shininess = 0;
 	Vector3 cameraPosition = new Vector3(0, 0, 0);
 	float reflectivity;
-	HashMap<String, float[]> cachedValues = new HashMap<>();
-	// *********************** END
 
 	private WebGLRenderingContext GLES20;
 
@@ -88,25 +74,6 @@ public class Program extends jmini3d.shader.Program {
 
 	public Program(WebGLRenderingContext GLES20) {
 		this.GLES20 = GLES20;
-	}
-
-	@Override
-	public void setUniformIfCachedValueChanged(String uniformName, float uniformValue, float[] cachedValues, int cachedValueIndex) {
-		if (cachedValues[0] != uniformValue) {
-			cachedValues[0] = uniformValue;
-			GLES20.uniform1f(uniforms.get(uniformName), uniformValue);
-		}
-	}
-
-	@Override
-	public float[] getValueCache(String cacheKey, int size) {
-		if (cachedValues.containsKey(cacheKey)) {
-			return cachedValues.get(cacheKey);
-		} else {
-			float[] cachedValueFloats = new float[size];
-			cachedValues.put(cacheKey, cachedValueFloats);
-			return cachedValueFloats;
-		}
 	}
 
 	native void log(String message) /*-{
@@ -120,12 +87,22 @@ public class Program extends jmini3d.shader.Program {
 		String fragmentShaderName = DEFAULT_FRAGMENT_SHADER;
 
 		if (useShaderPlugins) {
-			for (ShaderPlugin sp : scene.shaderPlugins) {
-				if (sp.getVertexShaderName() != null) {
-					vertexShaderName = sp.getVertexShaderName();
+			if (scene.shaderPlugin != null) {
+				sceneProgramPlugin = scene.shaderPlugin.getProgramPlugin(this);
+				if (sceneProgramPlugin.getVertexShaderName() != null) {
+					vertexShaderName = sceneProgramPlugin.getVertexShaderName();
 				}
-				if (sp.getFragmentShaderName() != null) {
-					fragmentShaderName = sp.getFragmentShaderName();
+				if (sceneProgramPlugin.getFragmentShaderName() != null) {
+					fragmentShaderName = sceneProgramPlugin.getFragmentShaderName();
+				}
+			}
+			if (material.shaderPlugin != null) {
+				materialProgramPlugin = material.shaderPlugin.getProgramPlugin(this);
+				if (materialProgramPlugin.getVertexShaderName() != null) {
+					vertexShaderName = materialProgramPlugin.getVertexShaderName();
+				}
+				if (materialProgramPlugin.getFragmentShaderName() != null) {
+					fragmentShaderName = materialProgramPlugin.getFragmentShaderName();
 				}
 			}
 		}
@@ -151,119 +128,51 @@ public class Program extends jmini3d.shader.Program {
 	}
 
 	public void finishShaderLoad(Scene scene, Material material) {
-		ArrayList<String> uniformsInit = new ArrayList<>();
+		HashMap<String, String> defines = new HashMap<>();
 
-		ArrayList<String> defines = new ArrayList<>();
-		HashMap<String, String> definesValues = new HashMap<>();
-
-		uniformsInit.add("projectionMatrix");
-		uniformsInit.add("viewMatrix");
-		uniformsInit.add("modelMatrix");
-		uniformsInit.add("objectColor");
+		if (sceneProgramPlugin != null) {
+			sceneProgramPlugin.prepareShader(scene, defines);
+		}
+		if (materialProgramPlugin != null) {
+			materialProgramPlugin.prepareShader(scene, defines);
+		}
 
 		if (material.map != null) {
-			defines.add("USE_MAP");
+			defines.put("USE_MAP", null);
 			useMap = true;
-			uniformsInit.add("map");
 		}
 
 		if (material.envMap != null) {
-			defines.add("USE_ENVMAP");
+			defines.put("USE_ENVMAP", null);
 			useNormals = true;
 			useEnvMap = true;
 			useCameraPosition = true;
-			uniformsInit.add("reflectivity");
-			uniformsInit.add("envMap");
 		}
 
 		if (material.useEnvMapAsMap) {
-			defines.add("USE_ENVMAP_AS_MAP");
+			defines.put("USE_ENVMAP_AS_MAP", null);
 		}
 
 		if (material.applyColorToAlpha) {
-			defines.add("APPLY_COLOR_TO_ALPHA");
+			defines.put("APPLY_COLOR_TO_ALPHA", null);
 		}
 
 		if (material.useVertexColors) {
 			useVertexColors = true;
-			defines.add("USE_VERTEX_COLORS");
+			defines.put("USE_VERTEX_COLORS", null);
 		}
-
-		maxPointLights = 0;
-		maxDirLights = 0;
-
-		if (material instanceof PhongMaterial && scene.lights.size() > 0) {
-			defines.add("USE_PHONG_LIGHTING");
-			uniformsInit.add("ambientColor");
-			uniformsInit.add("diffuseColor");
-			uniformsInit.add("specularColor");
-			uniformsInit.add("shininess");
-			useLighting = true;
-
-			for (Light light : scene.lights) {
-
-				if (light instanceof AmbientLight) {
-					defines.add("USE_AMBIENT_LIGHT");
-					uniformsInit.add("ambientLightColor");
-				}
-
-				if (light instanceof PointLight) {
-					maxPointLights++;
-				}
-
-				if (light instanceof DirectionalLight) {
-					maxDirLights++;
-				}
-			}
-
-			if (maxPointLights > 0) {
-				defines.add("USE_POINT_LIGHT");
-				uniformsInit.add("pointLightPosition");
-				uniformsInit.add("pointLightColor");
-				useCameraPosition = true;
-
-				pointLightPositions = Float32ArrayNative.create(maxPointLights * 3);
-				pointLightColors = Float32ArrayNative.create(maxPointLights * 4);
-			}
-
-			if (maxDirLights > 0) {
-				defines.add("USE_DIR_LIGHT");
-				uniformsInit.add("dirLightDirection");
-				uniformsInit.add("dirLightColor");
-				useCameraPosition = true;
-
-				dirLightDirections = Float32ArrayNative.create(maxDirLights * 3);
-				dirLightColors = Float32ArrayNative.create(maxDirLights * 4);
-			}
-
-			useNormals = true;
-		}
-
-		definesValues.put("MAX_POINT_LIGHTS", String.valueOf(maxPointLights));
-		definesValues.put("MAX_DIR_LIGHTS", String.valueOf(maxDirLights));
 
 		if (useCameraPosition) {
-			defines.add("USE_CAMERA_POSITION");
-			uniformsInit.add("cameraPosition");
+			defines.put("USE_CAMERA_POSITION", null);
 		}
 
 		if (useNormals) {
 			if (material.normalMap != null) {
-				defines.add("USE_NORMAL_MAP");
+				defines.put("USE_NORMAL_MAP", null);
 				useNormalMap = true;
 				useNormals = false;
-				uniformsInit.add("normalMap");
-				uniformsInit.add("normalMatrix");
 			} else {
-				defines.add("USE_NORMALS");
-				uniformsInit.add("normalMatrix");
-			}
-		}
-
-		if (useShaderPlugins) {
-			for (ShaderPlugin sp : scene.shaderPlugins) {
-				sp.addShaderDefines(defines);
-				sp.addUniformNames(uniformsInit);
+				defines.put("USE_NORMALS", null);
 			}
 		}
 
@@ -271,14 +180,14 @@ public class Program extends jmini3d.shader.Program {
 		StringBuffer fragmentShaderStringBuffer = new StringBuffer();
 
 		// TODO precision
-		for (String d : defines) {
-			vertexShaderStringBuffer.append("#define " + d + "\n");
-			fragmentShaderStringBuffer.append("#define " + d + "\n");
-		}
-
-		for (String k : definesValues.keySet()) {
-			vertexShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
-			fragmentShaderStringBuffer.append("#define " + k + " " + definesValues.get(k) + "\n");
+		for (String k : defines.keySet()) {
+			if (defines.get(k) == null) {
+				vertexShaderStringBuffer.append("#define " + k + "\n");
+				fragmentShaderStringBuffer.append("#define " + k + "\n");
+			} else {
+				vertexShaderStringBuffer.append("#define " + k + " " + defines.get(k) + "\n");
+				fragmentShaderStringBuffer.append("#define " + k + " " + defines.get(k) + "\n");
+			}
 		}
 
 		vertexShaderStringBuffer.append(vertexShaderLoaded);
@@ -300,8 +209,32 @@ public class Program extends jmini3d.shader.Program {
 		}
 		GLES20.useProgram(webGLProgram);
 
-		for (String uniform : uniformsInit) {
-			uniforms.put(uniform, GLES20.getUniformLocation(webGLProgram, uniform));
+		projectionMatrixUniform = GLES20.getUniformLocation(webGLProgram, "projectionMatrix");
+		viewMatrixUniform = GLES20.getUniformLocation(webGLProgram, "viewMatrix");
+		modelMatrixUniform = GLES20.getUniformLocation(webGLProgram, "modelMatrix");
+		objectColorUniform = GLES20.getUniformLocation(webGLProgram, "objectColor");
+
+		if (useNormals || useNormalMap) {
+			normalMatrixUniform = GLES20.getUniformLocation(webGLProgram, "normalMatrix");
+		}
+		if (useNormalMap) {
+			normalMapUniform = GLES20.getUniformLocation(webGLProgram, "normalMap");
+		}
+		if (useMap) {
+			mapUniform = GLES20.getUniformLocation(webGLProgram, "map");
+		}
+		if (useEnvMap) {
+			reflectivityUniform = GLES20.getUniformLocation(webGLProgram, "reflectivity");
+			envMapUniform = GLES20.getUniformLocation(webGLProgram, "envMap");
+		}
+		if (useCameraPosition) {
+			cameraPositionUniform = GLES20.getUniformLocation(webGLProgram, "cameraPosition");
+		}
+		if (sceneProgramPlugin != null) {
+			sceneProgramPlugin.onShaderLoaded();
+		}
+		if (materialProgramPlugin != null) {
+			materialProgramPlugin.onShaderLoaded();
 		}
 
 		// Initialize attrib locations
@@ -334,72 +267,26 @@ public class Program extends jmini3d.shader.Program {
 		activeFacesBuffer = null;
 
 		if (useMap && map != 0) {
-			GLES20.uniform1i(uniforms.get("map"), 0);
+			GLES20.uniform1i(mapUniform, 0);
 			map = 0;
 		}
 		if (useEnvMap && envMap != 1) {
-			GLES20.uniform1i(uniforms.get("envMap"), 1);
+			GLES20.uniform1i(envMapUniform, 1);
 			envMap = 1;
 		}
 		if (useCameraPosition && !cameraPosition.equals(scene.camera.position)) {
-			GLES20.uniform3f(uniforms.get("cameraPosition"), scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
+			GLES20.uniform3f(cameraPositionUniform, scene.camera.position.x, scene.camera.position.y, scene.camera.position.z);
 			cameraPosition.setAllFrom(scene.camera.position);
 		}
 		if (useNormalMap && normalMap != 2) {
-			GLES20.uniform1i(uniforms.get("normalMap"), 2);
+			GLES20.uniform1i(normalMapUniform, 2);
 			normalMap = 2;
 		}
-
-		if (useLighting) {
-			int pointLightIndex = 0;
-			int dirLightIndex = 0;
-
-			for (int i = 0; i < scene.lights.size(); i++) {
-				Light light = scene.lights.get(i);
-				if (light instanceof AmbientLight) {
-					setColorIfChanged("ambientLightColor", light.color, ambientLightColor);
-				}
-
-				if (light instanceof PointLight) {
-					pointLightPositions.set(pointLightIndex * 3, ((PointLight) light).position.x);
-					pointLightPositions.set(pointLightIndex * 3 + 1, ((PointLight) light).position.y);
-					pointLightPositions.set(pointLightIndex * 3 + 2, ((PointLight) light).position.z);
-
-					pointLightColors.set(pointLightIndex * 4, light.color.r);
-					pointLightColors.set(pointLightIndex * 4 + 1, light.color.g);
-					pointLightColors.set(pointLightIndex * 4 + 2, light.color.b);
-					pointLightColors.set(pointLightIndex * 4 + 3, light.color.a);
-
-					pointLightIndex++;
-				}
-
-				if (light instanceof DirectionalLight) {
-					dirLightDirections.set(dirLightIndex * 3, ((DirectionalLight) light).direction.x);
-					dirLightDirections.set(dirLightIndex * 3 + 1, ((DirectionalLight) light).direction.y);
-					dirLightDirections.set(dirLightIndex * 3 + 2, ((DirectionalLight) light).direction.z);
-
-					dirLightColors.set(dirLightIndex * 4, light.color.r);
-					dirLightColors.set(dirLightIndex * 4 + 1, light.color.g);
-					dirLightColors.set(dirLightIndex * 4 + 2, light.color.b);
-					dirLightColors.set(dirLightIndex * 4 + 3, light.color.a);
-
-					dirLightIndex++;
-				}
-			}
-			if (maxPointLights > 0) {
-				GLES20.uniform3fv(uniforms.get("pointLightPosition"), pointLightPositions);
-				GLES20.uniform4fv(uniforms.get("pointLightColor"), pointLightColors);
-			}
-			if (maxDirLights > 0) {
-				GLES20.uniform3fv(uniforms.get("dirLightDirection"), dirLightDirections);
-				GLES20.uniform4fv(uniforms.get("dirLightColor"), dirLightColors);
-			}
+		if (sceneProgramPlugin != null) {
+			sceneProgramPlugin.onSetSceneUniforms(scene);
 		}
-
-		if (useShaderPlugins) {
-			for (int i = 0; i < scene.shaderPlugins.size(); i++) {
-				scene.shaderPlugins.get(i).setSceneUniforms(this);
-			}
+		if (materialProgramPlugin != null) {
+			materialProgramPlugin.onSetSceneUniforms(scene);
 		}
 	}
 
@@ -408,21 +295,11 @@ public class Program extends jmini3d.shader.Program {
 			return;
 		}
 
-		if (!Arrays.equals(this.projectionMatrix, projectionMatrix)) {
-			GLES20.uniformMatrix4fv(uniforms.get("projectionMatrix"), false, projectionMatrix);
-			System.arraycopy(projectionMatrix, 0, this.projectionMatrix, 0, 16);
-		}
-		if (!Arrays.equals(this.viewMatrix, viewMatrix)) {
-			GLES20.uniformMatrix4fv(uniforms.get("viewMatrix"), false, viewMatrix);
-			System.arraycopy(viewMatrix, 0, this.viewMatrix, 0, 16);
-		}
-		if (!Arrays.equals(modelMatrix, o3d.modelMatrix)) {
-			GLES20.uniformMatrix4fv(uniforms.get("modelMatrix"), false, o3d.modelMatrix);
-			System.arraycopy(o3d.modelMatrix, 0, modelMatrix, 0, 16);
-		}
-		if ((useNormals || useNormalMap) && o3d.normalMatrix != null && !Arrays.equals(normalMatrix, o3d.normalMatrix)) {
-			GLES20.uniformMatrix3fv(uniforms.get("normalMatrix"), false, o3d.normalMatrix);
-			System.arraycopy(o3d.normalMatrix, 0, normalMatrix, 0, 9);
+		setMatrix4UniformIfChanged(projectionMatrixUniform, projectionMatrix, this.projectionMatrix);
+		setMatrix4UniformIfChanged(viewMatrixUniform, viewMatrix, this.viewMatrix);
+		setMatrix4UniformIfChanged(modelMatrixUniform, o3d.modelMatrix, this.modelMatrix);
+		if ((useNormals || useNormalMap) && o3d.normalMatrix != null) {
+			setMatrix3UniformIfChanged(normalMatrixUniform, o3d.normalMatrix, this.normalMatrix);
 		}
 
 		GeometryBuffers buffers = gpuUploader.upload(o3d.geometry3d);
@@ -494,10 +371,8 @@ public class Program extends jmini3d.shader.Program {
 			activeFacesBuffer = buffers.facesBufferId;
 		}
 
-		if (!objectColor.equals(o3d.material.color)) {
-			GLES20.uniform4f(uniforms.get("objectColor"), o3d.material.color.r, o3d.material.color.g, o3d.material.color.b, o3d.material.color.a);
-			objectColor.setAllFrom(o3d.material.color);
-		}
+		setColorUniformIfChanged(objectColorUniform, o3d.material.color, objectColor);
+
 		if (useMap) {
 			Integer mapTextureId = gpuUploader.textures.get(o3d.material.map);
 			if (renderer3d.mapTextureId == null || renderer3d.mapTextureId != mapTextureId) {
@@ -511,7 +386,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 		if (useEnvMap) {
 			if (reflectivity != o3d.material.reflectivity) {
-				GLES20.uniform1f(uniforms.get("reflectivity"), o3d.material.reflectivity);
+				GLES20.uniform1f(reflectivityUniform, o3d.material.reflectivity);
 				reflectivity = o3d.material.reflectivity;
 			}
 			Integer envMapTextureId = gpuUploader.cubeMapTextures.get(o3d.material.envMap);
@@ -535,24 +410,119 @@ public class Program extends jmini3d.shader.Program {
 				renderer3d.normalMapTextureId = normalMapTextureId;
 			}
 		}
-		if (useLighting) {
-			setColorIfChanged("ambientColor", ((PhongMaterial) o3d.material).ambient, ambientColor);
-			setColorIfChanged("diffuseColor", ((PhongMaterial) o3d.material).diffuse, diffuseColor);
-			setColorIfChanged("specularColor", ((PhongMaterial) o3d.material).specular, specularColor);
-			if (shininess != ((PhongMaterial) o3d.material).shininess) {
-				shininess = ((PhongMaterial) o3d.material).shininess;
-				GLES20.uniform1f(uniforms.get("shininess"), shininess);
-			}
+		if (sceneProgramPlugin != null) {
+			sceneProgramPlugin.onDrawObject(o3d);
+		}
+		if (materialProgramPlugin != null) {
+			materialProgramPlugin.onDrawObject(o3d);
 		}
 		GLES20.drawElements(WebGLRenderingContext.TRIANGLES, o3d.geometry3d.facesLength, WebGLRenderingContext.UNSIGNED_SHORT, 0);
 	}
 
-	private void setColorIfChanged(String uniform, Color4 newColor, Color4 lastColor) {
-		if (!newColor.equals(lastColor)) {
-			GLES20.uniform4f(uniforms.get(uniform), newColor.r, newColor.g, newColor.b, newColor.a);
-			lastColor.setAllFrom(newColor);
+	@Override
+	public int getUniformLocation(String uniformName) {
+		return GLES20.getUniformLocation(webGLProgram, uniformName);
+	}
+
+	@Override
+	public float setFloatUniformIfValueChanged(int uniform, float uniformValue, float lastValue) {
+		if (lastValue != uniformValue) {
+			GLES20.uniform1f(uniform, uniformValue);
+		}
+		return uniformValue;
+	}
+
+	private void setMatrix3UniformIfChanged(int matrixUniform, float newMatrix[], float lastMatrix[]) {
+		if (lastMatrix[0] != newMatrix[0]
+				|| lastMatrix[1] != newMatrix[1]
+				|| lastMatrix[2] != newMatrix[2]
+				|| lastMatrix[3] != newMatrix[3]
+				|| lastMatrix[4] != newMatrix[4]
+				|| lastMatrix[5] != newMatrix[5]
+				|| lastMatrix[6] != newMatrix[6]
+				|| lastMatrix[7] != newMatrix[7]
+				|| lastMatrix[8] != newMatrix[8]) {
+			GLES20.uniformMatrix3fv(matrixUniform, false, newMatrix);
+			lastMatrix[0] = newMatrix[0];
+			lastMatrix[1] = newMatrix[1];
+			lastMatrix[2] = newMatrix[2];
+			lastMatrix[3] = newMatrix[3];
+			lastMatrix[4] = newMatrix[4];
+			lastMatrix[5] = newMatrix[5];
+			lastMatrix[6] = newMatrix[6];
+			lastMatrix[7] = newMatrix[7];
+			lastMatrix[8] = newMatrix[8];
 		}
 	}
+
+	private void setMatrix4UniformIfChanged(int matrixUniform, float newMatrix[], float lastMatrix[]) {
+		if (lastMatrix[0] != newMatrix[0]
+				|| lastMatrix[1] != newMatrix[1]
+				|| lastMatrix[2] != newMatrix[2]
+				|| lastMatrix[3] != newMatrix[3]
+				|| lastMatrix[4] != newMatrix[4]
+				|| lastMatrix[5] != newMatrix[5]
+				|| lastMatrix[6] != newMatrix[6]
+				|| lastMatrix[7] != newMatrix[7]
+				|| lastMatrix[8] != newMatrix[8]
+				|| lastMatrix[9] != newMatrix[9]
+				|| lastMatrix[10] != newMatrix[10]
+				|| lastMatrix[11] != newMatrix[11]
+				|| lastMatrix[12] != newMatrix[12]
+				|| lastMatrix[13] != newMatrix[13]
+				|| lastMatrix[14] != newMatrix[14]
+				|| lastMatrix[15] != newMatrix[15]) {
+			GLES20.uniformMatrix4fv(matrixUniform, false, newMatrix);
+			lastMatrix[0] = newMatrix[0];
+			lastMatrix[1] = newMatrix[1];
+			lastMatrix[2] = newMatrix[2];
+			lastMatrix[3] = newMatrix[3];
+			lastMatrix[4] = newMatrix[4];
+			lastMatrix[5] = newMatrix[5];
+			lastMatrix[6] = newMatrix[6];
+			lastMatrix[7] = newMatrix[7];
+			lastMatrix[8] = newMatrix[8];
+			lastMatrix[9] = newMatrix[9];
+			lastMatrix[10] = newMatrix[10];
+			lastMatrix[11] = newMatrix[11];
+			lastMatrix[12] = newMatrix[12];
+			lastMatrix[13] = newMatrix[13];
+			lastMatrix[14] = newMatrix[14];
+			lastMatrix[15] = newMatrix[15];
+		}
+	}
+
+	@Override
+	public void setColorUniformIfChanged(int colorUniform, Color4 newColor, Color4 lastColor) {
+		if (newColor.r != lastColor.r || newColor.g != lastColor.g || newColor.b != lastColor.b || newColor.a != lastColor.a) {
+			GLES20.uniform4f(colorUniform, newColor.r, newColor.g, newColor.b, newColor.a);
+			lastColor.r = newColor.r;
+			lastColor.g = newColor.g;
+			lastColor.b = newColor.b;
+			lastColor.a = newColor.a;
+		}
+	}
+
+	@Override
+	public void setUniform3fv(int location, int count, float[] v) {
+		GLES20.uniform3fv(location, v);
+	}
+
+	@Override
+	public void setUniform4fv(int location, int count, float[] v) {
+		GLES20.uniform4fv(location, v);
+	}
+
+	@Override
+	public void setUseNormals(boolean useNormals) {
+		this.useNormals = useNormals;
+	}
+
+	@Override
+	public void setUseCameraPosition(boolean useCameraPosition) {
+		this.useCameraPosition = useCameraPosition;
+	}
+
 
 	private WebGLShader getShader(int type, String source) {
 		WebGLShader shader = GLES20.createShader(type);

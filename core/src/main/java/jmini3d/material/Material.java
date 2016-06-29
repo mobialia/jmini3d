@@ -4,6 +4,7 @@ import jmini3d.Blending;
 import jmini3d.Color4;
 import jmini3d.CubeMapTexture;
 import jmini3d.Texture;
+import jmini3d.shader.ShaderPlugin;
 
 public class Material {
 	public int shaderKey = -1;
@@ -15,7 +16,10 @@ public class Material {
 	public boolean useEnvMapAsMap = false;
 	public boolean applyColorToAlpha = false;
 	public boolean useVertexColors = false;
+	public boolean useLigths = false;
 	public float reflectivity = 0f;
+
+	public ShaderPlugin shaderPlugin = null;
 
 	public Material() {
 		color = new Color4(0, 0, 0, 0);
@@ -67,6 +71,11 @@ public class Material {
 
 	public void setNormalMap(Texture normalMap) {
 		this.normalMap = normalMap;
+		shaderKey = -1;
+	}
+
+	public void setShaderPlugin(ShaderPlugin shaderPlugin) {
+		this.shaderPlugin = shaderPlugin;
 		shaderKey = -1;
 	}
 }
