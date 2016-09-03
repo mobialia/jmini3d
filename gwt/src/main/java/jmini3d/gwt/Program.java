@@ -30,7 +30,7 @@ public class Program extends jmini3d.shader.Program {
 		console.log(message);
     }-*/;
 
-	public void init(Scene scene, Material material, ResourceLoader resourceLoader) {
+	public void init(final Scene scene, final Material material, ResourceLoader resourceLoader) {
 		prepareShader(scene, material);
 
 		resourceLoader.loadShader(vertexShaderName, new ResourceLoader.OnTextResourceLoaded() {
