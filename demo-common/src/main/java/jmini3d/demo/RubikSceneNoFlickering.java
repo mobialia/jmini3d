@@ -38,7 +38,7 @@ public class RubikSceneNoFlickering extends ParentScene {
 	Vector3 positions[] = new Vector3[9];
 
 	public RubikSceneNoFlickering() {
-		super("Rubik demo, no flickering");
+		super("Rubik demo");
 
 		CubeMapTexture envMap = new CubeMapTexture(new String[]{"posx.png", "negx.png", "posy.png", "negy.png", "posz.png", "negz.png"});
 
@@ -52,6 +52,8 @@ public class RubikSceneNoFlickering extends ParentScene {
 		Texture map = new Texture("cube.png");
 		Material material1 = new Material(map);
 		material1.setUseVertexColors(true);
+		material1.setApplyColorToAlpha(true);
+		material1.setColor(new Color4(255, 0, 0, 255));
 		Geometry geometry = new BoxGeometry(1);
 
 		Color4 colors[][] = {
