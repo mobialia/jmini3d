@@ -229,22 +229,20 @@ public class GpuUploader {
 
 	public void unload(Object o) {
 		if (o instanceof Geometry) {
-			if (geometryBuffers.containsKey(o)) {
+			GeometryBuffers buffers = geometryBuffers.remove(o);
+			if (buffers != null) {
 				((Geometry) o).status = 0;
-				GeometryBuffers buffers = geometryBuffers.remove(o);
-				if (buffers != null) {
-					if (buffers.vertexBufferId != null) {
-						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
-					}
-					if (buffers.normalsBufferId != null) {
-						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
-					}
-					if (buffers.uvsBufferId != null) {
-						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
-					}
-					if (buffers.facesBufferId != null) {
-						GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
-					}
+				if (buffers.vertexBufferId != null) {
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.vertexBufferId}));
+				}
+				if (buffers.normalsBufferId != null) {
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.normalsBufferId}));
+				}
+				if (buffers.uvsBufferId != null) {
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.uvsBufferId}));
+				}
+				if (buffers.facesBufferId != null) {
+					GLES20.glDeleteBuffers(1, IntBuffer.wrap(new int[]{buffers.facesBufferId}));
 				}
 			}
 		} else if (o instanceof Texture) {
