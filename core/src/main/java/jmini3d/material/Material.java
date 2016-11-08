@@ -78,4 +78,13 @@ public class Material {
 		this.shaderPlugin = shaderPlugin;
 		shaderKey = -1;
 	}
+
+	public Color4 getColor() {
+		return color;
+	}
+
+	public void setColor(Color4 color) {
+		this.color = color;
+		shaderKey = -1;
+	}
 }

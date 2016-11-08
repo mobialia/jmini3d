@@ -251,22 +251,20 @@ public class GpuUploader {
 
 	public void unload(Object o) {
 		if (o instanceof Geometry) {
-			if (geometryBuffers.containsKey(o)) {
+			GeometryBuffers buffers = geometryBuffers.remove(o);
+			if (buffers != null) {
 				((Geometry) o).status = 0;
-				GeometryBuffers buffers = geometryBuffers.remove(o);
-				if (buffers != null) {
-					if (buffers.vertexBufferId != null) {
-						gl.deleteBuffer(buffers.vertexBufferId);
-					}
-					if (buffers.normalsBufferId != null) {
-						gl.deleteBuffer(buffers.normalsBufferId);
-					}
-					if (buffers.uvsBufferId != null) {
-						gl.deleteBuffer(buffers.uvsBufferId);
-					}
-					if (buffers.facesBufferId != null) {
-						gl.deleteBuffer(buffers.facesBufferId);
-					}
+				if (buffers.vertexBufferId != null) {
+					gl.deleteBuffer(buffers.vertexBufferId);
+				}
+				if (buffers.normalsBufferId != null) {
+					gl.deleteBuffer(buffers.normalsBufferId);
+				}
+				if (buffers.uvsBufferId != null) {
+					gl.deleteBuffer(buffers.uvsBufferId);
+				}
+				if (buffers.facesBufferId != null) {
+					gl.deleteBuffer(buffers.facesBufferId);
 				}
 			}
 		} else if (o instanceof Texture) {
