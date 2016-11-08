@@ -24,10 +24,10 @@ public class Renderer3d implements jmini3d.Renderer3d {
 
 	WebGLRenderingContext GLES20;
 
-	public Renderer3d(WebGLRenderingContext gl, ResourceLoader resourceLoader, TextureLoadedListener textureLoadedListener) {
+	public Renderer3d(WebGLRenderingContext gl, ResourceLoader resourceLoader, GpuUploaderListener gpuUploaderListener) {
 		this.GLES20 = gl;
 		this.resourceLoader = resourceLoader;
-		gpuUploader = new GpuUploader(gl, resourceLoader, textureLoadedListener);
+		gpuUploader = new GpuUploader(gl, resourceLoader, gpuUploaderListener);
 		reset();
 	}
 
