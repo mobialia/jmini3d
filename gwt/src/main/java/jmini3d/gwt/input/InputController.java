@@ -204,6 +204,12 @@ public class InputController implements EventListener {
 				case KeyCodes.KEY_BACKSPACE:
 					key = KeyListener.KEY_BACKSPACE;
 					break;
+				case KeyCodes.KEY_PAGEDOWN:
+					key = KeyListener.KEY_PAGEDOWN;
+					break;
+				case KeyCodes.KEY_PAGEUP:
+					key = KeyListener.KEY_PAGEUP;
+					break;
 			}
 			if (key != 0) {
 				boolean managed = false;
