@@ -30,7 +30,7 @@ public class Program extends jmini3d.shader.Program {
 		console.log(message);
     }-*/;
 
-	public void init(final Scene scene, final Material material, ResourceLoader resourceLoader) {
+	public void init(final Scene scene, final Material material, final ResourceLoader resourceLoader, final GpuUploaderListener gpuUploaderListener) {
 		prepareShader(scene, material);
 
 		resourceLoader.loadShader(vertexShaderName, new ResourceLoader.OnTextResourceLoaded() {
@@ -39,6 +39,9 @@ public class Program extends jmini3d.shader.Program {
 				vertexShaderLoaded = text;
 				if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
 					finishShaderLoad(scene, material);
+					if (gpuUploaderListener != null) {
+						gpuUploaderListener.onGpuUploadFinish();
+					}
 				}
 			}
 		});
@@ -48,6 +51,9 @@ public class Program extends jmini3d.shader.Program {
 				fragmentShaderLoaded = text;
 				if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
 					finishShaderLoad(scene, material);
+					if (gpuUploaderListener != null) {
+						gpuUploaderListener.onGpuUploadFinish();
+					}
 				}
 			}
 		});

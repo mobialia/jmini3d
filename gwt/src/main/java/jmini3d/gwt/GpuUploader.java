@@ -33,12 +33,12 @@ public class GpuUploader {
 	HashMap<CubeMapTexture, ImageElement[]> cubeMapImages = new HashMap<>();
 	ArrayList<Program> shaderPrograms = new ArrayList<>();
 
-	TextureLoadedListener textureLoadedListener;
+	GpuUploaderListener gpuUploaderListener;
 
-	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader, TextureLoadedListener textureLoadedListener) {
+	public GpuUploader(WebGLRenderingContext gl, ResourceLoader resourceLoader, GpuUploaderListener gpuUploaderListener) {
 		this.gl = gl;
 		this.resourceLoader = resourceLoader;
-		this.textureLoadedListener = textureLoadedListener;
+		this.gpuUploaderListener = gpuUploaderListener;
 	}
 
 	public Program getProgram(Scene scene, Material material) {
@@ -59,7 +59,7 @@ public class GpuUploader {
 		if (program == null) {
 			program = new Program(gl);
 			program.shaderKey = key;
-			program.init(scene, material, resourceLoader);
+			program.init(scene, material, resourceLoader, gpuUploaderListener);
 			shaderPrograms.add(program);
 		}
 		return program;
@@ -214,8 +214,8 @@ public class GpuUploader {
 
 		texture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 
-		if (textureLoadedListener != null) {
-			textureLoadedListener.onTextureLoaded();
+		if (gpuUploaderListener != null) {
+			gpuUploaderListener.onGpuUploadFinish();
 		}
 	}
 
@@ -243,8 +243,8 @@ public class GpuUploader {
 
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 
-			if (textureLoadedListener != null) {
-				textureLoadedListener.onTextureLoaded();
+			if (gpuUploaderListener != null) {
+				gpuUploaderListener.onGpuUploadFinish();
 			}
 		}
 	}
