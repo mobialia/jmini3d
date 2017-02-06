@@ -6,7 +6,7 @@ import jmini3d.material.Material;
 
 public class ProgramPlugin {
 
-	Program program;
+	protected Program program;
 
 	public ProgramPlugin(Program program) {
 		this.program = program;

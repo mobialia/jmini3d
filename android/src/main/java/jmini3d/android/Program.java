@@ -22,8 +22,8 @@ public class Program extends jmini3d.shader.Program {
 
 		prepareShader(scene, material);
 
-		StringBuffer vertexShaderStringBuffer = new StringBuffer();
-		StringBuffer fragmentShaderStringBuffer = new StringBuffer();
+		StringBuilder vertexShaderStringBuffer = new StringBuilder();
+		StringBuilder fragmentShaderStringBuffer = new StringBuilder();
 
 		// TODO precision
 		for (String k : shaderDefines.keySet()) {
