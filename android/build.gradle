@@ -4,7 +4,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
     }
 }
@@ -16,12 +15,12 @@ apply plugin: 'com.jfrog.bintray'
 archivesBaseName = 'jmini3d-android'
 
 dependencies {
-    compile project(':core')
+    api project(':core')
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "27.0.2"
 }
 
 task copyResources(type: Copy)

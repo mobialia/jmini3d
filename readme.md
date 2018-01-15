@@ -144,7 +144,7 @@ gradle compileGwt
 Then you can start a local Jetty webserver:
 ```
 cd demo-gwt
-gradle jettyRun
+gradle appRun
 ```
 and access with your web browser to http://localhost:8080/jmini3d/
 

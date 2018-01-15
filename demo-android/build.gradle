@@ -1,26 +1,15 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
-    }
-}
-
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile project(':core')
-    compile project(':android')
-    compile project(':demo-common')
+    implementation project(':core')
+    implementation project(':android')
+    implementation project(':demo-common')
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "27.0.2"
 }
-
 
 task copyResources(type: Copy)
 
