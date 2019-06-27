@@ -7,9 +7,11 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "27.0.2"
-
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
+    defaultConfig {
+        targetSdkVersion 29
+    }
     lintOptions {
         abortOnError false
     }

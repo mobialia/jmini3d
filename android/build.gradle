@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
 
@@ -19,8 +19,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "27.0.2"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
+    defaultConfig {
+        // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
+        minSdkVersion 9
+    }
 }
 
 task copyResources(type: Copy)
