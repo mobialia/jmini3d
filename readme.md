@@ -97,7 +97,7 @@ Export to OBJ from Blender (faces must be triangulated and normals outside) with
 And convert to a Java class with:
 ```
 cd utils
-gradle jar
+../gradlew jar
 java -cp ./build/libs/jmini3d-utils-0.9.3.jar jmini3d.utils.Obj2Class teapot.obj TeapotGeometry.java jmini3d.demo
 ```
 
@@ -111,7 +111,7 @@ In BMFont export options select "White text with alpha".
 To convert the FNT file to a Java class:
 ```
 cd utils
-gradle jar
+../gradlew jar
 java -cp ./build/libs/jmini3d-utils-0.9.3.jar jmini3d.utils.Fnt2Class arial.fnt ArialFont.java jmini3d.demo
 ```
 The font texture must be placed in the images folder. It supports fonts with only one texture.
@@ -133,18 +133,18 @@ This project is built with the Gradle build tool, you can download it from http:
 Buld Android demo and install it to the connected device or emulator:
 ```
 cd demo-android
-gradle installDebug
+../gradlew installDebug
 ```
 
 Build gwt demo in the demo-gwt/src/main/webapp/ directory:
 ```
 cd demo-gwt
-gradle compileGwt
+../gradlew compileGwt
 ```
 Then you can start a local Jetty webserver:
 ```
 cd demo-gwt
-gradle appRun
+../gradlew appRun
 ```
 and access with your web browser to http://localhost:8080/jmini3d/
 
