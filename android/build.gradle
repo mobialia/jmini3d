@@ -20,8 +20,9 @@ dependencies {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+    buildToolsVersion "29.0.2"
     defaultConfig {
+        targetSdkVersion 29
         // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
         minSdkVersion 9
     }
