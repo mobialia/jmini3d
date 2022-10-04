@@ -1,16 +1,5 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-    }
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
 
 archivesBaseName = 'jmini3d-android'
 
@@ -19,13 +8,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 32
     defaultConfig {
-        targetSdkVersion 29
+        targetSdkVersion 32
         // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
         minSdkVersion 9
     }
+    namespace 'jmini3d.android'
 }
 
 task copyResources(type: Copy)
@@ -43,8 +32,7 @@ task sourcesJar(type: Jar) {
     from 'src/main/java'
 }
 
-publishToMavenLocal.dependsOn 'assembleRelease'
-bintrayUpload.dependsOn 'assembleRelease'
+publishToMavenLocal.dependsOn ':android:bundleReleaseAar'
 
 publishing {
     publications {
@@ -53,21 +41,5 @@ publishing {
             artifact sourcesJar
             artifact('build/outputs/aar/jmini3d-android-release.aar')
         }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['jmini3dAndroid']
-    pkg {
-        repo = 'maven'
-        name = 'com.mobialia.jmini3d-android'
-        desc = 'Minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT'
-        userOrg = 'mobialia'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/mobialia/jmini3d.git'
-        githubRepo = 'mobialia/jmini3d'
-        publish = true
     }
 }

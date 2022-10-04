@@ -1,11 +1,11 @@
 buildscript {
     repositories {
-        google()
-        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
-
     dependencies {
-        classpath 'org.gretty:gretty:3.0.3'
+        classpath 'org.gretty:gretty:4.0.3'
     }
 }
 
@@ -15,8 +15,10 @@ apply plugin: 'org.gretty'
 archivesBaseName = 'jmini3d-gwt_demo'
 
 dependencies {
-    implementation 'com.google.gwt:gwt-user:2.9.0'
-    implementation 'com.google.gwt:gwt-dev:2.9.0'
+    implementation 'org.gwtproject:gwt-user:2.10.0'
+    implementation 'org.gwtproject:gwt-dev:2.10.0'
+    implementation 'com.github.mobialia:gwtgl:1.0.0'
+    implementation 'com.github.mobialia:gwtgl:1.0.0:sources'
     implementation project(':core')
     implementation project(path: ':core', configuration: 'archives')
     implementation project(':gwt')
@@ -39,13 +41,13 @@ task compileGwt(dependsOn: classes, type: JavaExec) {
         file(buildDir).mkdirs()
     }
 
-    main = 'com.google.gwt.dev.Compiler'
+    mainClass = 'com.google.gwt.dev.Compiler'
 
     classpath {
         [
                 sourceSets.main.java.srcDirs,           // Java source
                 sourceSets.main.output.resourcesDir,    // Generated resources
-                sourceSets.main.java.outputDir,         // Generated classes
+                sourceSets.main.java.classesDirectory,  // Generated classes
                 sourceSets.main.compileClasspath,       // Deps
         ]
     }
@@ -58,13 +60,8 @@ task compileGwt(dependsOn: classes, type: JavaExec) {
                     '-logLevel', 'INFO',
                     '-localWorkers', '2',
                     '-style', 'PRETTY',
-                    //'-optimize', '9',        // No effect?
                     '-XdisableCastChecking',   // Disables runtime checking of cast operations. This can reduce compiled file sizes.
                     '-XdisableClassMetadata',  // Disables some java.lang.Class methods. This can reduce compiled file sizes.
-                    //'-XenableClosureCompiler', // This should create smaller JavaScript output. Not compatible with the compile report
-                    //'-compileReport',
-                    //'-XsoycDetailed',
-                    //'-XcompilerMetrics',
             ]
 
     maxHeapSize = '512M'
@@ -74,7 +71,7 @@ jar.dependsOn compileGwt
 
 task gwtSuperDev(dependsOn: classes, type: JavaExec) {
 
-    main = 'com.google.gwt.dev.codeserver.CodeServer'
+    mainClass = 'com.google.gwt.dev.codeserver.CodeServer'
 
     classpath {
         [
@@ -113,6 +110,6 @@ copyShaders {
 compileJava.dependsOn copyShaders
 
 gretty {
-    servletContainer = 'jetty7'
+    servletContainer = 'tomcat10'
     contextPath = '/jmini3d'
 }

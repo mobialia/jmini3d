@@ -1,5 +1,7 @@
 JMini3d
 =======
+[![Release](https://jitpack.io/v/mobialia/jmini3d.svg)](https://jitpack.io/#mobialia/jmini3d)
+
 Minimalistic OpenGL2 3d engine for mobile apps that supports Android and GWT (Google Web Toolkit, to create HTML5 apps developing in Java).
 
 HTML5 demo: http://www.mobialia.com/jmini3d-demo-gwt/
@@ -154,14 +156,14 @@ This library's JARs and AARs are distributed via Mobialia's bintray repo (https:
 To use them, first include this repository in your gradle file:
 ```
 repositories {
-    maven { url 'https://dl.bintray.com/mobialia/maven' }
+    maven { url 'https://jitpack.io' }
 }
 ```
 and then reference the Jmini3D libraries; example for an Android project:
 ```
 dependencies {
-    compile 'com.mobialia:jmini3d-core:0.9.3'
-    compile 'com.mobialia:jmini3d-android:0.9.3@aar'
+    implementation 'com.github.mobialia:jmini3d-core:0.9.4'
+    implementation 'com.github.mobialia:jmini3d-android:0.9.4@aar'
 }
 ```
 
