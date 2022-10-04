@@ -9,6 +9,9 @@ dependencies {
 android {
     compileSdkVersion 32
     defaultConfig {
+        versionCode 1
+        versionName "1.0"
+
         targetSdkVersion 32
         minSdkVersion 9
     }
