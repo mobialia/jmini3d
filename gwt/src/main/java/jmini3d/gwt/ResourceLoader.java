@@ -36,7 +36,7 @@ public class ResourceLoader {
 	 *
 	 * @param file
 	 */
-	public void loadShader(String file, OnTextResourceLoaded listener) {
+	public void loadShader(String file, final OnTextResourceLoaded listener) {
 		XMLHttpRequest request = XMLHttpRequest.create();
 
 		request.setOnReadyStateChange(new ReadyStateChangeHandler() {

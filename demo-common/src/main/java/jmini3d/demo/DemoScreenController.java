@@ -14,9 +14,9 @@ public class DemoScreenController implements ScreenController, TouchListener, Ke
 	long initialTime;
 
 	int sceneIndex = 0;
-	ParentScene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectsScene(), new RubikSceneFlickering(), new RubikSceneNoFlickering()};
+	ParentScene scenes[] = {new TeapotScene(), new CubeScene(), new EnvMapCubeScene(), new CubesScene(), new NormalMapScene(), new ChildObjectsScene(), new RubikSceneNoFlickering()};
 	ArrowsHudScene hudScene;
-	int cameraModes[] = {0, 0, 0, 0, 1, 2, 2, 2};
+	int cameraModes[] = {0, 0, 0, 0, 1, 2, 2};
 
 	public DemoScreenController() {
 		initialTime = System.currentTimeMillis();

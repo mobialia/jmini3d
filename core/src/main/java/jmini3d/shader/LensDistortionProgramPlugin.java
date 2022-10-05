@@ -3,9 +3,6 @@ package jmini3d.shader;
 import jmini3d.Scene;
 import jmini3d.material.Material;
 
-/**
- * A barrel lens distortion shader plugin applied at vertex level
- */
 public class LensDistortionProgramPlugin extends ProgramPlugin {
 
 	LensDistortionShaderPlugin lensDistortionShaderPlugin;

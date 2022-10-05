@@ -9,7 +9,7 @@ import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 
 import jmini3d.ScreenController;
 
-public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLoadedListener {
+public class Canvas3d implements AnimationScheduler.AnimationCallback, GpuUploaderListener {
 
 	Element webGLCanvas;
 	WebGLRenderingContext gl;
@@ -116,12 +116,12 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, TextureLo
 	}
 
 	@Override
-	public void onTextureLoaded() {
+	public void onGpuUploadFinish() {
 		requestRender();
 	}
 
 	/**
-	 * If true, framerate and memory is periodically calculated and Log'ed, and
+	 * If true, framerate and memory are periodically calculated and logged, and
 	 * gettable thru fps()
 	 */
 	public void setLogFps(boolean b) {

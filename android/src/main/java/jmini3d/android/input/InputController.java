@@ -21,10 +21,16 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 	HashMap<Integer, TouchPointer> pointers = new HashMap<Integer, TouchPointer>();
 	HashMap<Integer, TouchPointer> pointersAux = new HashMap<Integer, TouchPointer>();
 
+	long onTouchSleepPeriod = 16;
+
 	View view;
 
 	public InputController(View view) {
 		this.view = view;
+	}
+
+	public void setOnTouchSleepPeriod(long onTouchSleepPeriod) {
+		this.onTouchSleepPeriod = onTouchSleepPeriod;
 	}
 
 	public void setTouchListener(TouchListener touchListener) {
@@ -59,7 +65,6 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 					touchPointer = new TouchPointer();
 				}
 
-				new TouchPointer();
 				if (Build.VERSION.SDK_INT >= 5) {
 					touchPointer.x = (int) CompatibilityWrapper5.getX(event, pointerIndex);
 					touchPointer.y = (int) CompatibilityWrapper5.getY(event, pointerIndex);
@@ -109,11 +114,13 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 				break;
 		}
 
-		try {
-			// Avoid event flood
-			Thread.sleep(16);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (onTouchSleepPeriod > 0) {
+			try {
+				// Avoid event flood
+				Thread.sleep(onTouchSleepPeriod);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}

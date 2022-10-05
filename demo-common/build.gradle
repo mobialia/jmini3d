@@ -1,8 +1,7 @@
 apply plugin: 'java'
-apply plugin: 'maven'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 11
+targetCompatibility = 11
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
@@ -14,5 +13,5 @@ artifacts {
 }
 
 dependencies {
-    compile project(':core')
+    implementation project(':core')
 }

@@ -1,5 +1,8 @@
 package jmini3d.shader;
 
+/**
+ * A pincushion lens distortion shader plugin applied at vertex level
+ */
 public class LensDistortionShaderPlugin extends ShaderPlugin {
 
 	float c1, c2, c3, c4, c5, c6, maxRadiusSQ;
