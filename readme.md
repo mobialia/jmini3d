@@ -132,7 +132,7 @@ Build
 =====
 This project is built with the Gradle build tool, you can download it from http://www.gradle.org
 
-Buld Android demo and install it to the connected device or emulator:
+Build Android demo and install it to the connected device or emulator:
 ```
 cd demo-android
 ../gradlew installDebug
@@ -143,7 +143,8 @@ Build gwt demo in the demo-gwt/src/main/webapp/ directory:
 cd demo-gwt
 ../gradlew compileGwt
 ```
-Then you can start a local Jetty webserver:
+
+You can start a local webserver:
 ```
 cd demo-gwt
 ../gradlew appRun
