@@ -163,8 +163,8 @@ repositories {
 and then reference the Jmini3D libraries; example for an Android project:
 ```
 dependencies {
-    implementation 'com.github.mobialia:jmini3d-core:0.9.4'
-    implementation 'com.github.mobialia:jmini3d-android:0.9.4@aar'
+    implementation 'com.github.mobialia.jmini3d:jmini3d-core:0.9.4'
+    implementation 'com.github.mobialia.jmini3d:jmini3d-android:0.9.4@aar'
 }
 ```
 
