@@ -51,7 +51,7 @@ public class Utils {
 		float dot2 = acx * aix + acy * aiy + acz * aiz;
 
 		float ablength = (float) Math.sqrt(abx * abx + aby * aby + abz * abz);
-		float aclength = (float) Math.sqrt(abx * abx + aby * aby + abz * abz);
+		float aclength = (float) Math.sqrt(acx * acx + acy * acy + acz * acz);
 
 		return 0 <= dot1 && dot1 <= ablength * ablength &&
 				0 <= dot2 && dot2 <= aclength * aclength;
