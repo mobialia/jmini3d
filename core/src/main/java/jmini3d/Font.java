@@ -11,7 +11,7 @@ import jmini3d.material.SpriteMaterial;
  */
 public class Font {
 
-	public class CharSprite {
+	public static class CharSprite {
 		int x;
 		int y;
 		int width;
@@ -23,17 +23,17 @@ public class Font {
 		int chnl;
 	}
 
-	public class Kerning {
+	public static class Kerning {
 		char first;
 		char second;
 		int amount;
 	}
 
 	int lineHeight, base, scaleW, scaleH, pages, packed, alphaChnl, redChnl, greenChnl, blueChnl;
-	ArrayList<Texture> textures = new ArrayList<Texture>();
+	ArrayList<Texture> textures = new ArrayList<>();
 
-	HashMap<Character, CharSprite> chars = new HashMap<Character, CharSprite>();
-	ArrayList<Kerning> kernings = new ArrayList<Kerning>();
+	HashMap<Character, CharSprite> chars = new HashMap<>();
+	ArrayList<Kerning> kernings = new ArrayList<>();
 
 	public Font() {
 
@@ -74,9 +74,9 @@ public class Font {
 
 	public void addKerning(int first, int second, int amount) {
 		Kerning kerning = new Kerning();
-		kerning.first = Character.toChars(Integer.valueOf(first))[0];
-		kerning.second = Character.toChars(Integer.valueOf(second))[0];
-		kerning.amount = Integer.valueOf(amount);
+		kerning.first = Character.toChars(first)[0];
+		kerning.second = Character.toChars(second)[0];
+		kerning.amount = amount;
 		kernings.add(kerning);
 	}
 

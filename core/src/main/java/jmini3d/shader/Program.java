@@ -72,10 +72,10 @@ public abstract class Program {
 	public int mapLast = -1;
 	public int envMapLast = -1;
 	public int normalMapLast = -1;
-	public float projectionMatrixLast[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	public float viewMatrixLast[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	public float modelMatrixLast[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	public float normalMatrixLast[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+	public float[] projectionMatrixLast = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	public float[] viewMatrixLast = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	public float[] modelMatrixLast = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	public float[] normalMatrixLast = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	public Color4 objectColorLast = Color4.fromFloat(-1, -1, -1, -1);
 	public Vector3 cameraPositionLast = new Vector3(0, 0, 0);
 	public float reflectivityLast;

@@ -28,11 +28,11 @@ public class Program extends jmini3d.shader.Program {
 		// TODO precision
 		for (String k : shaderDefines.keySet()) {
 			if (shaderDefines.get(k) == null) {
-				vertexShaderStringBuffer.append("#define " + k + "\n");
-				fragmentShaderStringBuffer.append("#define " + k + "\n");
+				vertexShaderStringBuffer.append("#define ").append(k).append("\n");
+				fragmentShaderStringBuffer.append("#define ").append(k).append("\n");
 			} else {
-				vertexShaderStringBuffer.append("#define " + k + " " + shaderDefines.get(k) + "\n");
-				fragmentShaderStringBuffer.append("#define " + k + " " + shaderDefines.get(k) + "\n");
+				vertexShaderStringBuffer.append("#define ").append(k).append(" ").append(shaderDefines.get(k)).append("\n");
+				fragmentShaderStringBuffer.append("#define ").append(k).append(" ").append(shaderDefines.get(k)).append("\n");
 			}
 		}
 
@@ -98,7 +98,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 	}
 
-	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] projectionMatrix, float viewMatrix[]) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] projectionMatrix, float[] viewMatrix) {
 		setMatrix4UniformIfChanged(projectionMatrixUniform, projectionMatrix, this.projectionMatrixLast);
 		setMatrix4UniformIfChanged(viewMatrixUniform, viewMatrix, this.viewMatrixLast);
 		setMatrix4UniformIfChanged(modelMatrixUniform, o3d.modelMatrix, this.modelMatrixLast);
@@ -243,7 +243,7 @@ public class Program extends jmini3d.shader.Program {
 		return uniformValue;
 	}
 
-	private void setMatrix3UniformIfChanged(int matrixUniform, float newMatrix[], float lastMatrix[]) {
+	private void setMatrix3UniformIfChanged(int matrixUniform, float[] newMatrix, float[] lastMatrix) {
 		if (lastMatrix[0] != newMatrix[0]
 				|| lastMatrix[1] != newMatrix[1]
 				|| lastMatrix[2] != newMatrix[2]
@@ -266,7 +266,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 	}
 
-	private void setMatrix4UniformIfChanged(int matrixUniform, float newMatrix[], float lastMatrix[]) {
+	private void setMatrix4UniformIfChanged(int matrixUniform, float[] newMatrix, float[] lastMatrix) {
 		if (lastMatrix[0] != newMatrix[0]
 				|| lastMatrix[1] != newMatrix[1]
 				|| lastMatrix[2] != newMatrix[2]

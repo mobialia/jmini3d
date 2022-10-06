@@ -14,7 +14,7 @@ public class ResourceLoader {
 
 	Context context;
 
-	HashMap<String, Bitmap> customBitmaps = new HashMap<String, Bitmap>();
+	HashMap<String, Bitmap> customBitmaps = new HashMap<>();
 
 	public ResourceLoader(Context ctx) {
 		this.context = ctx;

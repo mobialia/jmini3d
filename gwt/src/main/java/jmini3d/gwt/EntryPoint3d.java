@@ -2,8 +2,6 @@ package jmini3d.gwt;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
 
 public class EntryPoint3d implements EntryPoint {
@@ -16,11 +14,7 @@ public class EntryPoint3d implements EntryPoint {
 		canvas3d = new Canvas3d(resourceDir, shaderDir);
 		canvas3d.setScale(canvas3d.getDevicePixelRatio());
 		canvas3d.setSize(Window.getClientWidth(), Window.getClientHeight());
-		Window.addResizeHandler(new ResizeHandler() {
-			public void onResize(ResizeEvent event) {
-				canvas3d.setSize(event.getWidth(), event.getHeight());
-			}
-		});
+		Window.addResizeHandler(event -> canvas3d.setSize(event.getWidth(), event.getHeight()));
 
 		onCreateSetContentView();
 

@@ -18,8 +18,8 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 	TouchListener touchListener;
 	KeyListener keyListener;
 
-	HashMap<Integer, TouchPointer> pointers = new HashMap<Integer, TouchPointer>();
-	HashMap<Integer, TouchPointer> pointersAux = new HashMap<Integer, TouchPointer>();
+	HashMap<Integer, TouchPointer> pointers = new HashMap<>();
+	HashMap<Integer, TouchPointer> pointersAux = new HashMap<>();
 
 	long onTouchSleepPeriod = 16;
 
@@ -60,7 +60,7 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 		switch (action & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				TouchPointer touchPointer = pointersAux.get(Integer.valueOf(pointerId));
+				TouchPointer touchPointer = pointersAux.get(pointerId);
 				if (touchPointer == null) {
 					touchPointer = new TouchPointer();
 				}
@@ -102,12 +102,12 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_UP:
-				TouchPointer upPointer = pointers.get(Integer.valueOf(pointerId));
+				TouchPointer upPointer = pointers.get(pointerId);
 				upPointer.status = TouchPointer.TOUCH_UP;
 				if (touchListener != null) {
 					touchListener.onTouch(pointers);
 				}
-				pointers.remove(Integer.valueOf(pointerId));
+				pointers.remove(pointerId);
 				pointersAux.put(pointerId, upPointer);
 				break;
 			case MotionEvent.ACTION_OUTSIDE:

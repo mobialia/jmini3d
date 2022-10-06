@@ -61,9 +61,7 @@ public class Scene {
 	}
 
 	public void removeChild(Object3d o) {
-		if (children.contains(o)) {
-			children.remove(o);
-		}
+		children.remove(o);
 	}
 
 	public Camera getCamera() {

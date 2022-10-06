@@ -3,7 +3,6 @@ package jmini3d.gwt;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class ResourceLoader {
@@ -11,8 +10,8 @@ public class ResourceLoader {
 	String resourcePath;
 	String shaderPath;
 
-	public static interface OnTextResourceLoaded {
-		public void onResourceLoaded(String text);
+	public interface OnTextResourceLoaded {
+		void onResourceLoaded(String text);
 	}
 
 	/**
@@ -39,14 +38,10 @@ public class ResourceLoader {
 	public void loadShader(String file, final OnTextResourceLoaded listener) {
 		XMLHttpRequest request = XMLHttpRequest.create();
 
-		request.setOnReadyStateChange(new ReadyStateChangeHandler() {
-
-			@Override
-			public void onReadyStateChange(XMLHttpRequest xhr) {
-				if (xhr.getReadyState() == XMLHttpRequest.DONE) {
-					// ASYNC
-					listener.onResourceLoaded(xhr.getResponseText());
-				}
+		request.setOnReadyStateChange(xhr -> {
+			if (xhr.getReadyState() == XMLHttpRequest.DONE) {
+				// ASYNC
+				listener.onResourceLoaded(xhr.getResponseText());
 			}
 		});
 

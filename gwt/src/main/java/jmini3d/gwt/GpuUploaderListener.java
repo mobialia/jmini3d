@@ -6,6 +6,6 @@ package jmini3d.gwt;
  */
 public interface GpuUploaderListener {
 
-	public void onGpuUploadFinish();
+	void onGpuUploadFinish();
 
 }

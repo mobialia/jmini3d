@@ -4,7 +4,6 @@ import com.google.gwt.core.client.JsArrayUtils;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.typedarrays.client.JsUtils;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 
@@ -160,12 +159,7 @@ public class GpuUploader {
 			} else {
 				textureImages.put(texture, textureImage);
 
-				Event.setEventListener(textureImage, new EventListener() {
-					@Override
-					public void onBrowserEvent(Event event) {
-						textureLoaded(renderer3d, texture, activeTexture);
-					}
-				});
+				Event.setEventListener(textureImage, event -> textureLoaded(renderer3d, texture, activeTexture));
 				Event.sinkEvents(textureImage, Event.ONLOAD);
 			}
 		}
@@ -184,12 +178,7 @@ public class GpuUploader {
 			for (int i = 0; i < 6; i++) {
 				textureImages[i] = resourceLoader.getImage(cubeMapTexture.images[i]);
 
-				Event.setEventListener(textureImages[i], new EventListener() {
-					@Override
-					public void onBrowserEvent(Event event) {
-						cubeTextureLoaded(renderer3d, cubeMapTexture, activeTexture);
-					}
-				});
+				Event.setEventListener(textureImages[i], event -> cubeTextureLoaded(renderer3d, cubeMapTexture, activeTexture));
 				Event.sinkEvents(textureImages[i], Event.ONLOAD);
 			}
 		}

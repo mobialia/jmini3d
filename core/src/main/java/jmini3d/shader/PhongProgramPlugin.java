@@ -30,10 +30,10 @@ public class PhongProgramPlugin extends ProgramPlugin {
 	int dirLightDirectionUniform;
 	int dirLightColorUniform;
 
-	float pointLightPositions[];
-	float pointLightColors[];
-	float dirLightDirections[];
-	float dirLightColors[];
+	float[] pointLightPositions;
+	float[] pointLightColors;
+	float[] dirLightDirections;
+	float[] dirLightColors;
 
 	float shininess = 0;
 	Color4 ambientColor = Color4.fromFloat(-1, -1, -1, -1);

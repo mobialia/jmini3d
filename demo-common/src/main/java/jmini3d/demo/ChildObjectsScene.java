@@ -34,7 +34,7 @@ public class ChildObjectsScene extends ParentScene {
 		Object3d skybox = new Object3d(skyboxGeometry, skyboxMaterial);
 		addChild(skybox);
 
-		Color4 faceColors[] = {
+		Color4[] faceColors = {
 				new Color4(200, 0, 0, 255),
 				new Color4(200, 200, 0, 255),
 				new Color4(200, 200, 200, 255),
@@ -43,12 +43,11 @@ public class ChildObjectsScene extends ParentScene {
 				new Color4(200, 100, 0, 255),
 		};
 		int j = 0;
-		for (int i = 0; i < faceColors.length; ++i) {
-			Color4 faceColor = faceColors[i];
-			for (int k = 0; k < 4; ++k) {
-				vertexColors.setColor(j++, faceColor);
-			}
-		}
+        for (Color4 faceColor : faceColors) {
+            for (int k = 0; k < 4; ++k) {
+                vertexColors.setColor(j++, faceColor);
+            }
+        }
 
 		Color4 white = new Color4(255, 255, 255, 255);
 		Material material1 = new Material(white);

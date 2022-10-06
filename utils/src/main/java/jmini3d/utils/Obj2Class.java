@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Obj2Class {
-	ArrayList<String> vertexList = new ArrayList<String>();
-	ArrayList<String> normalsList = new ArrayList<String>();
-	ArrayList<String> uvsList = new ArrayList<String>();
-	HashMap<String, Integer> vertexMap = new HashMap<String, Integer>();
+	ArrayList<String> vertexList = new ArrayList<>();
+	ArrayList<String> normalsList = new ArrayList<>();
+	ArrayList<String> uvsList = new ArrayList<>();
+	HashMap<String, Integer> vertexMap = new HashMap<>();
 	Integer vertexMapIndex = 0;
 
 	StringBuilder vertexSB = new StringBuilder();
@@ -20,7 +20,7 @@ public class Obj2Class {
 	StringBuilder uvsSB = new StringBuilder();
 	StringBuilder facesSB = new StringBuilder();
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		if (args.length < 3) {
 			System.out.println("Usage: Obj2Class file.obj file.java com.package.name");
 			System.out.println("Converts an OBJ file to a jmini3d geometry in a Java file");
@@ -40,7 +40,7 @@ public class Obj2Class {
 			String line;
 
 			while ((line = br.readLine()) != null) {
-				String tokens[] = line.split("\\s|/");
+				String[] tokens = line.split("\\s|/");
 
 				if ("v".equals(tokens[0])) {
 					vertexList.add(tokens[1] + "f, " + tokens[2] + "f, " + tokens[3] + "f");
@@ -77,9 +77,9 @@ public class Obj2Class {
 	public int addVertexNormalUv(String vertexIndex, String uvIndex, String normalIndex) {
 		String key = vertexIndex + "/" + normalIndex + "/" + uvIndex;
 
-		Integer vertexInt = Integer.valueOf(vertexIndex);
-		Integer uvInt = "".equals(uvIndex) ? -1 : Integer.valueOf(uvIndex);
-		Integer normalInt = Integer.valueOf(normalIndex);
+		int vertexInt = Integer.parseInt(vertexIndex);
+		int uvInt = "".equals(uvIndex) ? -1 : Integer.parseInt(uvIndex);
+		int normalInt = Integer.parseInt(normalIndex);
 
 		Integer index = vertexMap.get(key);
 		if (index == null) {

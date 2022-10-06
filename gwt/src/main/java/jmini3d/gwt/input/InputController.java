@@ -21,8 +21,8 @@ public class InputController implements EventListener {
 
 	TouchPointer mousePointer;
 
-	HashMap<Integer, TouchPointer> pointers = new HashMap<Integer, TouchPointer>();
-	HashMap<Integer, TouchPointer> pointersAux = new HashMap<Integer, TouchPointer>();
+	HashMap<Integer, TouchPointer> pointers = new HashMap<>();
+	HashMap<Integer, TouchPointer> pointersAux = new HashMap<>();
 
 	Element element;
 	int eventBits;
