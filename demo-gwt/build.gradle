@@ -14,6 +14,11 @@ apply plugin: 'org.gretty'
 
 archivesBaseName = 'jmini3d-gwt_demo'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 dependencies {
     implementation 'org.gwtproject:gwt-user:2.10.0'
     implementation 'org.gwtproject:gwt-dev:2.10.0'
