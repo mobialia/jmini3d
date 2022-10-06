@@ -8,6 +8,8 @@ dependencies {
 
 android {
     compileSdkVersion 32
+    buildToolsVersion '33.0.0'
+
     defaultConfig {
         versionCode 1
         versionName "1.0"
@@ -18,6 +20,10 @@ android {
     namespace 'jmini3d.android.demo'
     lint {
         abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
