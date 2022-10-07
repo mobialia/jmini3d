@@ -32,6 +32,12 @@ dependencies {
     implementation project(path: ':demo-common', configuration: 'archives')
 }
 
+clean.doFirst {
+    delete "${project.projectDir}/src/main/gwt-unitCache"
+    delete "${project.projectDir}/src/main/webapp/WEB-INF"
+    delete "${project.projectDir}/src/main/webapp/jmini3d_demo"
+}
+
 task compileGwt(dependsOn: classes, type: JavaExec) {
     ext.buildDir = "${project.projectDir}/src/main/webapp/"
     ext.extraDir = "${project.buildDir}/extra"
