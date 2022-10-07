@@ -119,25 +119,22 @@ public class Obj2Class {
 		sb.append("\n");
 
 		sb.append("public float[] vertex() {\n");
-		sb.append("    final float vertex[] = {\n");
+		sb.append("    return new float[] {\n");
 		sb.append(vertexSB);
 		sb.append("    };\n");
-		sb.append("    return vertex;\n");
 		sb.append("}\n");
 
 		sb.append("public float[] normals() {\n");
-		sb.append("    final float normals[] = {\n");
+		sb.append("    return new float[] {\n");
 		sb.append(normalsSB);
 		sb.append("    };\n");
-		sb.append("    return normals;\n");
 		sb.append("}\n");
 
 		if (uvsList.size() > 0) {
 			sb.append("public float[] uvs() {\n");
-			sb.append("    final float uvs[] = {\n");
+			sb.append("    return new float[] {\n");
 			sb.append(uvsSB);
 			sb.append("    };\n");
-			sb.append("    return uvs;\n");
 			sb.append("}\n");
 		} else {
 			sb.append("public float[] uvs() {\n");
@@ -146,10 +143,9 @@ public class Obj2Class {
 		}
 
 		sb.append("public short[] faces() {\n");
-		sb.append("    final short faces[] = {\n");
+		sb.append("    return new short[] {\n");
 		sb.append(facesSB);
 		sb.append("    };\n");
-		sb.append("    return faces;\n");
 		sb.append("}\n");
 		sb.append("}\n");
 
