@@ -1,1 +1,14 @@
-/.idea
+/.idea/
+/.gradle/
+/build/
+/android/src/main/res/raw/
+/core/build/
+/demo-gwt/src/main/webapp/jmini3d_demo/
+/demo-common/build/
+/demo-android/src/main/res/drawable-nodpi/
+/demo-gwt/build/
+/demo-gwt/src/main/gwt-unitCache/
+/demo-gwt/src/main/webapp/resources/
+/demo-gwt/src/main/webapp/shaders/
+/demo-gwt/src/main/webapp/WEB-INF/
+/gwt/build/
