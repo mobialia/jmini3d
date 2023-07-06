@@ -119,6 +119,9 @@ copyShaders {
 }
 
 compileJava.dependsOn copyShaders
+gradle.projectsEvaluated {
+    tasks.prepareInplaceWebAppFolder.dependsOn copyShaders
+}
 
 gretty {
     servletContainer = 'tomcat10'
