@@ -131,7 +131,18 @@ public class Font {
 	 * @param fontMetrics
 	 */
 	public void setTextLine(Object3d object3d, String text, Rect fontMetrics) {
-		int length = text.length();
+		setTextLine(object3d, text.toCharArray(), fontMetrics);
+	}
+
+	/**
+	 * Modifies an Object3D with a SpriteGeometry to put a text
+	 *
+	 * @param object3d
+	 * @param text
+	 * @param fontMetrics
+	 */
+	public void setTextLine(Object3d object3d, char[] text, Rect fontMetrics) {
+		int length = text.length;
 		SpriteGeometry geometry = (SpriteGeometry) object3d.geometry3d;
 
 		int i;
@@ -139,7 +150,7 @@ public class Font {
 		int y = 0;
 		char oldChar = (char) -1;
 		for (i = 0; i < length; i++) {
-			char c = text.charAt(i);
+			char c = text[i];
 			CharSprite cs = chars.get(c);
 			if (cs == null) {
 				System.out.print("Character " + c + " not found in bitmap texture");
