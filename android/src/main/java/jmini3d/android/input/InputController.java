@@ -83,14 +83,14 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 				for (int i = 0; i < event.getPointerCount(); i++) {
 					if (Build.VERSION.SDK_INT >= 5) {
 						int curPointerId = CompatibilityWrapper5.getPointerId(event, i);
-						if (pointers.containsKey(Integer.valueOf(curPointerId))) {
-							TouchPointer movePointer = pointers.get(Integer.valueOf(curPointerId));
+						if (pointers.containsKey(curPointerId)) {
+							TouchPointer movePointer = pointers.get(curPointerId);
 							movePointer.x = (int) CompatibilityWrapper5.getX(event, i);
 							movePointer.y = (int) CompatibilityWrapper5.getY(event, i);
 							movePointer.status = TouchPointer.TOUCH_MOVE;
 						}
 					} else {
-						TouchPointer movePointer = pointers.get(Integer.valueOf(0));
+						TouchPointer movePointer = pointers.get(0);
 						movePointer.x = (int) event.getX();
 						movePointer.y = (int) event.getY();
 						movePointer.status = TouchPointer.TOUCH_MOVE;
