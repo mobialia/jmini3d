@@ -30,11 +30,11 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	private float fps = 0;
 	private long timeLastSample;
 
-	public GlSurfaceView3d(Context ctx, boolean traslucent) {
+	public GlSurfaceView3d(Context ctx, boolean translucent) {
 		super(ctx);
 
 		setEGLContextClientVersion(2);
-		if (traslucent) {
+		if (translucent) {
 			if (Build.VERSION.SDK_INT >= 5) {
 				CompatibilityWrapper5.setZOrderOnTop(this);
 			}

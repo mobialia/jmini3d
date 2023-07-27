@@ -5,13 +5,13 @@ import android.os.Bundle;
 
 public class Activity3d extends Activity {
 	public GlSurfaceView3d glSurfaceView3d;
-	public boolean traslucent = false;
+	public boolean translucent = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		glSurfaceView3d = new GlSurfaceView3d(this, traslucent);
+		glSurfaceView3d = new GlSurfaceView3d(this, translucent);
 
 		onCreateSetContentView();
 	}
