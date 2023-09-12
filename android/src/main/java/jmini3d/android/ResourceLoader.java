@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 public class ResourceLoader {
-	static final String TAG = "ResourceLoader";
+	static final String TAG = ResourceLoader.class.getName();
 
 	Context context;
 
@@ -46,17 +46,12 @@ public class ResourceLoader {
 	}
 
 	public Bitmap makeBitmapFromInputStream(InputStream is) {
-		Bitmap bitmap;
-		try {
-			bitmap = BitmapFactory.decodeStream(is);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				// Ignore.
-			}
+		try (is) {
+			return BitmapFactory.decodeStream(is);
+		} catch (IOException e) {
+			// Ignore.
 		}
-		return bitmap;
+		return null;
 	}
 
 	public void freeBitmap(String name, Bitmap bitmap) {

@@ -7,7 +7,7 @@ import jmini3d.Object3d;
 import jmini3d.Scene;
 
 public class Renderer3d implements jmini3d.Renderer3d {
-	public static final String TAG = "Renderer";
+	public static final String TAG = Renderer3d.class.getName();
 
 	private ResourceLoader resourceLoader;
 	private GpuUploader gpuUploader;

@@ -11,7 +11,7 @@ import jmini3d.Scene;
 import jmini3d.material.Material;
 
 public class Program extends jmini3d.shader.Program {
-	static final String TAG = "Program";
+	static final String TAG = Program.class.getName();
 
 	WebGLProgram webGLProgram;
 
