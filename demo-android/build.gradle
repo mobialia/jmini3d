@@ -7,8 +7,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion '33.0.0'
+    compileSdk 33
+    buildToolsVersion ='33.0.1'
 
     defaultConfig {
         versionCode 1

@@ -9,13 +9,10 @@ dependencies {
 
 android {
     namespace 'jmini3d.android'
-    compileSdkVersion 33
-    buildToolsVersion '33.0.0'
+    compileSdk 33
+    buildToolsVersion = '33.0.1'
 
     defaultConfig {
-        versionCode 1
-        versionName "1.0"
-
         targetSdkVersion 33
         // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
         minSdkVersion 9
