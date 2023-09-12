@@ -3,7 +3,6 @@ package jmini3d.android;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -13,7 +12,8 @@ import jmini3d.ScreenController;
 import jmini3d.android.compat.CompatibilityWrapper5;
 
 public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Renderer {
-	public static final String TAG = "GlSurfaceView3d";
+	public static final String TAG = GlSurfaceView3d.class.getName();
+	public static final int FRAMES_TO_DRAW = 4;
 
 	int width, height;
 
@@ -35,9 +35,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 		setEGLContextClientVersion(2);
 		if (translucent) {
-			if (Build.VERSION.SDK_INT >= 5) {
-				CompatibilityWrapper5.setZOrderOnTop(this);
-			}
+			CompatibilityWrapper5.setZOrderOnTop(this);
 			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			getHolder().setFormat(PixelFormat.TRANSLUCENT);
 		} else {
@@ -62,6 +60,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 		width = w;
 		height = h;
 		renderer3d.setViewPort(width, height);
+		requestRender();
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 
 			if (screenController.onNewFrame(forceRedraw > 0)) {
 				// due to buffer swapping we need to redraw three frames
-				forceRedraw = 3;
+				forceRedraw = FRAMES_TO_DRAW;
 			}
 
 			if (forceRedraw > 0) {
@@ -84,7 +83,7 @@ public class GlSurfaceView3d extends GLSurfaceView implements GLSurfaceView.Rend
 	}
 
 	public void requestRender() {
-		forceRedraw = 3;
+		forceRedraw = FRAMES_TO_DRAW;
 	}
 
 	public void setScreenController(ScreenController screenController) {
