@@ -156,9 +156,10 @@ public class Font {
 				System.out.print("Character " + c + " not found in bitmap texture");
 				continue;
 			}
-			for (Kerning k : kernings) {
-				if (k.first == oldChar && k.second == c) {
-					x += k.amount;
+			for (int k = 0; k < kernings.size(); k++) {
+				Kerning kerning = kernings.get(k);
+				if (kerning.first == oldChar && kerning.second == c) {
+					x += kerning.amount;
 				}
 			}
 
