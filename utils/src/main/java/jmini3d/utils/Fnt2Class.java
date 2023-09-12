@@ -10,7 +10,7 @@ public class Fnt2Class {
 
 	StringBuffer constructorSB = new StringBuffer();
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		if (args.length < 3) {
 			System.out.println("Usage: Fnt2Class file.fnt file.java com.package.name");
 			System.out.println("Converts an FNT file to a jmini3d font in a Java file");
@@ -43,7 +43,7 @@ public class Fnt2Class {
 		}
 	}
 
-	private Integer getInt(String splits[], int index) {
+	private Integer getInt(String[] splits, int index) {
 		if (index > splits.length) {
 			return 0;
 		}
@@ -51,28 +51,28 @@ public class Fnt2Class {
 	}
 
 	public void addFntLine(String line) {
-		String splits[] = line.split("[ =\r\n]+");
+		String[] splits = line.split("[ =\r\n]+");
 		if (line.startsWith("common ")) {
 			// common lineHeight=32 base=26 scaleW=256 scaleH=256 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
-			constructorSB.append("\t\tsetCommon(" + getInt(splits, 2) + ", " + getInt(splits, 4) + ", " + getInt(splits, 6)  //
-					+ ", " + getInt(splits, 8) + ", " + getInt(splits, 10) + ", " + getInt(splits, 12)  //
-					+ ", " + getInt(splits, 14) + ", " + getInt(splits, 16) + ", " + getInt(splits, 18)  //
-					+ ", " + getInt(splits, 20) + ");\n");
+			constructorSB.append("\t\tsetCommon(").append(getInt(splits, 2)).append(", ").append(getInt(splits, 4)).append(", ").append(getInt(splits, 6)  //
+            ).append(", ").append(getInt(splits, 8)).append(", ").append(getInt(splits, 10)).append(", ").append(getInt(splits, 12)  //
+            ).append(", ").append(getInt(splits, 14)).append(", ").append(getInt(splits, 16)).append(", ").append(getInt(splits, 18)  //
+            ).append(", ").append(getInt(splits, 20)).append(");\n");
 
 		} else if (line.startsWith("page ")) {
 			//page id=0 file="arial_0.png"
-			constructorSB.append("\t\taddPage(" + getInt(splits, 2) + ", " + splits[4] + ");\n");
+			constructorSB.append("\t\taddPage(").append(getInt(splits, 2)).append(", ").append(splits[4]).append(");\n");
 
 		} else if (line.startsWith("char ")) {
 			// char id=32   x=254   y=0     width=0     height=1     xoffset=0     yoffset=31    xadvance=8     page=0  chnl=15
-			constructorSB.append("\t\taddChar(" + getInt(splits, 2) + ", " + getInt(splits, 4) + ", " + getInt(splits, 6)  //
-					+ ", " + getInt(splits, 8) + ", " + getInt(splits, 10) + ", " + getInt(splits, 12)  //
-					+ ", " + getInt(splits, 14) + ", " + getInt(splits, 16) + ", " + getInt(splits, 18)  //
-					+ ", " + getInt(splits, 20) + ");\n");
+			constructorSB.append("\t\taddChar(").append(getInt(splits, 2)).append(", ").append(getInt(splits, 4)).append(", ").append(getInt(splits, 6)  //
+            ).append(", ").append(getInt(splits, 8)).append(", ").append(getInt(splits, 10)).append(", ").append(getInt(splits, 12)  //
+            ).append(", ").append(getInt(splits, 14)).append(", ").append(getInt(splits, 16)).append(", ").append(getInt(splits, 18)  //
+            ).append(", ").append(getInt(splits, 20)).append(");\n");
 
 		} else if (line.startsWith("kerning ")) {
 			// kerning first=32  second=65  amount=-2
-			constructorSB.append("\t\taddKerning(" + getInt(splits, 2) + ", " + getInt(splits, 4) + ", " + getInt(splits, 6) + ");\n");
+			constructorSB.append("\t\taddKerning(").append(getInt(splits, 2)).append(", ").append(getInt(splits, 4)).append(", ").append(getInt(splits, 6)).append(");\n");
 		}
 	}
 

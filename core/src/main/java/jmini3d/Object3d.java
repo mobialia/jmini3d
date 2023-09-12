@@ -20,8 +20,8 @@ public class Object3d {
 	public float[] modelMatrix = new float[16];
 	public float[] normalMatrix = new float[9];
 
-	public float rotationMatrix[];
-	private float scaleMatrix[];
+	public float[] rotationMatrix;
+	private float[] scaleMatrix;
 	private float[] translationMatrix = new float[16];
 
 	public ArrayList<Object3d> children;

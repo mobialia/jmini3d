@@ -11,7 +11,7 @@ import jmini3d.Scene;
 import jmini3d.material.Material;
 
 public class Program extends jmini3d.shader.Program {
-	static final String TAG = "Program";
+	static final String TAG = Program.class.getName();
 
 	WebGLProgram webGLProgram;
 
@@ -33,44 +33,38 @@ public class Program extends jmini3d.shader.Program {
 	public void init(final Scene scene, final Material material, final ResourceLoader resourceLoader, final GpuUploaderListener gpuUploaderListener) {
 		prepareShader(scene, material);
 
-		resourceLoader.loadShader(vertexShaderName, new ResourceLoader.OnTextResourceLoaded() {
-			@Override
-			public void onResourceLoaded(String text) {
-				vertexShaderLoaded = text;
-				if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
-					finishShaderLoad(scene, material);
-					if (gpuUploaderListener != null) {
-						gpuUploaderListener.onGpuUploadFinish();
-					}
+		resourceLoader.loadShader(vertexShaderName, text -> {
+			vertexShaderLoaded = text;
+			if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
+				finishShaderLoad(scene, material);
+				if (gpuUploaderListener != null) {
+					gpuUploaderListener.onGpuUploadFinish();
 				}
 			}
 		});
-		resourceLoader.loadShader(fragmentShaderName, new ResourceLoader.OnTextResourceLoaded() {
-			@Override
-			public void onResourceLoaded(String text) {
-				fragmentShaderLoaded = text;
-				if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
-					finishShaderLoad(scene, material);
-					if (gpuUploaderListener != null) {
-						gpuUploaderListener.onGpuUploadFinish();
-					}
+		resourceLoader.loadShader(fragmentShaderName, text -> {
+			fragmentShaderLoaded = text;
+			if (vertexShaderLoaded != null && fragmentShaderLoaded != null) {
+				finishShaderLoad(scene, material);
+				if (gpuUploaderListener != null) {
+					gpuUploaderListener.onGpuUploadFinish();
 				}
 			}
 		});
 	}
 
 	public void finishShaderLoad(Scene scene, Material material) {
-		StringBuffer vertexShaderStringBuffer = new StringBuffer();
-		StringBuffer fragmentShaderStringBuffer = new StringBuffer();
+		StringBuilder vertexShaderStringBuffer = new StringBuilder();
+		StringBuilder fragmentShaderStringBuffer = new StringBuilder();
 
 		// TODO precision
 		for (String k : shaderDefines.keySet()) {
 			if (shaderDefines.get(k) == null) {
-				vertexShaderStringBuffer.append("#define " + k + "\n");
-				fragmentShaderStringBuffer.append("#define " + k + "\n");
+				vertexShaderStringBuffer.append("#define ").append(k).append("\n");
+				fragmentShaderStringBuffer.append("#define ").append(k).append("\n");
 			} else {
-				vertexShaderStringBuffer.append("#define " + k + " " + shaderDefines.get(k) + "\n");
-				fragmentShaderStringBuffer.append("#define " + k + " " + shaderDefines.get(k) + "\n");
+				vertexShaderStringBuffer.append("#define ").append(k).append(" ").append(shaderDefines.get(k)).append("\n");
+				fragmentShaderStringBuffer.append("#define ").append(k).append(" ").append(shaderDefines.get(k)).append("\n");
 			}
 		}
 
@@ -139,7 +133,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 	}
 
-	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] projectionMatrix, float viewMatrix[]) {
+	public void drawObject(Renderer3d renderer3d, GpuUploader gpuUploader, Object3d o3d, float[] projectionMatrix, float[] viewMatrix) {
 		if (!shaderLoaded) {
 			return;
 		}
@@ -288,7 +282,7 @@ public class Program extends jmini3d.shader.Program {
 		return uniformValue;
 	}
 
-	private void setMatrix3UniformIfChanged(int matrixUniform, float newMatrix[], float lastMatrix[]) {
+	private void setMatrix3UniformIfChanged(int matrixUniform, float[] newMatrix, float[] lastMatrix) {
 		if (lastMatrix[0] != newMatrix[0]
 				|| lastMatrix[1] != newMatrix[1]
 				|| lastMatrix[2] != newMatrix[2]
@@ -311,7 +305,7 @@ public class Program extends jmini3d.shader.Program {
 		}
 	}
 
-	private void setMatrix4UniformIfChanged(int matrixUniform, float newMatrix[], float lastMatrix[]) {
+	private void setMatrix4UniformIfChanged(int matrixUniform, float[] newMatrix, float[] lastMatrix) {
 		if (lastMatrix[0] != newMatrix[0]
 				|| lastMatrix[1] != newMatrix[1]
 				|| lastMatrix[2] != newMatrix[2]

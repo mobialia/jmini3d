@@ -14,6 +14,11 @@ apply plugin: 'org.gretty'
 
 archivesBaseName = 'jmini3d-gwt_demo'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 dependencies {
     implementation 'org.gwtproject:gwt-user:2.10.0'
     implementation 'org.gwtproject:gwt-dev:2.10.0'
@@ -25,6 +30,12 @@ dependencies {
     implementation project(path: ':gwt', configuration: 'archives')
     implementation project(':demo-common')
     implementation project(path: ':demo-common', configuration: 'archives')
+}
+
+clean.doFirst {
+    delete "${project.projectDir}/src/main/gwt-unitCache"
+    delete "${project.projectDir}/src/main/webapp/WEB-INF"
+    delete "${project.projectDir}/src/main/webapp/jmini3d_demo"
 }
 
 task compileGwt(dependsOn: classes, type: JavaExec) {
@@ -108,6 +119,9 @@ copyShaders {
 }
 
 compileJava.dependsOn copyShaders
+gradle.projectsEvaluated {
+    tasks.prepareInplaceWebAppFolder.dependsOn copyShaders
+}
 
 gretty {
     servletContainer = 'tomcat10'

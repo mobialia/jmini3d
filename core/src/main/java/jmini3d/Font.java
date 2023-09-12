@@ -11,7 +11,7 @@ import jmini3d.material.SpriteMaterial;
  */
 public class Font {
 
-	public class CharSprite {
+	public static class CharSprite {
 		int x;
 		int y;
 		int width;
@@ -23,17 +23,17 @@ public class Font {
 		int chnl;
 	}
 
-	public class Kerning {
+	public static class Kerning {
 		char first;
 		char second;
 		int amount;
 	}
 
 	int lineHeight, base, scaleW, scaleH, pages, packed, alphaChnl, redChnl, greenChnl, blueChnl;
-	ArrayList<Texture> textures = new ArrayList<Texture>();
+	ArrayList<Texture> textures = new ArrayList<>();
 
-	HashMap<Character, CharSprite> chars = new HashMap<Character, CharSprite>();
-	ArrayList<Kerning> kernings = new ArrayList<Kerning>();
+	HashMap<Character, CharSprite> chars = new HashMap<>();
+	ArrayList<Kerning> kernings = new ArrayList<>();
 
 	public Font() {
 
@@ -74,9 +74,9 @@ public class Font {
 
 	public void addKerning(int first, int second, int amount) {
 		Kerning kerning = new Kerning();
-		kerning.first = Character.toChars(Integer.valueOf(first))[0];
-		kerning.second = Character.toChars(Integer.valueOf(second))[0];
-		kerning.amount = Integer.valueOf(amount);
+		kerning.first = Character.toChars(first)[0];
+		kerning.second = Character.toChars(second)[0];
+		kerning.amount = amount;
 		kernings.add(kerning);
 	}
 
@@ -131,7 +131,18 @@ public class Font {
 	 * @param fontMetrics
 	 */
 	public void setTextLine(Object3d object3d, String text, Rect fontMetrics) {
-		int length = text.length();
+		setTextLine(object3d, text.toCharArray(), fontMetrics);
+	}
+
+	/**
+	 * Modifies an Object3D with a SpriteGeometry to put a text
+	 *
+	 * @param object3d
+	 * @param text
+	 * @param fontMetrics
+	 */
+	public void setTextLine(Object3d object3d, char[] text, Rect fontMetrics) {
+		int length = text.length;
 		SpriteGeometry geometry = (SpriteGeometry) object3d.geometry3d;
 
 		int i;
@@ -139,15 +150,16 @@ public class Font {
 		int y = 0;
 		char oldChar = (char) -1;
 		for (i = 0; i < length; i++) {
-			char c = text.charAt(i);
+			char c = text[i];
 			CharSprite cs = chars.get(c);
 			if (cs == null) {
 				System.out.print("Character " + c + " not found in bitmap texture");
 				continue;
 			}
-			for (Kerning k : kernings) {
-				if (k.first == oldChar && k.second == c) {
-					x += k.amount;
+			for (int k = 0; k < kernings.size(); k++) {
+				Kerning kerning = kernings.get(k);
+				if (kerning.first == oldChar && kerning.second == c) {
+					x += kerning.amount;
 				}
 			}
 

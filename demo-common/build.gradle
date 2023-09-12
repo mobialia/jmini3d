@@ -1,12 +1,12 @@
 apply plugin: 'java'
 
 java {
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 

@@ -21,7 +21,7 @@ import jmini3d.material.Material;
 import jmini3d.shader.ShaderKey;
 
 public class GpuUploader {
-	static final String TAG = "GpuUploader";
+	static final String TAG = GpuUploader.class.getName();
 
 	ResourceLoader resourceLoader;
 

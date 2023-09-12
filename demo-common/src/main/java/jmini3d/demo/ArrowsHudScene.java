@@ -1,5 +1,7 @@
 package jmini3d.demo;
 
+import java.util.Objects;
+
 import jmini3d.Font;
 import jmini3d.HudScene;
 import jmini3d.Object3d;
@@ -56,7 +58,7 @@ public class ArrowsHudScene extends HudScene {
 	}
 
 	public void setTitle(String title) {
-		if (this.title != title) {
+		if (!Objects.equals(this.title, title)) {
 			font.setTextLine(titleObject3d, title, fm);
 			setTitleObjectScale();
 		}

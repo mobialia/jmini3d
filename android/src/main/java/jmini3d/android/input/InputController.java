@@ -18,8 +18,8 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 	TouchListener touchListener;
 	KeyListener keyListener;
 
-	HashMap<Integer, TouchPointer> pointers = new HashMap<Integer, TouchPointer>();
-	HashMap<Integer, TouchPointer> pointersAux = new HashMap<Integer, TouchPointer>();
+	HashMap<Integer, TouchPointer> pointers = new HashMap<>();
+	HashMap<Integer, TouchPointer> pointersAux = new HashMap<>();
 
 	long onTouchSleepPeriod = 16;
 
@@ -60,7 +60,7 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 		switch (action & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				TouchPointer touchPointer = pointersAux.get(Integer.valueOf(pointerId));
+				TouchPointer touchPointer = pointersAux.get(pointerId);
 				if (touchPointer == null) {
 					touchPointer = new TouchPointer();
 				}
@@ -83,14 +83,14 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 				for (int i = 0; i < event.getPointerCount(); i++) {
 					if (Build.VERSION.SDK_INT >= 5) {
 						int curPointerId = CompatibilityWrapper5.getPointerId(event, i);
-						if (pointers.containsKey(Integer.valueOf(curPointerId))) {
-							TouchPointer movePointer = pointers.get(Integer.valueOf(curPointerId));
+						if (pointers.containsKey(curPointerId)) {
+							TouchPointer movePointer = pointers.get(curPointerId);
 							movePointer.x = (int) CompatibilityWrapper5.getX(event, i);
 							movePointer.y = (int) CompatibilityWrapper5.getY(event, i);
 							movePointer.status = TouchPointer.TOUCH_MOVE;
 						}
 					} else {
-						TouchPointer movePointer = pointers.get(Integer.valueOf(0));
+						TouchPointer movePointer = pointers.get(0);
 						movePointer.x = (int) event.getX();
 						movePointer.y = (int) event.getY();
 						movePointer.status = TouchPointer.TOUCH_MOVE;
@@ -102,12 +102,12 @@ public class InputController implements OnTouchListener, View.OnKeyListener {
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_UP:
-				TouchPointer upPointer = pointers.get(Integer.valueOf(pointerId));
+				TouchPointer upPointer = pointers.get(pointerId);
 				upPointer.status = TouchPointer.TOUCH_UP;
 				if (touchListener != null) {
 					touchListener.onTouch(pointers);
 				}
-				pointers.remove(Integer.valueOf(pointerId));
+				pointers.remove(pointerId);
 				pointersAux.put(pointerId, upPointer);
 				break;
 			case MotionEvent.ACTION_OUTSIDE:

@@ -7,14 +7,14 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion '33.0.0'
+    compileSdk 33
+    buildToolsVersion ='33.0.1'
 
     defaultConfig {
         versionCode 1
         versionName "1.0"
 
-        targetSdkVersion 32
+        targetSdkVersion 33
         minSdkVersion 9
     }
     namespace 'jmini3d.android.demo'

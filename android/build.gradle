@@ -8,16 +8,25 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 32
-    defaultConfig {
-        versionCode 1
-        versionName "1.0"
+    namespace 'jmini3d.android'
+    compileSdk 33
+    buildToolsVersion = '33.0.1'
 
-        targetSdkVersion 32
+    defaultConfig {
+        targetSdkVersion 33
         // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
         minSdkVersion 9
     }
-    namespace 'jmini3d.android'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 task copyResources(type: Copy)
@@ -30,19 +39,14 @@ copyResources {
 
 preBuild.dependsOn copyResources
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from 'src/main/java'
-}
-
-publishToMavenLocal.dependsOn ':android:bundleReleaseAar'
-
 publishing {
     publications {
         jmini3dAndroid(MavenPublication) {
             artifactId = 'jmini3d-android'
-            artifact sourcesJar
-            artifact('build/outputs/aar/jmini3d-android-release.aar')
+
+            afterEvaluate {
+                from components.release
+            }
         }
     }
 }

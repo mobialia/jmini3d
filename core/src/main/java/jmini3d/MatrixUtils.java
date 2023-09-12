@@ -7,7 +7,7 @@ public class MatrixUtils {
 	/**
 	 * This is the old gl.glFustrum
 	 */
-	public static void perspective(float destination[], float fovy, float aspectRatio, float near, float far) {
+	public static void perspective(float[] destination, float fovy, float aspectRatio, float near, float far) {
 		float top = near * (float) Math.tan(fovy * Math.PI / 360.0);
 		float bottom = -top;
 		float right = top * aspectRatio;
@@ -44,7 +44,7 @@ public class MatrixUtils {
 	/**
 	 * GLU.glLookAt vx, vy, vz are auxiliars to avoid allocations
 	 */
-	public static void lookAt(float destination[], Vector3 eye, Vector3 target, Vector3 up, Vector3 vx, Vector3 vy, Vector3 vz) {
+	public static void lookAt(float[] destination, Vector3 eye, Vector3 target, Vector3 up, Vector3 vx, Vector3 vy, Vector3 vz) {
 		vz.setAllFrom(eye);
 		vz.subtract(target);
 		vz.normalize();
@@ -74,7 +74,7 @@ public class MatrixUtils {
 		destination[15] = 1;
 	}
 
-	public static void ortho(float matrix[], float left, float right, float bottom, float top, float near, float far) {
+	public static void ortho(float[] matrix, float left, float right, float bottom, float top, float near, float far) {
 		float r_l = right - left;
 		float t_b = top - bottom;
 		float f_n = far - near;
@@ -164,7 +164,7 @@ public class MatrixUtils {
 				in[12], in[13], in[14], in[15]};
 	}
 
-	public static void copyMatrix(float[] origin, float destination[]) {
+	public static void copyMatrix(float[] origin, float[] destination) {
 		System.arraycopy(origin, 0, destination, 0, origin.length);
 	}
 

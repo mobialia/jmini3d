@@ -3,21 +3,21 @@ package jmini3d.input;
 
 public interface KeyListener {
 
-	final static int KEY_UP = 1;
-	final static int KEY_DOWN = 2;
-	final static int KEY_LEFT = 3;
-	final static int KEY_RIGHT = 4;
-	final static int KEY_CENTER = 5;
-	final static int KEY_ZOOM_IN = 6;
-	final static int KEY_ZOOM_OUT = 7;
-	final static int KEY_BACKSPACE = 8;
-	final static int KEY_BACK = 9;
-	final static int KEY_ENTER = 13;
-	final static int KEY_PAGEUP = 33;
-	final static int KEY_PAGEDOWN = 34;
+	int KEY_UP = 1;
+	int KEY_DOWN = 2;
+	int KEY_LEFT = 3;
+	int KEY_RIGHT = 4;
+	int KEY_CENTER = 5;
+	int KEY_ZOOM_IN = 6;
+	int KEY_ZOOM_OUT = 7;
+	int KEY_BACKSPACE = 8;
+	int KEY_BACK = 9;
+	int KEY_ENTER = 13;
+	int KEY_PAGEUP = 33;
+	int KEY_PAGEDOWN = 34;
 
-	public boolean onKeyDown(int key);
+	boolean onKeyDown(int key);
 
-	public boolean onKeyUp(int key);
+	boolean onKeyUp(int key);
 
 }

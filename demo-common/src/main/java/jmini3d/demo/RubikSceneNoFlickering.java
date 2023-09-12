@@ -29,13 +29,13 @@ public class RubikSceneNoFlickering extends ParentScene {
 	int nextRotationSection;
 	float nextRotationAngle;
 	Random random = new Random();
-	Vector3 axis[] = {
+	Vector3[] axis = {
 			new Vector3(1, 0, 0),
 			new Vector3(0, 1, 0),
 			new Vector3(0, 0, 1),
 	};
-	Vector3 rotations[] = new Vector3[9 * 3];
-	Vector3 positions[] = new Vector3[9];
+	Vector3[] rotations = new Vector3[9 * 3];
+	Vector3[] positions = new Vector3[9];
 
 	public RubikSceneNoFlickering() {
 		super("Rubik demo");
@@ -56,7 +56,7 @@ public class RubikSceneNoFlickering extends ParentScene {
 		material1.setColor(new Color4(255, 0, 0, 255));
 		Geometry geometry = new BoxGeometry(1);
 
-		Color4 colors[][] = {
+		Color4[][] colors = {
 				{new Color4(200, 0, 0, 255), // x+
 						new Color4(200, 200, 0, 255)}, // x-
 				{new Color4(200, 200, 200, 255), // y+
@@ -71,7 +71,7 @@ public class RubikSceneNoFlickering extends ParentScene {
 				for (int ix = -1; ix <= 1; ++ix) {
 					VertexColors vertexColors = new VertexColors(6 * 4);
 					int vertexIndex = 0;
-					int index[] = {ix, iy, iz};
+					int[] index = {ix, iy, iz};
 					for (int i = 0; i < geometry.vertex().length; ) {
 						for (int coordinate = 0; coordinate < 3; ++coordinate) {
 							if ((index[coordinate] > 0) && (geometry.vertex()[i] > 0) && (geometry.normals()[i] > 0)) {

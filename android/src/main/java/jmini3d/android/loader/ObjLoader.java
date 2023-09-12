@@ -14,16 +14,16 @@ import jmini3d.geometry.VariableGeometry;
  * This support bigger files than the conversion-to-a-class method
  */
 public class ObjLoader {
-	ArrayList<Float> vertexList = new ArrayList<Float>();
-	ArrayList<Float> normalsList = new ArrayList<Float>();
-	ArrayList<Float> uvsList = new ArrayList<Float>();
-	HashMap<String, Integer> vertexMap = new HashMap<String, Integer>();
+	ArrayList<Float> vertexList = new ArrayList<>();
+	ArrayList<Float> normalsList = new ArrayList<>();
+	ArrayList<Float> uvsList = new ArrayList<>();
+	HashMap<String, Integer> vertexMap = new HashMap<>();
 	Integer vertexMapIndex = 0;
 
-	ArrayList<Float> vertex = new ArrayList<Float>();
-	ArrayList<Float> normals = new ArrayList<Float>();
-	ArrayList<Float> uvs = new ArrayList<Float>();
-	ArrayList<Short> faces = new ArrayList<Short>();
+	ArrayList<Float> vertex = new ArrayList<>();
+	ArrayList<Float> normals = new ArrayList<>();
+	ArrayList<Float> uvs = new ArrayList<>();
+	ArrayList<Short> faces = new ArrayList<>();
 
 	public VariableGeometry load(InputStream is) {
 		VariableGeometry geometry = null;
@@ -39,7 +39,7 @@ public class ObjLoader {
 
 			// First load all the file into the xxxList arrays
 			while ((line = br.readLine()) != null) {
-				String tokens[] = line.split("\\s|/");
+				String[] tokens = line.split("\\s|/");
 
 				lineCount++;
 				if ((lineCount % 1000) == 0) {
@@ -56,7 +56,7 @@ public class ObjLoader {
 					normalsList.add(Float.valueOf(tokens[3]));
 				} else if ("vt".equals(tokens[0])) {
 					uvsList.add(Float.valueOf(tokens[1]));
-					uvsList.add(1f - Float.valueOf(tokens[2]));
+					uvsList.add(1f - Float.parseFloat(tokens[2]));
 				} else if ("f".equals(tokens[0])) {
 					faces.add((short) addVertexNormalUv(tokens[1], tokens[2], tokens[3]));
 					faces.add((short) addVertexNormalUv(tokens[4], tokens[5], tokens[6]));
@@ -85,7 +85,7 @@ public class ObjLoader {
 	}
 
 	public float[] convertFloatArray(ArrayList<Float> in) {
-		float out[] = new float[in.size()];
+		float[] out = new float[in.size()];
 		for (int i = 0; i < in.size(); i++) {
 			out[i] = in.get(i);
 		}
@@ -93,7 +93,7 @@ public class ObjLoader {
 	}
 
 	public short[] convertShortArray(ArrayList<Short> in) {
-		short out[] = new short[in.size()];
+		short[] out = new short[in.size()];
 		for (int i = 0; i < in.size(); i++) {
 			out[i] = in.get(i);
 		}
@@ -103,9 +103,9 @@ public class ObjLoader {
 	public int addVertexNormalUv(String vertexIndex, String uvIndex, String normalIndex) {
 		String key = vertexIndex + "/" + normalIndex + "/" + uvIndex;
 
-		Integer vertexInt = (Integer.valueOf(vertexIndex) - 1) * 3;
-		Integer uvInt = "".equals(uvIndex) ? -1 : (Integer.valueOf(uvIndex) - 1) * 2;
-		Integer normalInt = (Integer.valueOf(normalIndex) - 1) * 3;
+		int vertexInt = (Integer.parseInt(vertexIndex) - 1) * 3;
+		int uvInt = "".equals(uvIndex) ? -1 : (Integer.parseInt(uvIndex) - 1) * 2;
+		int normalInt = (Integer.parseInt(normalIndex) - 1) * 3;
 
 		Integer index = vertexMap.get(key);
 		if (index == null) {

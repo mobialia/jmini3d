@@ -5,13 +5,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:8.1.1'
     }
 }
 
 allprojects {
     project.group = 'com.github.mobialia'
-    project.version = '0.9.4'
+    project.version = '0.9.5'
 
     repositories {
         maven { url 'https://jitpack.io' }
