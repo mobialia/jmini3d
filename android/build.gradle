@@ -13,9 +13,9 @@ android {
     buildToolsVersion = '33.0.1'
 
     defaultConfig {
-        targetSdkVersion 33
+        targetSdk 33
         // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
-        minSdkVersion 9
+        minSdk 9
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
