@@ -108,18 +108,18 @@ void main(void) {
         #ifdef USE_NORMAL_MAP
             vec3 normal = normalize(normalMatrix * (texture2D(normalMap, vTextureCoord).rgb * 2.0 - 1.0));
         #else
-            vec3 normal = vNormal;
+            vec3 normal = normalize(vNormal);
         #endif
 
         #if MAX_POINT_LIGHTS > 0
             for (int i = 0 ; i < MAX_POINT_LIGHTS ; i++) {
-                vec3 positionToLight = pointLightPosition[i] - vPosition.xyz;
-                vec3 positionToCamera = cameraPosition - vPosition.xyz;
-                float diffuseWeight = diffuseColor.a * pointLightColor[i].a * max(dot(normalize(normal.xyz), normalize(positionToLight)), 0.0);
+                vec3 positionToLight = normalize(pointLightPosition[i] - vPosition.xyz);
+                float diffuseWeight = diffuseColor.a * pointLightColor[i].a * max(dot(normal.xyz, positionToLight), 0.0);
                 diffuse = diffuse + diffuseColor.rgb * pointLightColor[i].rgb * diffuseWeight;
 
-                if (dot(normalize(positionToLight), normal.xyz) > 0.0) {
-                    float specularWeight = specularColor.a * pointLightColor[i].a * pow(max(dot(normalize(positionToCamera), reflect(-normalize(positionToLight), normal.xyz)), 0.0), shininess);
+                if (dot(positionToLight, normal.xyz) > 0.0) {
+                    vec3 positionToCamera = normalize(cameraPosition - vPosition.xyz);
+                    float specularWeight = specularColor.a * pointLightColor[i].a * pow(max(dot(positionToCamera, reflect(-positionToLight, normal.xyz)), 0.0), shininess);
                     specular = specular + specularColor.rgb * pointLightColor[i].rgb * specularWeight;
                 }
             }
@@ -127,12 +127,12 @@ void main(void) {
 
         #if MAX_DIR_LIGHTS > 0
             for (int i = 0 ; i < MAX_DIR_LIGHTS ; i++) {
-                vec3 positionToCamera = cameraPosition - vPosition.xyz;
-                float diffuseWeight = diffuseColor.a * dirLightColor[i].a * max(dot(normalize(normal.xyz), -normalize(dirLightDirection[i])), 0.0);
+                float diffuseWeight = diffuseColor.a * dirLightColor[i].a * max(dot(normal.xyz, -normalize(dirLightDirection[i])), 0.0);
                 diffuse = diffuse + diffuseColor.rgb * dirLightColor[i].rgb * diffuseWeight;
 
                 if (dot(normalize(-dirLightDirection[i]), normal.xyz) > 0.0) {
-                    float specularWeight = specularColor.a * dirLightColor[i].a * pow(max(dot(normalize(positionToCamera), reflect(normalize(dirLightDirection[i]), normal.xyz)), 0.0), shininess);
+                    vec3 positionToCamera = normalize(cameraPosition - vPosition.xyz);
+                    float specularWeight = specularColor.a * dirLightColor[i].a * pow(max(dot(positionToCamera, reflect(normalize(dirLightDirection[i]), normal.xyz)), 0.0), shininess);
                     specular = specular + specularColor.rgb * dirLightColor[i].rgb * specularWeight;
                 }
             }
