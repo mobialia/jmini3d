@@ -39,7 +39,7 @@ public class Canvas3d implements AnimationScheduler.AnimationCallback, GpuUpload
 			gl = (WebGLRenderingContext) getContext(webGLCanvas, "experimental-webgl");
 		}
 		if (gl == null) {
-			Window.alert("Sorry, Your browser doesn't support WebGL. Please install the last version of Firefox, Chrome, Safari, or Internet Explorer and check that WebGL is enabled.");
+			Window.alert("Sorry, Your browser doesn't support WebGL. Please install the last version of Firefox, Chrome, Safari, or Edge and check that WebGL is enabled.");
 			return;
 		}
 
