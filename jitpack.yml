@@ -1,4 +1,2 @@
 jdk:
   - openjdk17
-env:
-  JAVA_HOME: /home/jitpack/tools/jdk17
