@@ -1,7 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
-archivesBaseName = 'jmini3d-android'
+base {
+    archivesName = 'jmini3d-android'
+}
 
 dependencies {
     api project(':core')
@@ -9,17 +11,15 @@ dependencies {
 
 android {
     namespace 'jmini3d.android'
-    compileSdk 33
-    buildToolsVersion = '33.0.1'
+    compileSdk 37
 
     defaultConfig {
-        targetSdk 33
-        // Android 2.2 (=8) has VBO problems for versions < 2.3 we will use OpenGL ES 1.1 -->
-        minSdk 9
+        targetSdk 37
+        minSdk 21
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     publishing {
@@ -29,7 +29,7 @@ android {
     }
 }
 
-task copyResources(type: Copy)
+tasks.register('copyResources', Copy)
 
 copyResources {
     from '../core/shaders'

@@ -5,25 +5,27 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.gretty:gretty:4.0.3'
+        classpath 'org.gretty:gretty:5.0.2'
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'org.gretty'
 
-archivesBaseName = 'jmini3d-gwt_demo'
+base {
+    archivesName = 'jmini3d-gwt_demo'
+}
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
-    implementation 'org.gwtproject:gwt-user:2.10.0'
-    implementation 'org.gwtproject:gwt-dev:2.10.0'
-    implementation 'com.github.mobialia:gwtgl:1.0.0'
-    implementation 'com.github.mobialia:gwtgl:1.0.0:sources'
+    implementation 'org.gwtproject:gwt-user:2.13.1'
+    implementation 'org.gwtproject:gwt-dev:2.13.1'
+    implementation('com.github.mobialia:gwtgl:1.1.0')
+    implementation('com.github.mobialia:gwtgl:1.1.0:sources')
     implementation project(':core')
     implementation project(path: ':core', configuration: 'archives')
     implementation project(':gwt')
@@ -34,15 +36,16 @@ dependencies {
 
 clean.doFirst {
     delete "${project.projectDir}/src/main/gwt-unitCache"
-    delete "${project.projectDir}/src/main/webapp/WEB-INF"
+    delete "${project.projectDir}/src/main/webapp/WEB-INF/deploy"
     delete "${project.projectDir}/src/main/webapp/jmini3d_demo"
 }
 
-task compileGwt(dependsOn: classes, type: JavaExec) {
+tasks.register('compileGwt', JavaExec) {
+    dependsOn classes
     ext.buildDir = "${project.projectDir}/src/main/webapp/"
     ext.extraDir = "${project.buildDir}/extra"
 
-    sourceSets.main.java.srcDirs.each{ dir ->
+    sourceSets.main.java.srcDirs.each { dir ->
         inputs.dir dir
     }
     inputs.dir sourceSets.main.output.resourcesDir
@@ -80,7 +83,8 @@ task compileGwt(dependsOn: classes, type: JavaExec) {
 
 jar.dependsOn compileGwt
 
-task gwtSuperDev(dependsOn: classes, type: JavaExec) {
+tasks.register('gwtSuperDev', JavaExec) {
+    dependsOn classes
 
     mainClass = 'com.google.gwt.dev.codeserver.CodeServer'
 
@@ -100,7 +104,7 @@ task gwtSuperDev(dependsOn: classes, type: JavaExec) {
     maxHeapSize = '512M'
 }
 
-task copyResources(type: Copy)
+tasks.register('copyResources', Copy)
 
 copyResources {
     from '../demo-common/resources'
@@ -110,7 +114,7 @@ copyResources {
 
 compileGwt.dependsOn copyResources
 
-task copyShaders(type: Copy)
+tasks.register('copyShaders', Copy)
 
 copyShaders {
     from '../core/shaders'

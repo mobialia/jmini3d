@@ -1,14 +1,17 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-archivesBaseName = 'jmini3d-utils'
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+base {
+    archivesName = 'jmini3d-utils'
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }

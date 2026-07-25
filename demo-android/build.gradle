@@ -7,27 +7,25 @@ dependencies {
 }
 
 android {
-    compileSdk 33
-    buildToolsVersion ='33.0.1'
+    compileSdk 37
 
     defaultConfig {
         versionCode 1
         versionName "1.0"
 
-        targetSdkVersion 33
-        minSdkVersion 9
+        minSdk 21
     }
     namespace 'jmini3d.android.demo'
     lint {
         abortOnError false
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
-task copyResources(type: Copy)
+tasks.register('copyResources', Copy)
 
 copyResources {
     from '../demo-common/resources'
