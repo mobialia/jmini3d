@@ -1,5 +1,6 @@
 JMini3d
 =======
+[![Release](https://img.shields.io/github/v/release/mobialia/jmini3d.svg)](https://github.com/mobialia/jmini3d/releases)
 
 A minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT (Google Web Toolkit, for creating HTML5 apps using Java).
 
