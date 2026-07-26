@@ -9,13 +9,43 @@ buildscript {
     }
 }
 
+ext {
+    githubPackagesUrl = 'https://maven.pkg.github.com/mobialia/jmini3d'
+    githubUser = project.findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR') ?: ''
+    githubToken = project.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN') ?: ''
+}
+
 allprojects {
     project.group = 'com.github.mobialia'
     project.version = '0.9.6'
 
     repositories {
-        maven { url 'https://jitpack.io' }
         google()
         mavenCentral()
+        maven {
+            name = 'gwtgl'
+            url = uri('https://maven.pkg.github.com/mobialia/gwtgl')
+            credentials {
+                username = rootProject.ext.githubUser
+                password = rootProject.ext.githubToken
+            }
+        }
+    }
+}
+
+subprojects {
+    plugins.withId('maven-publish') {
+        publishing {
+            repositories {
+                maven {
+                    name = 'GitHubPackages'
+                    url = rootProject.ext.githubPackagesUrl
+                    credentials {
+                        username = rootProject.ext.githubUser
+                        password = rootProject.ext.githubToken
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 JMini3d
 =======
-[![Release](https://jitpack.io/v/mobialia/jmini3d.svg)](https://jitpack.io/#mobialia/jmini3d)
 
 A minimalistic OpenGL2 3D engine for mobile apps that supports Android and GWT (Google Web Toolkit, for creating HTML5 apps using Java).
 
@@ -151,20 +150,38 @@ then, access it with your web browser at http://localhost:8080/jmini3d/
 
 Using JMini3d in other projects
 ===============================
-This library's JARs and AARs are distributed via JitPack (https://jitpack.io/#mobialia/jmini3d).
-To use them, first include this repository in your gradle file:
-```
+This library's JARs and AARs are distributed via GitHub Packages at
+https://github.com/mobialia/jmini3d/packages.
+
+GitHub Packages requires authentication even to read public packages, so you need a GitHub
+Personal Access Token (PAT) with at least `read:packages` scope. Create one at
+https://github.com/settings/tokens, then set the `GITHUB_ACTOR` and `GITHUB_TOKEN` environment
+variables (or use gradle properties) before building.
+
+Gradle `build.gradle`:
+
+```groovy
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven {
+        url = uri('https://maven.pkg.github.com/mobialia/jmini3d')
+        credentials {
+            username = project.findProperty('gpr.user') ?: System.getenv('GITHUB_USERNAME')
+            password = project.findProperty('gpr.key')  ?: System.getenv('GITHUB_TOKEN')
+        }
+    }
 }
-```
-and then reference the Jmini3D libraries; example for an Android project:
-```
+
 dependencies {
-    implementation 'com.github.mobialia.jmini3d:jmini3d-core:0.9.6'
-    implementation 'com.github.mobialia.jmini3d:jmini3d-android:0.6.5@aar'
+    implementation 'com.github.mobialia:jmini3d-core:0.9.6'
+    implementation 'com.github.mobialia:jmini3d-android:0.9.6@aar'
 }
 ```
+
+Available modules:
+* `jmini3d-core` — common classes shared between Android and GWT
+* `jmini3d-android` — Android library (AAR)
+* `jmini3d-gwt` — GWT library (JAR + sources)
+* `jmini3d-utils` — OBJ/FNT converters (JAR + sources)
 
 Licenses
 ========
