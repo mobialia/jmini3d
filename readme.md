@@ -36,7 +36,7 @@ Subprojects
 
 Axis
 ====
-This library uses by default the same axis system than Blender, Z is up, Y is front. It is right handed.
+This library uses by default the same axis system as Blender, Z is up, Y is front. It is right handed.
 
 ```
  z   y
@@ -44,7 +44,7 @@ This library uses by default the same axis system than Blender, Z is up, Y is fr
  | /
  |------x
 ```
-The axis system can be changed to the standard OpenGL system (-Z front, Y up) calling to `JMini3d.useOpenglAxisSystem()`
+The axis system can be changed to the standard OpenGL system (-Z front, Y up) calling `JMini3d.useOpenglAxisSystem()`
 
 HUD Scenes
 ==========
@@ -82,12 +82,12 @@ In mobile devices when using:
 ```
 <meta name="viewport" content="width=device-width">
 ```
-the canvas must be upscaled by the canvas3d.getDevicePixelRatio(). The scale must be set also in the InputController,
+the canvas must be upscaled by canvas3d.getDevicePixelRatio(). The scale must be set also in the InputController,
 you can see how it works in the demo.
 
 Generate Geometries from OBJ files
 ==================================
-Export to OBJ from Blender (faces must be triangulated and normals outside) with this options:
+Export to OBJ from Blender (faces must be triangulated and normals outside) with these options:
 
 * Write Normals
 * Include UVs
@@ -147,7 +147,7 @@ You can start a local webserver:
 cd demo-gwt
 ../gradlew appRun
 ```
-then, access it with your web browser at http://localhost:8080/jmini3d/
+then access it with your web browser at http://localhost:8080/jmini3d/
 
 Using JMini3d in other projects
 ===============================
