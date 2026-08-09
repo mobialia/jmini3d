@@ -7,11 +7,14 @@ public class LensDistortionShaderPlugin extends ShaderPlugin {
 
 	float c1, c2, c3, c4, c5, c6, maxRadiusSQ;
 
+	private static int KEY;
+
 	static {
-		shaderKey = getNextSceneShaderPluginKey();
+		KEY = getNextSceneShaderPluginKey();
 	}
 
 	public LensDistortionShaderPlugin(float c1, float c2, float c3, float c4, float c5, float c6, float maxRadiusSQ) {
+		shaderKey = KEY;
 		this.c1 = c1;
 		this.c2 = c2;
 		this.c3 = c3;

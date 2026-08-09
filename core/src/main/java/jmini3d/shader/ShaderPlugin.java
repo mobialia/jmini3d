@@ -7,7 +7,7 @@ public abstract class ShaderPlugin {
 
 	private static int nextSceneShadePluginKey = 1;
 	private static int nextMaterialShadePluginrKey = 1;
-	public static int shaderKey;
+	protected int shaderKey;
 
 	public static int getNextSceneShaderPluginKey() {
 		int shaderKey = ShaderPlugin.nextSceneShadePluginKey;
