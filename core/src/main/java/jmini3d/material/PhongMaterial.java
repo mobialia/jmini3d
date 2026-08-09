@@ -20,7 +20,7 @@ public class PhongMaterial extends Material {
 		this.ambient = ambient;
 		this.diffuse = diffuse;
 		this.specular = specular;
-		this.useLigths = true;
+		this.useLights = true;
 		shaderPlugin = new PhongShaderPlugin();
 	}
 
@@ -29,7 +29,7 @@ public class PhongMaterial extends Material {
 		this.ambient = ambient;
 		this.diffuse = diffuse;
 		this.specular = specular;
-		this.useLigths = true;
+		this.useLights = true;
 		shaderPlugin = new PhongShaderPlugin();
 	}
 
@@ -39,7 +39,7 @@ public class PhongMaterial extends Material {
 		this.diffuse = diffuse;
 		this.specular = specular;
 		this.shininess = shininess;
-		this.useLigths = true;
+		this.useLights = true;
 		shaderPlugin = new PhongShaderPlugin();
 	}
 }

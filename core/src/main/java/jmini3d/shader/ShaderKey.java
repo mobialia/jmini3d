@@ -55,7 +55,7 @@ public class ShaderKey {
 	}
 
 	public static int getMaterialKey(Material material) {
-		boolean useLights = material.useLigths;
+		boolean useLights = material.useLights;
 		boolean useMap = material.map != null;
 		boolean useEnvMap = material.envMap != null;
 		boolean useEnvMapAsMap = material.useEnvMapAsMap;

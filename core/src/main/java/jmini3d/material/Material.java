@@ -16,7 +16,7 @@ public class Material {
 	public boolean useEnvMapAsMap = false;
 	public boolean applyColorToAlpha = false;
 	public boolean useVertexColors = false;
-	public boolean useLigths = false;
+	public boolean useLights = false;
 	public float reflectivity = 0f;
 
 	public ShaderPlugin shaderPlugin = null;
