@@ -189,16 +189,13 @@ public class GpuUploader {
 
 	public void upload(Renderer3d renderer3d, CubeMapTexture cubeMapTexture, int activeTexture) {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADED) == 0) {
-			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
-
-			Integer textureId = textures.get(cubeMapTexture);
+			Integer textureId = cubeMapTextures.get(cubeMapTexture);
 			if (textureId == null) {
 				int[] texturesIds = new int[1];
 				GLES20.glGenTextures(1, texturesIds, 0);
 				textureId = texturesIds[0];
 				cubeMapTextures.put(cubeMapTexture, textureId);
 			}
-			cubeMapTextures.put(cubeMapTexture, textureId);
 
 			if (renderer3d.activeTexture != activeTexture) {
 				GLES20.glActiveTexture(activeTexture);
@@ -224,6 +221,8 @@ public class GpuUploader {
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADED;
 		}
 	}
 
