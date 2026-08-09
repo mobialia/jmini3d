@@ -150,8 +150,11 @@ public class GpuUploader {
 		if ((texture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			texture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
-			Integer Integer = gl.createTexture();
-			textures.put(texture, Integer);
+			Integer textureId = textures.get(texture);
+			if (textureId == null) {
+				textureId = gl.createTexture();
+				textures.put(texture, textureId);
+			}
 
 			ImageElement textureImage = resourceLoader.getImage(texture.image);
 			if (textureImage == null) {
@@ -169,8 +172,11 @@ public class GpuUploader {
 		if ((cubeMapTexture.status & GpuObjectStatus.TEXTURE_UPLOADING) == 0) {
 			cubeMapTexture.status |= GpuObjectStatus.TEXTURE_UPLOADING;
 
-			Integer texture = gl.createTexture();
-			cubeMapTextures.put(cubeMapTexture, texture);
+			Integer textureId = cubeMapTextures.get(cubeMapTexture);
+			if (textureId == null) {
+				textureId = gl.createTexture();
+				cubeMapTextures.put(cubeMapTexture, textureId);
+			}
 
 			ImageElement[] textureImages = new ImageElement[6];
 			cubeMapImages.put(cubeMapTexture, textureImages);
