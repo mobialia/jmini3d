@@ -145,9 +145,9 @@ public class Object3d {
 				MatrixUtils.multiply(modelMatrix, scaleMatrix, modelMatrix);
 			}
 
-			normalMatrix = MatrixUtils.toInverseMat3(modelMatrix, normalMatrix);
-			if (normalMatrix != null) {
-				normalMatrix = MatrixUtils.transpose(normalMatrix, normalMatrix);
+			float[] inv = MatrixUtils.toInverseMat3(modelMatrix, normalMatrix);
+			if (inv != null) {
+				normalMatrix = MatrixUtils.transpose(inv, normalMatrix);
 			}
 
 			for (int i = 0; i < children.size(); i++) {
