@@ -173,8 +173,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.mobialia:jmini3d-core:0.9.6'
-    implementation 'com.github.mobialia:jmini3d-android:0.9.6@aar'
+    implementation 'com.github.mobialia:jmini3d-core:0.9.7'
+    implementation 'com.github.mobialia:jmini3d-android:0.9.7@aar'
 }
 ```
 

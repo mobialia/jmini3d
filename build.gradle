@@ -17,7 +17,7 @@ ext {
 
 allprojects {
     project.group = 'com.github.mobialia'
-    project.version = '0.9.6'
+    project.version = '0.9.7'
 
     repositories {
         google()

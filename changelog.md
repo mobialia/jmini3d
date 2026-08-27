@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.7] - 2026-08-27
+
+### Added
+- Added `keep.xml` to the Android library so the Android resource shrinker preserves the bundled GLSL shaders (`@raw/vertex_shader`, `@raw/fragment_shader`, `@raw/vertex_shader_lens_distortion`, `@raw/fragment_shader_opengl_axis`).
+- Added a GitHub Packages badge and this changelog to the readme.
+
+### Fixed
+- Fixed a static `shaderKey` shared across all `ShaderPlugin` subclasses.
+- Fixed `normalMatrix` being set to `null` when the model matrix is singular.
+- Fixed Android `GpuUploader` cube map texture bugs.
+- Fixed GWT `GpuUploader` texture leaks and variable shadowing.
+- Fixed `useLigths` → `useLights` typo.
+- Fixed grammatical errors in the readme.
+
 ## [0.9.6] - 2026-07-26
 
 ### Changed
@@ -135,6 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Renamed shaders extension from `.txt` to `.glsl`.
 
+[0.9.7]: https://github.com/mobialia/jmini3d/releases/tag/0.9.7
 [0.9.6]: https://github.com/mobialia/jmini3d/releases/tag/0.9.6
 [0.9.5]: https://github.com/mobialia/jmini3d/releases/tag/0.9.5
 [0.9.4]: https://github.com/mobialia/jmini3d/releases/tag/0.9.4
