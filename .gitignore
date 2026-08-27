@@ -2,7 +2,8 @@
 /.gradle/
 /build/
 /android/build/
-/android/src/main/res/raw/
+/android/src/main/res/raw/*
+!/android/src/main/res/raw/keep.xml
 /core/build/
 /demo-gwt/src/main/webapp/jmini3d_demo/
 /demo-common/build/
