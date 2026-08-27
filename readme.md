@@ -184,6 +184,36 @@ Available modules:
 * `jmini3d-gwt` — GWT library (JAR + sources)
 * `jmini3d-utils` — OBJ/FNT converters (JAR + sources)
 
+Resource Shrinking (Release Builds)
+==================================
+The shaders (`res/raw/*.glsl`) and textures (`res/drawable-nodpi/*`) are loaded
+at runtime via `Resources.getIdentifier(...)`, a dynamic lookup the Android
+resource shrinker cannot trace statically. If your app enables
+`shrinkResources true` in its release `buildType`, these resources will be
+stripped from the release APK, causing a crash at draw time:
+
+```
+java.lang.RuntimeException: Could not initialize shaders
+    at jmini3d.android.Program.init(Program.java:59)
+```
+
+Since jmini3d 0.9.7 the AAR ships a `res/raw/keep.xml` that retains the four
+shader resources, so consuming apps are protected automatically. You only
+need to ensure you're depending on jmini3d-android 0.9.7 or newer.
+
+For the textures you load by name through `ResourceLoader.getImage()`, add your
+own `keep.xml` in your app's `res/raw/` listing every `@drawable/...` resource
+you reference dynamically, for example:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/texture_a,@drawable/texture_b,@drawable/texture_c" />
+```
+
+Alternatively, set `shrinkResources false` in your release build type to keep
+all resources at the cost of a slightly larger APK.
+
 Licenses
 ========
 
